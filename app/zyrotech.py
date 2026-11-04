@@ -56,6 +56,7 @@ class App(ctk.CTk):
         bar = ctk.CTkFrame(self, fg_color=SIDE, corner_radius=0, height=34); bar.grid(row=1, column=0, columnspan=2, sticky="ew")
         self.status = ctk.CTkLabel(bar, text="", font=self.f_s, text_color=MUTE, anchor="w"); self.status.pack(side="left", padx=14)
         self.prog = ctk.CTkProgressBar(bar, width=220, height=8, progress_color=ACC, fg_color=CARD2); self.prog.set(0); self.prog.pack(side="right", padx=14, pady=10)
+        self._scan_busy = False
         self.protocol("WM_DELETE_WINDOW", self.on_close)
         self.splash("Escaneando tu equipo...")
         threading.Thread(target=self.boot, daemon=True).start()
@@ -112,6 +113,58 @@ class App(ctk.CTk):
             except Exception: self.comps = []
             lic = pro.load_license(); self.licensed = bool(lic) and pro.verify(lic, self.comps)[0]
         self.after(0, self.ready)
+
+    def refresh_scan(self):
+        """Vuelve a leer hardware y estado real de los tweaks sin confiar solo en el historial."""
+        if self._scan_busy:
+            return
+        self._scan_busy = True
+        self.say("Actualizando detección de hardware y tweaks...", 0.15)
+
+        def work():
+            try:
+                hw = core.hw_profile(core.scan_raw())
+                statuses = {}
+                for t in self.vis:
+                    if t.get("mode") == "once":
+                        statuses[t["id"]] = "once"
+                    elif not core.applicable(t, hw):
+                        statuses[t["id"]] = "incompatible"
+                    elif t.get("locked"):
+                        statuses[t["id"]] = "locked"
+                    else:
+                        try:
+                            statuses[t["id"]] = core.tweak_status(t)
+                        except Exception:
+                            statuses[t["id"]] = "unknown"
+                self.after(0, lambda: self._finish_refresh(hw, statuses))
+            except Exception as e:
+                message = str(e)
+                self.after(0, lambda: self._fail_refresh(message))
+
+        threading.Thread(target=work, daemon=True).start()
+
+    def _finish_refresh(self, hw, statuses):
+        self.hw, self.statuses = hw, statuses
+        for t in self.vis:
+            tid = t["id"]
+            var = self.vars.get(tid)
+            if var is None:
+                continue
+            state = statuses.get(tid, "unknown")
+            if state == "active":
+                var.set(True)
+            elif state in ("inactive", "partial", "incompatible", "unknown") and tid not in self.st["applied"]:
+                var.set(False)
+        self._scan_busy = False
+        self.say("Detección actualizada. Los contadores reflejan el estado leído de Windows.", 0)
+        if self.page:
+            self.show(self.page)
+
+    def _fail_refresh(self, message):
+        self._scan_busy = False
+        self.say("No se pudo completar el análisis.", 0)
+        messagebox.showwarning("ZyroTech", f"No se pudo actualizar la detección: {message}")
 
     def ready(self):
         self.vars = {t["id"]: ctk.BooleanVar(value=(self.statuses.get(t["id"]) == "active" or (self.statuses.get(t["id"]) == "unknown" and t["id"] in self.st["applied"]))) for t in self.vis}
@@ -189,6 +242,7 @@ class App(ctk.CTk):
         self.btn(r, "Optimización recomendada", self.recommended, width=230).pack(side="left")
         self.btn(r, "Crear punto de restauración", self.make_restore, "ghost", width=230).pack(side="left", padx=10)
         self.btn(r, "Revertir todo", self.revert_all, "ghost", width=150).pack(side="left")
+        self.btn(r, "Actualizar análisis", self.refresh_scan, "ghost", width=165).pack(side="left", padx=10)
         if not PRO:
             up = self.card(self.content, border_width=1, border_color=GOLD); up.pack(fill="x", padx=28)
             ctk.CTkLabel(up, text=f"Pro: {sum(1 for t in self.vis if t.get('locked'))} optimizaciones más, Game Booster, perfiles, timer 0.5 ms y limpiador de RAM · {config.PRICE_TEXT}, pago único",
@@ -239,7 +293,7 @@ class App(ctk.CTk):
         self.pending_lbl = ctk.CTkLabel(bar, text="", font=self.f_b, text_color=TEXT); self.pending_lbl.pack(side="left", padx=18, pady=12)
         self.risk_ok = ctk.BooleanVar(value=False)
         ctk.CTkCheckBox(bar, text="Entiendo los riesgos", variable=self.risk_ok, font=self.f_s, fg_color=ACC, hover_color=ACC, text_color=MUTE).pack(side="left", padx=10)
-        self.btn(bar, "Aplicar", self.on_apply, width=120).pack(side="right", padx=14)
+        self.btn(bar, "Aplicar" if PRO else "Aplicar uno", self.on_apply, width=120).pack(side="right", padx=14)
         self.btn(bar, "Ver pendientes", self.show_pending, "ghost", width=140).pack(side="right")
         self.fill_list(); self.update_pending()
 
@@ -254,12 +308,18 @@ class App(ctk.CTk):
     def tweak_row(self, t):
         locked = bool(t.get("locked")); compatible = core.applicable(t, self.hw); status = self.statuses.get(t["id"], "unknown")
         c = ctk.CTkFrame(self.listf, fg_color=CARD, corner_radius=12); c.pack(fill="x", pady=3)
-        disabled = locked or not compatible or (t["mode"] == "track" and status == "unknown")
+        managed = t["id"] in self.st["applied"]
+        disabled = locked or not compatible or (t["mode"] == "track" and status == "unknown") or (status == "active" and not managed)
         sw = ctk.CTkSwitch(c, text="", variable=self.vars[t["id"]], onvalue=True, offvalue=False, command=self.update_pending, progress_color=ACC, width=46, state="disabled" if disabled else "normal")
         sw.pack(side="left", padx=(14, 6), pady=12)
         ctk.CTkLabel(c, text=t["name"], font=self.f_n, text_color=GOLD if locked else (RED if t["risk"] == "extreme" else TEXT), anchor="w", wraplength=430, justify="left").pack(side="left", fill="x", expand=True, padx=4)
         tags = ([("PRO")] if locked else []) + ([t["badge"]] if t.get("badge") else []) + (["Reinicio"] if t.get("reboot") else []) + (["Una vez"] if t["mode"] == "once" else [])
-        state_label = "No compatible" if not compatible else ("Acción puntual" if status == "once" else "Activo" if status == "active" else "Estado no disponible" if status == "unknown" else "Disponible")
+        state_label = ("No compatible" if not compatible else
+                       "Acción puntual" if status == "once" else
+                       "Activo" if status == "active" and managed else
+                       "Activo detectado" if status == "active" else
+                       "Parcialmente activo" if status == "partial" else
+                       "Estado no disponible" if status == "unknown" else "Disponible")
         state_color = MUTE if not compatible or status == "unknown" else GREEN if status == "active" else TEXT
         ctk.CTkLabel(c, text=state_label, font=self.f_s, text_color=state_color).pack(side="right", padx=6)
         for b in tags: self.badge(c, b).pack(side="right", padx=3)
@@ -309,6 +369,8 @@ class App(ctk.CTk):
     def on_apply(self):
         ap, rv = self.pending()
         if not ap and not rv: return
+        if not PRO and len(ap) > 1:
+            return messagebox.showinfo("ZyroTech Free", "La edición Free aplica un tweak por vez. Dejé todos seleccionados; aplicá uno y después seguí con el próximo.")
         if any(t["risk"] == "extreme" for t in ap) and not self.risk_ok.get():
             return messagebox.showwarning("ZyroTech", "Marcá 'Entiendo los riesgos' para aplicar los cambios en rojo.")
         if not self.need_admin(): return
@@ -365,7 +427,8 @@ class App(ctk.CTk):
         hw = self.hw
         summary = self.card(self.content); summary.pack(fill="x", padx=28, pady=(0, 10))
         ctk.CTkLabel(summary, text="EQUIPO DETECTADO", font=self.f_s, text_color=ACC, anchor="w").pack(fill="x", padx=18, pady=(13, 4))
-        ctk.CTkLabel(summary, text=f'{hw["cpu_name"]}   ·   {hw["gpu_name"]}   ·   {hw["ram"]} GB RAM   ·   {"Notebook" if hw["laptop"] else "Escritorio"}   ·   {"Windows 11" if hw["win11"] else "Windows 10 / anterior"}', font=self.f_n, text_color=TEXT, anchor="w", wraplength=900).pack(fill="x", padx=18, pady=(0, 13))
+        ctk.CTkLabel(summary, text=f'{hw["cpu_name"]}   ·   {hw["gpu_name"]}   ·   {hw["ram"]} GB RAM   ·   {"Notebook" if hw["laptop"] else "Escritorio"}   ·   {"Windows 11" if hw["win11"] else "Windows 10 / anterior"}', font=self.f_n, text_color=TEXT, anchor="w", wraplength=900).pack(fill="x", padx=18, pady=(0, 5))
+        self.btn(summary, "Actualizar detección", self.refresh_scan, "ghost", width=180).pack(anchor="e", padx=18, pady=(0, 10))
         if not PRO:
             c = self.card(self.content, border_width=1, border_color=GOLD); c.pack(fill="x", padx=28, pady=8)
             ctk.CTkLabel(c, text="Tres perfiles en ZyroTech Pro", font=self.f_h1, text_color=GOLD, anchor="w").pack(fill="x", padx=20, pady=(18, 6))
@@ -377,7 +440,7 @@ class App(ctk.CTk):
             c = self.card(self.content, border_width=1, border_color=ACC if name == "Avanzado" else LINE); c.pack(fill="x", padx=28, pady=5)
             row = ctk.CTkFrame(c, fg_color="transparent"); row.pack(fill="x", padx=18, pady=(13, 2))
             ctk.CTkLabel(row, text=name, font=self.f_h1, text_color=ACC).pack(side="left")
-            ctk.CTkLabel(row, text=f'{len(result["apply"])} para aplicar  ·  {len(result["active"])} ya activos', font=self.f_b, text_color=GREEN).pack(side="right")
+            ctk.CTkLabel(row, text=f'{len(result["apply"])} para aplicar  ·  {len(result["active"])} activos  ·  {len(result["partial"])} parciales', font=self.f_b, text_color=GREEN).pack(side="right")
             ctk.CTkLabel(c, text=desc, font=self.f_n, text_color=MUTE, anchor="w").pack(fill="x", padx=18, pady=(0, 5))
             ctk.CTkLabel(c, text=f'{len(result["incompatible"])} no compatibles o sin lectura fiable  ·  {len(result["unsafe"])} excluidos por seguridad  ·  {len(result["locked"])} Pro bloqueados en esta edición', font=self.f_s, text_color=MUTE, anchor="w", wraplength=850).pack(fill="x", padx=18, pady=(0, 8))
             self.btn(c, "Revisar cambios", lambda n=name: self.preview_profile(n), "gold" if name == "Avanzado" else "ghost", width=180).pack(anchor="e", padx=18, pady=(0, 13))
@@ -389,7 +452,7 @@ class App(ctk.CTk):
         result = pro.profile_preview(name, self.vis, self.hw, self.statuses)
         w = ctk.CTkToplevel(self); w.wm_title(f"Vista previa · {name}"); w.geometry("760x640"); w.minsize(640, 480); w.configure(fg_color=BG); w.after(120, w.lift)
         ctk.CTkLabel(w, text=f"Perfil {name}", font=self.f_h1, text_color=ACC, anchor="w").pack(fill="x", padx=20, pady=(18, 2))
-        ctk.CTkLabel(w, text=f'{len(result["apply"])} disponibles para aplicar · {len(result["active"])} ya activos (se omiten) · {len(result["incompatible"])} incompatibles o sin lectura · {len(result["unsafe"])} excluidos por seguridad', font=self.f_s, text_color=MUTE, anchor="w", wraplength=700).pack(fill="x", padx=20, pady=(0, 10))
+        ctk.CTkLabel(w, text=f'{len(result["apply"])} disponibles para aplicar · {len(result["active"])} ya activos · {len(result["partial"])} parcialmente activos (se completan) · {len(result["incompatible"])} incompatibles o sin lectura · {len(result["unsafe"])} excluidos por seguridad', font=self.f_s, text_color=MUTE, anchor="w", wraplength=700).pack(fill="x", padx=20, pady=(0, 10))
         box = ctk.CTkScrollableFrame(w, fg_color="transparent"); box.pack(fill="both", expand=True, padx=16)
         choices = {}
         for t in result["apply"]:
@@ -397,7 +460,7 @@ class App(ctk.CTk):
             row = ctk.CTkFrame(box, fg_color=CARD, corner_radius=10); row.pack(fill="x", pady=2)
             ctk.CTkCheckBox(row, text=t["name"], variable=v, font=self.f_n, text_color=TEXT, fg_color=ACC, hover_color=ACC).pack(fill="x", padx=10, pady=8)
             ctk.CTkLabel(row, text=f'{t["module"]}{" · requiere reinicio" if t.get("reboot") else ""}', font=self.f_s, text_color=MUTE, anchor="w").pack(fill="x", padx=38, pady=(0, 7))
-        for key, title, color in [("active", "YA ACTIVOS · SE OMITEN", GREEN), ("incompatible", "INCOMPATIBLES O SIN LECTURA FIABLE · SE OMITEN", MUTE), ("unsafe", "EXCLUIDOS POR SEGURIDAD", RED), ("locked", "BLOQUEADOS EN FREE", GOLD), ("once", "ACCIONES PUNTUALES · NO INCLUIDAS EN PERFILES", MUTE)]:
+        for key, title, color in [("active", "YA ACTIVOS · SE OMITEN", GREEN), ("partial", "PARCIALMENTE ACTIVOS · SE COMPLETAN", GOLD), ("incompatible", "INCOMPATIBLES O SIN LECTURA FIABLE · SE OMITEN", MUTE), ("unsafe", "EXCLUIDOS POR SEGURIDAD", RED), ("locked", "BLOQUEADOS EN FREE", GOLD), ("once", "ACCIONES PUNTUALES · NO INCLUIDAS EN PERFILES", MUTE)]:
             items = result[key]
             if items:
                 ctk.CTkLabel(box, text=f"{title} ({len(items)})", font=self.f_b, text_color=color, anchor="w").pack(fill="x", pady=(12, 3))
@@ -408,13 +471,20 @@ class App(ctk.CTk):
         bar = ctk.CTkFrame(w, fg_color="transparent"); bar.pack(fill="x", padx=20, pady=14)
         self.btn(bar, "Marcar todos", lambda: [v.set(True) for v in choices.values()], "ghost", width=120).pack(side="left")
         self.btn(bar, "Desmarcar todos", lambda: [v.set(False) for v in choices.values()], "ghost", width=140).pack(side="left", padx=8)
-        self.btn(bar, "Aplicar seleccionados", lambda: self.execute_profile(w, result["apply"], choices, name), "gold", width=200).pack(side="right")
+        self.btn(bar, "Aplicar seleccionados", lambda: self.execute_profile(w, result["apply"], choices, name), "ghost", width=200).pack(side="right")
+        self.btn(bar, "Aplicar todo", lambda: self.apply_all_profile(w, result["apply"], choices, name), "gold", width=140).pack(side="right", padx=(0, 8))
+
+    def apply_all_profile(self, window, candidates, choices, name):
+        """Selecciona todos los cambios elegibles del perfil y abre la confirmación final."""
+        for variable in choices.values():
+            variable.set(True)
+        self.execute_profile(window, candidates, choices, name)
 
     def execute_profile(self, window, candidates, choices, name):
         selected = [t for t in candidates if choices[t["id"]].get()]
         if not selected: return messagebox.showinfo("ZyroTech", "No seleccionaste cambios para aplicar.", parent=window)
         if not self.need_admin(): return
-        if not messagebox.askyesno("Confirmar perfil", f"Se aplicarán {len(selected)} cambios del perfil {name}. ZyroTech intentará crear un punto de restauración y un backup antes de continuar. ¿Seguimos?", parent=window): return
+        if not messagebox.askyesno("Confirmar perfil", f"Se aplicarán {len(selected)} cambios elegibles del perfil {name}. Los tweaks ya activos e incompatibles se omiten. ZyroTech intentará crear un punto de restauración y un backup antes de continuar. ¿Seguimos?", parent=window): return
         window.destroy(); self.say(f"Aplicando perfil {name}...", 0.05)
         threading.Thread(target=lambda: self.run_apply(selected, [], lambda: self.show("profiles")), daemon=True).start()
 
