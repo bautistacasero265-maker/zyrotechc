@@ -1,6 +1,11 @@
 name: Unpack ZyroTech source for review
 
 on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/unpack-zip-for-review.yml"
+      - "zyrotech-apps-actualizado.zip"
   workflow_dispatch:
 
 permissions:
@@ -13,12 +18,13 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Extract safe text source files
+      - name: Extract text sources and screen obvious secrets
         shell: bash
         run: |
           python - <<'PY'
           from pathlib import Path, PurePosixPath
           from zipfile import ZipFile
+          import re
           import shutil
 
           archive = Path("zyrotech-apps-actualizado.zip")
@@ -36,9 +42,16 @@ jobs:
           blocked_parts = {".git", "__pycache__", ".venv", "venv", "node_modules"}
           blocked_suffixes = {".pem", ".key", ".p12", ".pfx", ".db", ".sqlite",
                               ".sqlite3", ".exe", ".dll", ".pyd", ".so"}
+          secret_patterns = [
+              re.compile(rb"-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----"),
+              re.compile(rb"gh[pousr]_[A-Za-z0-9_]{30,}"),
+              re.compile(rb"xox[baprs]-[A-Za-z0-9-]{20,}"),
+              re.compile(rb"AKIA[0-9A-Z]{16}"),
+          ]
+
           count = 0
           total = 0
-
+          suspicious = []
           with ZipFile(archive) as zf:
               for info in zf.infolist():
                   if info.is_dir():
@@ -47,27 +60,41 @@ jobs:
                   path = PurePosixPath(name)
                   if path.is_absolute() or ".." in path.parts:
                       continue
+                  if path.suffix.lower() in blocked_suffixes or path.name.lower().startswith(".env"):
+                      if path.suffix.lower() in {".pem", ".key", ".p12", ".pfx"} or path.name.lower().startswith(".env"):
+                          suspicious.append(f"Archivo sensible omitido: {name}")
+                      continue
                   if any(part.lower() in blocked_parts for part in path.parts):
-                      continue
-                  if path.suffix.lower() in blocked_suffixes:
-                      continue
-                  if path.name.lower().startswith(".env"):
                       continue
                   if path.suffix.lower() not in allowed:
                       continue
-                  target = destination.joinpath(*path.parts)
-                  target.parent.mkdir(parents=True, exist_ok=True)
+
                   data = zf.read(info)
+                  if any(pattern.search(data) for pattern in secret_patterns):
+                      suspicious.append(f"Posible secreto dentro del archivo (omitido): {name}")
+                      continue
                   try:
                       data.decode("utf-8")
                   except UnicodeDecodeError:
                       continue
+
+                  target = destination.joinpath(*path.parts)
+                  target.parent.mkdir(parents=True, exist_ok=True)
                   target.write_bytes(data)
                   count += 1
                   total += len(data)
 
-          print(f"Archivos de texto extraídos: {count}")
-          print(f"Bytes de código extraídos: {total}")
+          report = [
+              f"Archivos de texto extraídos: {count}",
+              f"Bytes de código extraídos: {total}",
+              "",
+              "Revisión automática limitada: busca nombres de archivos de claves y algunos patrones de tokens conocidos.",
+              "No garantiza que no existan secretos codificados o contraseñas dentro del código.",
+              "",
+              * (suspicious or ["No se detectaron archivos sensibles por las reglas básicas."])
+          ]
+          (destination / "SECURITY_SCAN.txt").write_text("\n".join(report), encoding="utf-8")
+          print("\n".join(report))
           if count == 0:
               raise SystemExit("No se encontraron archivos de código compatibles.")
           PY
