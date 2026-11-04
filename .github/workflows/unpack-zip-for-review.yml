@@ -1,0 +1,83 @@
+name: Unpack ZyroTech source for review
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  unpack:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Extract safe text source files
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path, PurePosixPath
+          from zipfile import ZipFile
+          import shutil
+
+          archive = Path("zyrotech-apps-actualizado.zip")
+          if not archive.exists():
+              raise SystemExit("No se encontró el ZIP en la raíz del repositorio.")
+
+          destination = Path("review-src")
+          if destination.exists():
+              shutil.rmtree(destination)
+          destination.mkdir()
+
+          allowed = {".py", ".json", ".txt", ".bat", ".cmd", ".spec", ".yml",
+                     ".yaml", ".toml", ".md", ".ini", ".reg", ".ps1",
+                     ".html", ".css", ".js", ".xml", ".manifest"}
+          blocked_parts = {".git", "__pycache__", ".venv", "venv", "node_modules"}
+          blocked_suffixes = {".pem", ".key", ".p12", ".pfx", ".db", ".sqlite",
+                              ".sqlite3", ".exe", ".dll", ".pyd", ".so"}
+          count = 0
+          total = 0
+
+          with ZipFile(archive) as zf:
+              for info in zf.infolist():
+                  if info.is_dir():
+                      continue
+                  name = info.filename.replace("\\", "/")
+                  path = PurePosixPath(name)
+                  if path.is_absolute() or ".." in path.parts:
+                      continue
+                  if any(part.lower() in blocked_parts for part in path.parts):
+                      continue
+                  if path.suffix.lower() in blocked_suffixes:
+                      continue
+                  if path.name.lower().startswith(".env"):
+                      continue
+                  if path.suffix.lower() not in allowed:
+                      continue
+                  target = destination.joinpath(*path.parts)
+                  target.parent.mkdir(parents=True, exist_ok=True)
+                  data = zf.read(info)
+                  try:
+                      data.decode("utf-8")
+                  except UnicodeDecodeError:
+                      continue
+                  target.write_bytes(data)
+                  count += 1
+                  total += len(data)
+
+          print(f"Archivos de texto extraídos: {count}")
+          print(f"Bytes de código extraídos: {total}")
+          if count == 0:
+              raise SystemExit("No se encontraron archivos de código compatibles.")
+          PY
+
+      - name: Publish review branch
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout -B zyrotech-source-review
+          git add review-src
+          git commit -m "chore: unpack ZyroTech sources for code review"
+          git push --force origin zyrotech-source-review
