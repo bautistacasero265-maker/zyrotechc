@@ -112,8 +112,15 @@ def scan_raw():
     out = ps(r"""$g=@(Get-CimInstance Win32_VideoController | % Name) -join '|'
 $c=(Get-CimInstance Win32_Processor | Select -First 1).Name
 $r=[math]::Round((Get-CimInstance Win32_ComputerSystem).TotalPhysicalMemory/1GB)
-$d=$null; try{$d=Get-Partition -DriveLetter C | Get-Disk | Get-PhysicalDisk}catch{}
-$ssd=[bool]($d -and ($d.MediaType -eq 'SSD' -or $d.BusType -eq 'NVMe'))
+$d=$null; $p=$null; $ssd=$false
+try {
+  $d=Get-Partition -DriveLetter C -ErrorAction Stop | Get-Disk -ErrorAction Stop | Select-Object -First 1
+  if($d) {
+    $p=Get-PhysicalDisk -ErrorAction SilentlyContinue | Where-Object { $_.DeviceId -eq [string]$d.Number } | Select-Object -First 1
+    if($p) { $ssd=($p.MediaType -eq 'SSD' -or $p.BusType -eq 'NVMe') }
+    else { $ssd=([string]$d.BusType -match 'NVMe|SSD' -or [string]$d.FriendlyName -match '\\bSSD\\b|NVMe') }
+  }
+} catch { $ssd=$false }
 $lap=[bool](Get-CimInstance Win32_SystemEnclosure | ? { $_.ChassisTypes | ? { $_ -in 8,9,10,11,12,14,18,21,30,31,32 } })
 $o=Get-CimInstance Win32_OperatingSystem
 $w=[bool](Get-NetAdapter -Physical -ErrorAction SilentlyContinue | ? { $_.PhysicalMediaType -match '802.11|Native' })
@@ -171,7 +178,9 @@ def tweak_status(t):
         except Exception:
             states.append(None)
     if not states or any(s is None for s in states): return "unknown"
-    return "active" if all(states) else "inactive"
+    if all(states): return "active"
+    if any(states): return "partial"
+    return "inactive"
 
 def coverage(tweaks, applied, include_locked=True):
     """% del peso de tweaks reversibles ya aplicado (cobertura, no promesa de FPS)."""
