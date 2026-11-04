@@ -90,7 +90,7 @@ PROFILE_BLOCK_BADGES = {"Breaking", "Irreversible", "Seguridad", "Beta"}
 def profile_preview(name, tweaks, hw, statuses):
     """Propone solo cambios reversibles, medibles y compatibles; informa los omitidos."""
     modules = PROFILE_MODULES[name]
-    result = {"apply": [], "active": [], "incompatible": [], "unsafe": [], "locked": [], "once": []}
+    result = {"apply": [], "active": [], "partial": [], "incompatible": [], "unsafe": [], "locked": [], "once": []}
     for t in tweaks:
         if t["module"] not in modules:
             continue
@@ -104,6 +104,9 @@ def profile_preview(name, tweaks, hw, statuses):
             result["incompatible"].append(t)
         elif statuses.get(t["id"]) == "active":
             result["active"].append(t)
+        elif statuses.get(t["id"]) == "partial":
+            result["partial"].append(t)
+            result["apply"].append(t)
         else:
             result["apply"].append(t)
     return result
