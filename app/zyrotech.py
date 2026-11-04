@@ -167,7 +167,7 @@ class App(ctk.CTk):
         messagebox.showwarning("ZyroTech", f"No se pudo actualizar la detección: {message}")
 
     def ready(self):
-        self.vars = {t["id"]: ctk.BooleanVar(value=(self.statuses.get(t["id"]) == "active" or (self.statuses.get(t["id"]) == "unknown" and t["id"] in self.st["applied"]))) for t in self.vis}
+        self.vars = {t["id"]: ctk.BooleanVar(value=(self.statuses.get(t["id"]) in ("active", "partial") or (self.statuses.get(t["id"]) == "unknown" and t["id"] in self.st["applied"]))) for t in self.vis}
         for w in self.side.winfo_children(): w.destroy()
         if PRO and not self.licensed: return self.gate_view()
         ctk.CTkLabel(self.side, text="ZyroTech", font=ctk.CTkFont(family="Segoe UI", size=26, weight="bold"), text_color=ACC).pack(anchor="w", padx=22, pady=(26, 0))
@@ -309,7 +309,7 @@ class App(ctk.CTk):
         locked = bool(t.get("locked")); compatible = core.applicable(t, self.hw); status = self.statuses.get(t["id"], "unknown")
         c = ctk.CTkFrame(self.listf, fg_color=CARD, corner_radius=12); c.pack(fill="x", pady=3)
         managed = t["id"] in self.st["applied"]
-        disabled = locked or not compatible or (t["mode"] == "track" and status == "unknown") or (status == "active" and not managed)
+        disabled = locked or not compatible or (t["mode"] == "track" and status == "unknown") or (status in ("active", "partial") and not managed)
         sw = ctk.CTkSwitch(c, text="", variable=self.vars[t["id"]], onvalue=True, offvalue=False, command=self.update_pending, progress_color=ACC, width=46, state="disabled" if disabled else "normal")
         sw.pack(side="left", padx=(14, 6), pady=12)
         ctk.CTkLabel(c, text=t["name"], font=self.f_n, text_color=GOLD if locked else (RED if t["risk"] == "extreme" else TEXT), anchor="w", wraplength=430, justify="left").pack(side="left", fill="x", expand=True, padx=4)
@@ -342,7 +342,7 @@ class App(ctk.CTk):
         want = {t["id"] for t in self.vis if self.vars[t["id"]].get() and not t.get("locked")}; done = set(self.st["applied"])
         ap = [t for t in self.vis if t["id"] in want and core.applicable(t, self.hw) and
               self.statuses.get(t["id"]) != "unknown" and self.statuses.get(t["id"]) != "active" and
-              (t["id"] not in done or t["mode"] == "once")]
+              (t["id"] not in done or t["mode"] == "once" or self.statuses.get(t["id"]) == "partial")]
         rv = [t for t in self.vis if t["id"] in done and t["id"] not in want]
         return ap, rv
     def update_pending(self):
@@ -387,14 +387,26 @@ class App(ctk.CTk):
             self.say("No se aplicó nada: falló el punto de restauración o el backup.", 0); return self.after(0, lambda: messagebox.showerror("ZyroTech", str(e)))
         for t in rv:
             n += 1; self.say(f"Revirtiendo: {t['name']}", n / total)
-            e = core.run_undo(self.st["applied"].pop(t["id"], [])); self.statuses[t["id"]] = "inactive" if not e else "unknown"; core.save_json(core.data_path("state.json"), self.st); self.log("Revertido", t["name"], not e); errs += e
+            e = core.run_undo(self.st["applied"].pop(t["id"], []))
+            try:
+                self.statuses[t["id"]] = core.tweak_status(t) if not e else "unknown"
+            except Exception:
+                self.statuses[t["id"]] = "unknown"
+            core.save_json(core.data_path("state.json"), self.st); self.log("Revertido", t["name"], not e); errs += e
         reboot = False
         for t in ap:
             n += 1; self.say(f"Aplicando: {t['name']}", n / total)
             try:
                 undo = core.apply_tweak(t)
                 if t["mode"] == "track":
-                    self.st["applied"][t["id"]] = undo; self.statuses[t["id"]] = "active"
+                    # Conservar la primera copia de los valores originales si se
+                    # completa un tweak parcialmente aplicado.
+                    if t["id"] not in self.st["applied"]:
+                        self.st["applied"][t["id"]] = undo
+                    try:
+                        self.statuses[t["id"]] = core.tweak_status(t)
+                    except Exception:
+                        self.statuses[t["id"]] = "unknown"
                     core.save_json(core.data_path("state.json"), self.st)
                 self.log("Aplicado", t["name"], True); reboot = reboot or t.get("reboot", False)
             except Exception as e:
@@ -414,7 +426,12 @@ class App(ctk.CTk):
         def w():
             for i, tid in enumerate(list(reversed(list(self.st["applied"]))), 1):
                 self.say(f"Revirtiendo: {self.tname(tid)}", i / max(1, len(self.st["applied"])))
-                e = core.run_undo(self.st["applied"].pop(tid)); self.statuses[tid] = "inactive" if not e else "unknown"; core.save_json(core.data_path("state.json"), self.st); self.log("Revertido", self.tname(tid), not e)
+                e = core.run_undo(self.st["applied"].pop(tid))
+                try:
+                    self.statuses[tid] = core.tweak_status(next(t for t in self.vis if t["id"] == tid)) if not e else "unknown"
+                except Exception:
+                    self.statuses[tid] = "unknown"
+                core.save_json(core.data_path("state.json"), self.st); self.log("Revertido", self.tname(tid), not e)
             def ui():
                 for v in self.vars.values(): v.set(False)
                 self.update_pending(); self.say("Todo revertido.", 0)
@@ -578,7 +595,12 @@ class App(ctk.CTk):
             ctk.CTkLabel(box, text=f'{h["t"]}   {h["a"]}   {h["n"]}' + ("" if h["ok"] else "   (con error)"), font=self.f_s, text_color=MUTE if h["ok"] else RED, anchor="w").pack(fill="x")
     def revert_one(self, tid):
         if not self.need_admin(): return
-        e = core.run_undo(self.st["applied"].pop(tid, [])); self.statuses[tid] = "inactive" if not e else "unknown"; core.save_json(core.data_path("state.json"), self.st); self.log("Revertido", self.tname(tid), not e)
+        e = core.run_undo(self.st["applied"].pop(tid, []))
+        try:
+            self.statuses[tid] = core.tweak_status(next(t for t in self.vis if t["id"] == tid)) if not e else "unknown"
+        except Exception:
+            self.statuses[tid] = "unknown"
+        core.save_json(core.data_path("state.json"), self.st); self.log("Revertido", self.tname(tid), not e)
         if tid in self.vars: self.vars[tid].set(False)
         self.show("hist")
 
