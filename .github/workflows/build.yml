@@ -33,6 +33,9 @@ jobs:
       - name: Validate and regenerate tweak catalog
         run: python tools/generate_tweaks.py
 
+      - name: Test profile rules and Free packaging
+        run: python -m unittest discover -s tests -v
+
       - name: Build Free edition
         run: python tools/build.py free
 
