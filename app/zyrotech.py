@@ -11,18 +11,20 @@ except ImportError:
     pro = None
 if PRO and pro is None: sys.exit("Falta pro_features.py")
 
-# ---------- Identidad visual ZyroTech ----------
-BG, SIDE, CARD, CARD2, LINE = "#080D13", "#0B131D", "#111C28", "#172636", "#26394B"
-TEXT, MUTE, RED, GOLD, GREEN = "#F1F6FA", "#8FA4B7", "#FF647C", "#FFC86D", "#55E6AD"
-CYAN, BLUE, PURPLE = "#72D8F4", "#5DA8FF", "#A78BFA"
+# ---------- Identidad visual ZyroTech / nueva interfaz ----------
+BG, SIDE, CARD, CARD2, LINE = "#0D0E14", "#14151E", "#191A25", "#222432", "#303245"
+TEXT, MUTE, RED, GOLD, GREEN = "#F3F2FA", "#9899AF", "#FF718B", "#FFC66D", "#C5FF55"
+CYAN, BLUE, PURPLE = "#A78BFA", "#72B7FF", "#B38BFF"
 ACC = CYAN if PRO else GREEN
-ACC_TXT = "#071018"
-HOVER = "#203648"
-BADGE = {"Breaking": RED, "Seguridad": RED, "Irreversible": RED, "Beta": "#8B5CF6", "Energía": "#F59E0B", "Info": "#3B82F6", "Reinicio": "#3B82F6", "Una vez": "#6B7280", "PRO": GOLD}
-WARN_BANNER = ("Algunos cambios marcados bajan la seguridad del equipo (Defender, Windows Update, virtualización o mitigaciones de CPU). "
-               "Podés desmarcarlos cuando quieras.")
+ACC_TXT = "#111019"
+HOVER = "#303146"
+BADGE = {"Breaking": RED, "Seguridad": RED, "Irreversible": RED, "Beta": PURPLE, "Energía": GOLD, "Info": BLUE, "Reinicio": BLUE, "Una vez": "#77798E", "PRO": GOLD}
+WARN_BANNER = ("Algunos cambios marcados bajan la seguridad del equipo. Revisá cada acción antes de aplicarla.")
 BAD_FOR_AUTO = {"Breaking", "Irreversible", "Beta", "Seguridad"}
 ORDER = ["Privacidad", "Debloat", "Gaming", "Kernel", "Energía", "Red", "Periféricos", "Interfaz", "Servicios", "Tareas", "Inicio", "Mantenimiento", "Seguridad básica", "Seguridad"]
+
+
+
 
 
 def load_tweaks():
@@ -45,44 +47,81 @@ class App(ctk.CTk):
         super().__init__()
         ctk.set_appearance_mode("dark")
         self.wm_title("ZyroTech " + ("Pro" if PRO else "Free"))
-        self.geometry("1280x800"); self.minsize(1000, 650); self.configure(fg_color=BG)
-        self.f_logo = ctk.CTkFont(family="Segoe UI", size=18, weight="bold")
-        self.f_h1 = ctk.CTkFont(family="Segoe UI", size=27, weight="bold")
-        self.f_h2 = ctk.CTkFont(family="Segoe UI", size=16, weight="bold")
+        self.geometry("1200x800")
+        self.minsize(920, 640)
+        self.configure(fg_color=BG)
+
+        self.f_logo = ctk.CTkFont(family="Segoe UI", size=19, weight="bold")
+        self.f_h1 = ctk.CTkFont(family="Segoe UI", size=29, weight="bold")
+        self.f_h2 = ctk.CTkFont(family="Segoe UI", size=17, weight="bold")
         self.f_b = ctk.CTkFont(family="Segoe UI", size=13, weight="bold")
         self.f_n = ctk.CTkFont(family="Segoe UI", size=13)
         self.f_s = ctk.CTkFont(family="Segoe UI", size=11)
-        self.f_big = ctk.CTkFont(family="Segoe UI", size=42, weight="bold")
+        self.f_big = ctk.CTkFont(family="Segoe UI", size=43, weight="bold")
         self.f_mono = ctk.CTkFont(family="Cascadia Code", size=11)
         ctk.set_widget_scaling(1.0)
+
         self.st = core.load_json(core.data_path("state.json"), {"applied": {}})
         self.hist = core.load_json(core.data_path("history.json"), [])
         self.settings = core.load_json(core.data_path("settings.json"), {"games": [], "last_latency": None})
         self.tweaks, self.vis, self.vars, self.hw, self.statuses = [], [], {}, None, {}
-        self.restore_ok, self.cat, self.page, self.licensed, self.comps = False, None, None, not PRO, []
-        self.booster = self.ram = None; self.pending_lbl = self.banner = None
-        self.grid_columnconfigure(1, weight=1); self.grid_rowconfigure(1, weight=1)
-        self.topbar = ctk.CTkFrame(self, fg_color=SIDE, corner_radius=0, height=68)
-        self.topbar.grid(row=0, column=0, columnspan=2, sticky="ew"); self.topbar.grid_propagate(False)
-        brand = ctk.CTkFrame(self.topbar, fg_color="transparent"); brand.pack(side="left", padx=22, pady=12)
-        mark = ctk.CTkFrame(brand, fg_color=ACC, corner_radius=11, width=42, height=42); mark.pack(side="left"); mark.pack_propagate(False)
-        ctk.CTkLabel(mark, text="ZT", font=self.f_logo, text_color=ACC_TXT).pack(expand=True)
-        namebox = ctk.CTkFrame(brand, fg_color="transparent"); namebox.pack(side="left", padx=12)
-        ctk.CTkLabel(namebox, text="ZYROTECH", font=ctk.CTkFont(family="Segoe UI", size=17, weight="bold"), text_color=TEXT).pack(anchor="w")
-        ctk.CTkLabel(namebox, text="OPTIMIZER SUITE", font=ctk.CTkFont(family="Segoe UI", size=9, weight="bold"), text_color=MUTE).pack(anchor="w", pady=(1, 0))
-        top_right = ctk.CTkFrame(self.topbar, fg_color="transparent"); top_right.pack(side="right", padx=22)
-        self.edition_tag = ctk.CTkLabel(top_right, text="PRO EDITION" if PRO else "FREE EDITION", fg_color=CARD2, text_color=ACC, corner_radius=8, font=self.f_s, padx=12, pady=6)
-        self.edition_tag.pack(side="right", padx=(10, 0))
-        ctk.CTkLabel(top_right, text="●  LOCAL MODE", font=self.f_s, text_color=GREEN).pack(side="right")
-        self.side = ctk.CTkFrame(self, fg_color=SIDE, corner_radius=0, width=226); self.side.grid(row=1, column=0, sticky="nsew"); self.side.grid_propagate(False)
-        self.content = ctk.CTkFrame(self, fg_color=BG, corner_radius=0); self.content.grid(row=1, column=1, sticky="nsew")
-        bar = ctk.CTkFrame(self, fg_color=SIDE, corner_radius=0, height=38); bar.grid(row=2, column=0, columnspan=2, sticky="ew")
-        self.status = ctk.CTkLabel(bar, text="Preparando análisis local...", font=self.f_s, text_color=MUTE, anchor="w"); self.status.pack(side="left", padx=18)
-        self.prog = ctk.CTkProgressBar(bar, width=210, height=7, progress_color=ACC, fg_color=CARD2); self.prog.set(0); self.prog.pack(side="right", padx=18, pady=11)
+        self.restore_ok, self.cat, self.page = False, None, None
+        self.licensed, self.comps = True, []
+        self.booster = self.ram = None
+        self.pending_lbl = self.banner = None
+
+        # Layout principal: cabecera + navegación horizontal + espacio de trabajo + estado.
+        self.grid_columnconfigure(0, weight=1)
+        self.grid_rowconfigure(2, weight=1)
+        self.topbar = ctk.CTkFrame(self, fg_color=SIDE, corner_radius=0, height=70)
+        self.topbar.grid(row=0, column=0, sticky="ew")
+        self.topbar.grid_propagate(False)
+
+        brand = ctk.CTkFrame(self.topbar, fg_color="transparent")
+        brand.pack(side="left", padx=25, pady=12)
+        mark = ctk.CTkFrame(brand, fg_color=ACC, corner_radius=13, width=43, height=43)
+        mark.pack(side="left")
+        mark.pack_propagate(False)
+        ctk.CTkLabel(mark, text="Z", font=ctk.CTkFont(family="Segoe UI", size=26, weight="bold"),
+                     text_color=ACC_TXT).pack(expand=True)
+        namebox = ctk.CTkFrame(brand, fg_color="transparent")
+        namebox.pack(side="left", padx=12)
+        ctk.CTkLabel(namebox, text="ZYROTECH", font=self.f_logo, text_color=TEXT).pack(anchor="w")
+        ctk.CTkLabel(namebox, text="PERFORMANCE LAB", font=ctk.CTkFont(family="Segoe UI", size=9, weight="bold"),
+                     text_color=MUTE).pack(anchor="w", pady=(0, 1))
+
+        top_right = ctk.CTkFrame(self.topbar, fg_color="transparent")
+        top_right.pack(side="right", padx=24)
+        ctk.CTkLabel(top_right, text="●  PROCESAMIENTO LOCAL" if PRO else "●  MODO LOCAL",
+                     font=self.f_s, text_color=GREEN).pack(side="left", padx=(0, 16))
+        self.edition_tag = ctk.CTkLabel(top_right, text="PRO" if PRO else "FREE",
+                     fg_color=CARD2, text_color=ACC, corner_radius=8, font=self.f_s, padx=13, pady=7)
+        self.edition_tag.pack(side="left")
+        self.btn(top_right, "↻  ESCANEAR", self.refresh_scan, "ghost", height=34, width=125).pack(side="left", padx=(13, 0))
+
+        self.navbar = ctk.CTkFrame(self, fg_color="#11121A", corner_radius=0, height=54,
+                                   border_width=1, border_color=LINE)
+        self.navbar.grid(row=1, column=0, sticky="ew")
+        self.navbar.grid_propagate(False)
+
+        self.content = ctk.CTkFrame(self, fg_color=BG, corner_radius=0)
+        self.content.grid(row=2, column=0, sticky="nsew")
+
+        footer = ctk.CTkFrame(self, fg_color=SIDE, corner_radius=0, height=34)
+        footer.grid(row=3, column=0, sticky="ew")
+        footer.grid_propagate(False)
+        self.status = ctk.CTkLabel(footer, text="Preparando diagnóstico local...",
+                                   font=self.f_s, text_color=MUTE, anchor="w")
+        self.status.pack(side="left", padx=20)
+        self.prog = ctk.CTkProgressBar(footer, width=170, height=6, progress_color=ACC, fg_color=CARD2)
+        self.prog.set(0)
+        self.prog.pack(side="right", padx=20, pady=12)
+
         self._scan_busy = False
         self.protocol("WM_DELETE_WINDOW", self.on_close)
-        self.splash("Escaneando tu equipo...")
+        self.splash("Analizando componentes y ajustes...")
         threading.Thread(target=self.boot, daemon=True).start()
+
 
     # ---------- utilidades ----------
     def clear(self):
@@ -132,12 +171,16 @@ class App(ctk.CTk):
                             corner_radius=7, font=self.f_s, height=22)
 
     def heading(self, text, sub=""):
-        ctk.CTkLabel(self.content, text="CONTROL CENTER  /  ZYROTECH", font=ctk.CTkFont(family="Segoe UI", size=10, weight="bold"),
-                     text_color=ACC, anchor="w").pack(fill="x", padx=30, pady=(24, 2))
-        ctk.CTkLabel(self.content, text=text, font=self.f_h1, text_color=TEXT, anchor="w").pack(fill="x", padx=30, pady=(0, 0))
+        top = ctk.CTkFrame(self.content, fg_color="transparent")
+        top.pack(fill="x", padx=30, pady=(22, 14))
+        ctk.CTkLabel(top, text="ZYROTECH   /   PERFORMANCE LAB",
+                     font=ctk.CTkFont(family="Segoe UI", size=9, weight="bold"),
+                     text_color=ACC, anchor="w").pack(fill="x")
+        ctk.CTkLabel(top, text=text, font=self.f_h1, text_color=TEXT, anchor="w").pack(fill="x", pady=(3, 1))
         if sub:
-            ctk.CTkLabel(self.content, text=sub, font=self.f_n, text_color=MUTE, anchor="w",
-                         wraplength=900, justify="left").pack(fill="x", padx=30, pady=(4, 14))
+            ctk.CTkLabel(top, text=sub, font=self.f_n, text_color=MUTE, anchor="w",
+                         wraplength=940, justify="left").pack(fill="x", pady=(2, 0))
+
     def tname(self, tid): return next((t["name"] for t in self.tweaks if t["id"] == tid), "DNS personalizado" if tid == "DNS" else tid)
     def log(self, action, name, ok):
         self.hist.append({"t": time.strftime("%d/%m %H:%M"), "a": action, "n": name, "ok": ok}); self.hist = self.hist[-200:]
@@ -172,10 +215,8 @@ class App(ctk.CTk):
             else:
                 try: self.statuses[t["id"]] = core.tweak_status(t)
                 except Exception: self.statuses[t["id"]] = "unknown"
-        if PRO:
-            try: self.comps = pro.fingerprint()
-            except Exception: self.comps = []
-            lic = pro.load_license(); self.licensed = bool(lic) and pro.verify(lic, self.comps)[0]
+        # Free y Pro son ejecutables separados; no existe pantalla de licencia ni verificación por clave.
+
         self.after(0, self.ready)
 
     def refresh_scan(self):
@@ -230,86 +271,42 @@ class App(ctk.CTk):
         messagebox.showwarning("ZyroTech", f"No se pudo actualizar la detección: {message}")
 
     def ready(self):
-        self.vars = {t["id"]: ctk.BooleanVar(value=(self.statuses.get(t["id"]) in ("active", "partial") or (self.statuses.get(t["id"]) == "unknown" and t["id"] in self.st["applied"]))) for t in self.vis}
-        for w in self.side.winfo_children(): w.destroy()
-        if PRO and not self.licensed: return self.gate_view()
-        ctk.CTkLabel(self.side, text="TU ESPACIO", font=ctk.CTkFont(family="Segoe UI", size=9, weight="bold"), text_color=MUTE).pack(anchor="w", padx=20, pady=(24, 10))
+        self.vars = {t["id"]: ctk.BooleanVar(value=(self.statuses.get(t["id"]) in ("active", "partial") or
+                       (self.statuses.get(t["id"]) == "unknown" and t["id"] in self.st["applied"]))) for t in self.vis}
+        for w in self.navbar.winfo_children():
+            w.destroy()
         self.nav = {}
         nav_items = [
-            ("home", "⌂", "Panel"),
-            ("opt", "◈", "Optimizar"),
-            ("profiles", "▦", "Perfiles"),
-            ("game", "▣", "Gaming"),
-            ("net", "⌁", "Red"),
-            ("hist", "◷", "Historial"),
-            ("pro", "✦", "Licencia" if PRO else "Free vs Pro"),
+            ("home", "◫", "Inicio"),
+            ("opt", "⌁", "Ajustes"),
         ]
+        if PRO:
+            nav_items.extend([("profiles", "▦", "Perfiles"), ("game", "◉", "Gaming")])
+        nav_items.extend([("net", "⌘", "Red"), ("hist", "◷", "Actividad"), ("pro", "⋯", "Acerca de")])
         for key, glyph, label in nav_items:
-            b = ctk.CTkButton(self.side, text=f"  {glyph}     {label}", anchor="w",
+            b = ctk.CTkButton(self.navbar, text=f"{glyph}   {label}", anchor="center",
                               fg_color="transparent", text_color=MUTE, hover_color=CARD2,
-                              corner_radius=10, height=43, font=self.f_b,
+                              corner_radius=9, height=38, font=self.f_b,
                               command=lambda k=key: self.show(k))
-            b.pack(fill="x", padx=12, pady=3); self.nav[key] = b
-        foot = ctk.CTkFrame(self.side, fg_color="transparent")
-        foot.pack(side="bottom", fill="x", padx=14, pady=16)
-        ctk.CTkFrame(foot, fg_color=LINE, height=1).pack(fill="x", pady=(0, 12))
-        ctk.CTkLabel(foot, text="DETECCIÓN LOCAL", font=ctk.CTkFont(family="Segoe UI", size=9, weight="bold"), text_color=MUTE).pack(anchor="w", padx=5)
-        ctk.CTkLabel(foot, text="Tus datos permanecen en este equipo", font=self.f_s, text_color=MUTE).pack(anchor="w", padx=5, pady=(3, 10))
-        if not PRO:
-            self.btn(foot, "✦   Desbloquear Pro", self.go_buy, "gold", height=42).pack(fill="x")
-        if not PRO:
-            self.btn(self.side, "Desbloquear Pro", self.go_buy, "gold").pack(side="bottom", fill="x", padx=16, pady=18)
-        if "--revert-all" in sys.argv: pass
+            b.pack(side="left", padx=(14 if key == "home" else 3, 3), pady=7)
+            self.nav[key] = b
         self.show("home")
 
     def show(self, key):
-        self.page = key; self.clear()
-        for k, b in self.nav.items(): b.configure(fg_color=CARD2 if k == key else "transparent", text_color=TEXT if k == key else MUTE)
+        self.page = key
+        self.clear()
+        for k, b in self.nav.items():
+            active = (k == key)
+            b.configure(fg_color=CARD2 if active else "transparent",
+                        text_color=ACC if active else MUTE)
         getattr(self, "page_" + key)()
 
-    # ---------- activación Pro ----------
-    def gate_view(self):
-        self.clear()
-        code = pro.machine_code(self.comps) if self.comps else ""
-        wrap = ctk.CTkFrame(self.content, fg_color="transparent")
-        wrap.pack(fill="both", expand=True, padx=70, pady=34)
-        ctk.CTkLabel(wrap, text="ZYROTECH PRO  /  ACTIVACIÓN", font=ctk.CTkFont(family="Segoe UI", size=10, weight="bold"),
-                     text_color=ACC, anchor="w").pack(fill="x", pady=(18, 4))
-        ctk.CTkLabel(wrap, text="Desbloqueá toda la suite.", font=ctk.CTkFont(family="Segoe UI", size=28, weight="bold"),
-                     text_color=TEXT, anchor="w").pack(fill="x")
-        ctk.CTkLabel(wrap, text="La licencia se valida localmente y queda vinculada a este equipo. No necesitamos una cuenta para iniciar la aplicación.",
-                     font=self.f_n, text_color=MUTE, anchor="w", wraplength=780).pack(fill="x", pady=(5, 18))
-        c = self.card(wrap)
-        c.pack(fill="x", pady=(0, 12))
-        ctk.CTkLabel(c, text="01  ·  CÓDIGO DE ESTE EQUIPO", font=ctk.CTkFont(family="Segoe UI", size=10, weight="bold"),
-                     text_color=ACC, anchor="w").pack(fill="x", padx=20, pady=(18, 6))
-        tb = ctk.CTkTextbox(c, height=68, fg_color=CARD2, font=self.f_mono, corner_radius=10)
-        tb.pack(fill="x", padx=20)
-        tb.insert("1.0", code or "No se pudo leer el hardware. Ejecutá como administrador.")
-        tb.configure(state="disabled")
-        self.btn(c, "Copiar código", lambda: (self.clipboard_clear(), self.clipboard_append(code), self.say("Código copiado.")),
-                 "ghost", width=145).pack(anchor="w", padx=20, pady=(8, 14))
-        ctk.CTkLabel(c, text="02  ·  PEGÁ TU LICENCIA PRO", font=ctk.CTkFont(family="Segoe UI", size=10, weight="bold"),
-                     text_color=ACC, anchor="w").pack(fill="x", padx=20, pady=(2, 6))
-        self.lic_box = ctk.CTkTextbox(c, height=90, fg_color=CARD2, font=self.f_mono, corner_radius=10)
-        self.lic_box.pack(fill="x", padx=20)
-        self.gate_msg = ctk.CTkLabel(c, text="", font=self.f_n, text_color=RED, anchor="w")
-        self.gate_msg.pack(fill="x", padx=20, pady=(7, 0))
-        self.btn(c, "Activar ZyroTech Pro", self.activate, "gold", width=205, height=42).pack(anchor="w", padx=20, pady=(8, 18))
-        ctk.CTkLabel(wrap, text=config.CONTACT, font=self.f_s, text_color=MUTE, anchor="w").pack(fill="x", pady=(2, 0))
-
-    def activate(self):
-        txt = self.lic_box.get("1.0", "end").strip(); ok, why = pro.verify(txt, self.comps)
-        if not ok: return self.gate_msg.configure(text=why)
-        pro.save_license(txt); self.licensed = True; self.ready()
 
     # ---------- Panel ----------
     def coverage(self, include_locked=True):
         applied = {i for i, s in self.statuses.items() if s == "active"}
         return core.coverage([t for t in self.vis if core.applicable(t, self.hw)], applied, include_locked)
     def page_home(self):
-        self.heading("Panel principal", "Una lectura clara del estado de tu PC y de las optimizaciones que realmente corresponden a tu equipo.")
-
         eligible = [t for t in self.vis if t.get("mode") == "track" and core.applicable(t, self.hw)]
         active = sum(1 for t in eligible if self.statuses.get(t["id"]) == "active")
         partial = sum(1 for t in eligible if self.statuses.get(t["id"]) == "partial")
@@ -317,100 +314,115 @@ class App(ctk.CTk):
         unknown = sum(1 for t in eligible if self.statuses.get(t["id"]) == "unknown")
         incompatible = sum(1 for t in self.vis if self.statuses.get(t["id"]) == "incompatible")
         coverage = self.coverage()
+        hw = self.hw or {}
 
-        hero = self.card(self.content, fg="#101E2A")
-        hero.pack(fill="x", padx=30, pady=(0, 14))
-        hero_left = ctk.CTkFrame(hero, fg_color="transparent")
-        hero_left.pack(side="left", fill="both", expand=True, padx=20, pady=17)
-        ctk.CTkLabel(hero_left, text="ZYROTECH  /  SYSTEM OVERVIEW", font=ctk.CTkFont(family="Segoe UI", size=9, weight="bold"),
-                     text_color=ACC, anchor="w").pack(anchor="w")
-        ctk.CTkLabel(hero_left, text="Tu PC. Tu rendimiento. Tu control.", font=ctk.CTkFont(family="Segoe UI", size=20, weight="bold"),
-                     text_color=TEXT, anchor="w").pack(anchor="w", pady=(4, 3))
-        ctk.CTkLabel(hero_left, text="Análisis local · sin telemetría de ZyroTech · cambios reversibles cuando el tweak lo permite",
-                     font=self.f_s, text_color=MUTE, anchor="w").pack(anchor="w")
-        self.btn(hero, "↻  Actualizar análisis", self.refresh_scan, "ghost", width=175, height=40).pack(side="right", padx=20, pady=18)
+        body = ctk.CTkScrollableFrame(self.content, fg_color="transparent", corner_radius=0)
+        body.pack(fill="both", expand=True, padx=26, pady=(17, 20))
 
-        stats = ctk.CTkFrame(self.content, fg_color="transparent")
-        stats.pack(fill="x", padx=30, pady=(0, 14))
-        for i in range(4): stats.grid_columnconfigure(i, weight=1, uniform="stats")
+        hero = self.card(body, fg="#1B1B2A", border_color="#39354F", corner_radius=20)
+        hero.pack(fill="x", pady=(0, 14))
+        hero.grid_columnconfigure(0, weight=1)
+        left = ctk.CTkFrame(hero, fg_color="transparent")
+        left.grid(row=0, column=0, sticky="nsew", padx=24, pady=23)
+        ctk.CTkLabel(left, text="TU CENTRO DE RENDIMIENTO",
+                     font=ctk.CTkFont(family="Segoe UI", size=9, weight="bold"),
+                     text_color=ACC, anchor="w").pack(fill="x")
+        ctk.CTkLabel(left, text="Menos ruido. Más control.",
+                     font=ctk.CTkFont(family="Segoe UI", size=28, weight="bold"),
+                     text_color=TEXT, anchor="w").pack(fill="x", pady=(4, 4))
+        ctk.CTkLabel(left, text="ZyroTech detecta tu hardware, comprueba los ajustes y separa lo activo de lo que todavía tiene sentido revisar.",
+                     font=self.f_n, text_color=MUTE, anchor="w", wraplength=680,
+                     justify="left").pack(fill="x")
+        right = ctk.CTkFrame(hero, fg_color="transparent")
+        right.grid(row=0, column=1, sticky="e", padx=24, pady=20)
+        ctk.CTkLabel(right, text=f"{coverage}%", font=ctk.CTkFont(family="Segoe UI", size=42, weight="bold"),
+                     text_color=ACC).pack()
+        ctk.CTkLabel(right, text="COBERTURA VERIFICADA", font=ctk.CTkFont(family="Segoe UI", size=9, weight="bold"),
+                     text_color=MUTE).pack(pady=(0, 8))
+        self.btn(right, "Actualizar análisis", self.refresh_scan, "acc", width=165, height=38).pack()
 
-        def stat(parent, col, label, value, note, tint):
-            box = self.card(parent, fg=CARD)
-            box.grid(row=0, column=col, sticky="nsew", padx=(0 if col == 0 else 6, 0 if col == 3 else 6))
-            ctk.CTkLabel(box, text=label.upper(), font=ctk.CTkFont(family="Segoe UI", size=9, weight="bold"),
+        metrics = ctk.CTkFrame(body, fg_color="transparent")
+        metrics.pack(fill="x", pady=(0, 14))
+        for i in range(4):
+            metrics.grid_columnconfigure(i, weight=1, uniform="metric")
+        def metric(i, title, value, detail, accent):
+            c = self.card(metrics, corner_radius=15)
+            c.grid(row=0, column=i, sticky="nsew", padx=(0 if i == 0 else 5, 0 if i == 3 else 5))
+            ctk.CTkLabel(c, text=title.upper(), font=ctk.CTkFont(family="Segoe UI", size=9, weight="bold"),
                          text_color=MUTE, anchor="w").pack(fill="x", padx=15, pady=(13, 1))
-            ctk.CTkLabel(box, text=str(value), font=ctk.CTkFont(family="Segoe UI", size=29, weight="bold"),
-                         text_color=tint, anchor="w").pack(fill="x", padx=15, pady=(0, 0))
-            ctk.CTkLabel(box, text=note, font=self.f_s, text_color=MUTE, anchor="w").pack(fill="x", padx=15, pady=(0, 13))
+            ctk.CTkLabel(c, text=str(value), font=ctk.CTkFont(family="Segoe UI", size=31, weight="bold"),
+                         text_color=accent, anchor="w").pack(fill="x", padx=15)
+            ctk.CTkLabel(c, text=detail, font=self.f_s, text_color=MUTE,
+                         anchor="w").pack(fill="x", padx=15, pady=(0, 13))
+        metric(0, "Activos", active, "Leídos directamente en Windows", GREEN)
+        metric(1, "Por revisar", pending, "Compatibles y pendientes", ACC)
+        metric(2, "Parciales / desconocidos", partial + unknown, f"{partial} parciales · {unknown} sin lectura", GOLD)
+        metric(3, "No compatibles", incompatible, "Se excluyen del análisis útil", MUTE)
 
-        stat(stats, 0, "Tweaks activos", active, "Estado verificado en Windows", GREEN)
-        stat(stats, 1, "Recomendados", pending, "Compatibles y aún pendientes", ACC)
-        stat(stats, 2, "Parciales / sin lectura", partial + unknown, f"{partial} parciales · {unknown} no verificables", GOLD)
-        stat(stats, 3, "No compatibles", incompatible, "Se omiten automáticamente", MUTE)
+        lower = ctk.CTkFrame(body, fg_color="transparent")
+        lower.pack(fill="x")
+        lower.grid_columnconfigure(0, weight=3, uniform="lower")
+        lower.grid_columnconfigure(1, weight=2, uniform="lower")
 
-        row = ctk.CTkFrame(self.content, fg_color="transparent")
-        row.pack(fill="both", expand=True, padx=30, pady=(0, 12))
-        row.grid_columnconfigure(0, weight=3, uniform="home")
-        row.grid_columnconfigure(1, weight=2, uniform="home")
-        row.grid_rowconfigure(0, weight=1)
-
-        hw = self.hw
-        device = self.card(row)
+        device = self.card(lower, corner_radius=17)
         device.grid(row=0, column=0, sticky="nsew", padx=(0, 7))
-        ctk.CTkLabel(device, text="HARDWARE DETECTADO", font=ctk.CTkFont(family="Segoe UI", size=10, weight="bold"),
-                     text_color=ACC, anchor="w").pack(fill="x", padx=19, pady=(16, 10))
+        ctk.CTkLabel(device, text="INFORMACIÓN DEL EQUIPO", font=ctk.CTkFont(family="Segoe UI", size=9, weight="bold"),
+                     text_color=ACC, anchor="w").pack(fill="x", padx=18, pady=(16, 10))
         specs = [
-            ("CPU", hw.get("cpu_name", "No detectado")),
-            ("GPU", hw.get("gpu_name", "No detectada")),
+            ("PROCESADOR", hw.get("cpu_name", "No detectado")),
+            ("GRÁFICOS", hw.get("gpu_name", "No detectada")),
             ("MEMORIA", f'{hw.get("ram", 0)} GB RAM'),
-            ("ALMACENAMIENTO", "SSD / NVMe" if hw.get("ssd") else "HDD / no identificado como SSD"),
-            ("SISTEMA", hw.get("os", "Windows")),
-            ("FORMATO", "Notebook" if hw.get("laptop") else "PC de escritorio"),
+            ("UNIDAD", "SSD / NVMe" if hw.get("ssd") else "HDD / no identificado como SSD"),
+            ("WINDOWS", hw.get("os", "Windows")),
+            ("FORMATO", "Notebook" if hw.get("laptop") else "Escritorio"),
         ]
         spec_grid = ctk.CTkFrame(device, fg_color="transparent")
-        spec_grid.pack(fill="both", expand=True, padx=16, pady=(0, 15))
-        spec_grid.grid_columnconfigure(0, weight=1, uniform="spec")
-        spec_grid.grid_columnconfigure(1, weight=1, uniform="spec")
+        spec_grid.pack(fill="both", expand=True, padx=14, pady=(0, 15))
+        spec_grid.grid_columnconfigure((0, 1), weight=1, uniform="spec")
         for idx, (label, value) in enumerate(specs):
             rr, cc = divmod(idx, 2)
             cell = ctk.CTkFrame(spec_grid, fg_color=CARD2, corner_radius=10)
             cell.grid(row=rr, column=cc, sticky="nsew", padx=3, pady=3)
-            ctk.CTkLabel(cell, text=label, font=ctk.CTkFont(family="Segoe UI", size=9, weight="bold"),
-                         text_color=MUTE, anchor="w").pack(fill="x", padx=11, pady=(8, 1))
-            ctk.CTkLabel(cell, text=value, font=self.f_n, text_color=TEXT, anchor="w",
-                         wraplength=290, justify="left").pack(fill="x", padx=11, pady=(0, 8))
+            ctk.CTkLabel(cell, text=label, font=ctk.CTkFont(family="Segoe UI", size=8, weight="bold"),
+                         text_color=MUTE, anchor="w").pack(fill="x", padx=10, pady=(8, 1))
+            ctk.CTkLabel(cell, text=value, font=self.f_s, text_color=TEXT, anchor="w",
+                         wraplength=285, justify="left").pack(fill="x", padx=10, pady=(0, 8))
 
-        overview = self.card(row)
+        overview = self.card(lower, corner_radius=17)
         overview.grid(row=0, column=1, sticky="nsew", padx=(7, 0))
-        ctk.CTkLabel(overview, text="ESTADO DE OPTIMIZACIÓN", font=ctk.CTkFont(family="Segoe UI", size=10, weight="bold"),
-                     text_color=ACC, anchor="w").pack(fill="x", padx=18, pady=(16, 4))
-        ctk.CTkLabel(overview, text=f"{coverage}%", font=ctk.CTkFont(family="Segoe UI", size=39, weight="bold"),
-                     text_color=TEXT).pack(anchor="w", padx=17, pady=(0, 0))
+        ctk.CTkLabel(overview, text="ESTADO GENERAL", font=ctk.CTkFont(family="Segoe UI", size=9, weight="bold"),
+                     text_color=ACC, anchor="w").pack(fill="x", padx=18, pady=(16, 6))
+        ctk.CTkLabel(overview, text=f"{active} de {max(1, len(eligible))}",
+                     font=ctk.CTkFont(family="Segoe UI", size=32, weight="bold"),
+                     text_color=TEXT, anchor="w").pack(fill="x", padx=18)
+        ctk.CTkLabel(overview, text="ajustes compatibles y comprobables activos",
+                     font=self.f_s, text_color=MUTE, anchor="w").pack(fill="x", padx=18, pady=(0, 9))
         pb = ctk.CTkProgressBar(overview, height=9, progress_color=ACC, fg_color=CARD2, corner_radius=6)
-        pb.set(coverage / 100); pb.pack(fill="x", padx=19, pady=(3, 9))
-        ctk.CTkLabel(overview, text=f"{active} ajustes activos de los compatibles y verificables.",
-                     font=self.f_s, text_color=MUTE, wraplength=300, justify="left").pack(fill="x", padx=18, pady=(0, 10))
-        ctk.CTkFrame(overview, fg_color=LINE, height=1).pack(fill="x", padx=18, pady=(0, 10))
-        ctk.CTkLabel(overview, text="LATENCIA DE TEMPORIZACIÓN", font=ctk.CTkFont(family="Segoe UI", size=9, weight="bold"),
+        pb.set(coverage / 100)
+        pb.pack(fill="x", padx=18, pady=(0, 13))
+        ctk.CTkFrame(overview, fg_color=LINE, height=1).pack(fill="x", padx=18, pady=(0, 11))
+        ctk.CTkLabel(overview, text="MEDICIÓN DE TEMPORIZACIÓN", font=ctk.CTkFont(family="Segoe UI", size=8, weight="bold"),
                      text_color=MUTE, anchor="w").pack(fill="x", padx=18)
-        self.lat_lbl = ctk.CTkLabel(overview, text=self.lat_text(), font=self.f_n, text_color=TEXT, anchor="w", justify="left")
-        self.lat_lbl.pack(fill="x", padx=18, pady=(4, 7))
-        self.btn(overview, "Medir ahora", self.measure, "ghost", width=130, height=34).pack(anchor="w", padx=18, pady=(0, 12))
-        ctk.CTkLabel(overview, text="La medición no equivale a FPS ni garantiza menor latencia dentro del juego.",
-                     font=ctk.CTkFont(family="Segoe UI", size=9), text_color=MUTE, wraplength=300,
-                     justify="left").pack(fill="x", padx=18, pady=(0, 12))
+        self.lat_lbl = ctk.CTkLabel(overview, text=self.lat_text(), font=self.f_s, text_color=TEXT,
+                                    anchor="w", justify="left")
+        self.lat_lbl.pack(fill="x", padx=18, pady=(4, 8))
+        self.btn(overview, "Medir ahora", self.measure, "ghost", width=130, height=33).pack(anchor="w", padx=18)
+        ctk.CTkLabel(overview, text="La medición no equivale a FPS ni garantiza menor latencia en juegos.",
+                     font=ctk.CTkFont(family="Segoe UI", size=9), text_color=MUTE,
+                     wraplength=310, justify="left").pack(fill="x", padx=18, pady=(10, 14))
 
-        actions = self.card(self.content)
-        actions.pack(fill="x", padx=30, pady=(0, 18))
-        ctk.CTkLabel(actions, text="ACCIONES RÁPIDAS", font=ctk.CTkFont(family="Segoe UI", size=10, weight="bold"),
-                     text_color=ACC, anchor="w").pack(fill="x", padx=18, pady=(13, 8))
-        action_row = ctk.CTkFrame(actions, fg_color="transparent")
-        action_row.pack(fill="x", padx=18, pady=(0, 14))
-        self.btn(action_row, "◈  Ver recomendaciones", self.recommended, "acc", width=195).pack(side="left")
-        self.btn(action_row, "＋  Punto de restauración", self.make_restore, "ghost", width=205).pack(side="left", padx=8)
-        self.btn(action_row, "↶  Revertir todo", self.revert_all, "ghost", width=150).pack(side="left")
-        if not PRO:
-            self.badge(action_row, "PRO").pack(side="right", padx=8)
+        actions = self.card(body, corner_radius=17)
+        actions.pack(fill="x", pady=(14, 0))
+        ctk.CTkLabel(actions, text="SIGUIENTE PASO", font=ctk.CTkFont(family="Segoe UI", size=9, weight="bold"),
+                     text_color=ACC, anchor="w").pack(fill="x", padx=18, pady=(14, 5))
+        ctk.CTkLabel(actions, text="Revisá los cambios antes de aplicarlos. Los que ya están activos o no corresponden a tu PC se omiten.",
+                     font=self.f_n, text_color=MUTE, anchor="w", wraplength=850,
+                     justify="left").pack(fill="x", padx=18, pady=(0, 11))
+        row = ctk.CTkFrame(actions, fg_color="transparent")
+        row.pack(fill="x", padx=18, pady=(0, 15))
+        self.btn(row, "Ver ajustes recomendados", self.recommended, "acc", width=200).pack(side="left")
+        self.btn(row, "Crear punto de restauración", self.make_restore, "ghost", width=215).pack(side="left", padx=8)
+        self.btn(row, "Revertir todos los cambios", self.revert_all, "ghost", width=195).pack(side="left")
 
     def lat_text(self):
         l = self.settings.get("last_latency")
@@ -844,26 +856,42 @@ class App(ctk.CTk):
         if tid in self.vars: self.vars[tid].set(False)
         self.show("hist")
 
-    # ---------- Pro / licencia ----------
+    # ---------- Acerca de / versión ----------
     def page_pro(self):
-        if PRO:
-            self.heading("Licencia", "Tu licencia queda guardada en este equipo y no funciona en otro.")
-            c = self.card(self.content); c.pack(fill="x", padx=28)
-            ctk.CTkLabel(c, text="Licencia activa en este equipo", font=self.f_b, text_color=GREEN, anchor="w").pack(fill="x", padx=18, pady=(16, 4))
-            ctk.CTkLabel(c, text="Código de equipo", font=self.f_s, text_color=MUTE, anchor="w").pack(fill="x", padx=18)
-            tb = ctk.CTkTextbox(c, height=60, fg_color=CARD2, font=ctk.CTkFont(family="Consolas", size=12)); tb.pack(fill="x", padx=18, pady=(2, 8)); tb.insert("1.0", pro.machine_code(self.comps)); tb.configure(state="disabled")
-            ctk.CTkLabel(c, text="Si cambiás la placa madre o reinstalás con otro hardware y pierde la licencia, mandá este código para recibir una nueva.", font=self.f_s, text_color=MUTE, wraplength=820, justify="left").pack(fill="x", padx=18, pady=(0, 16))
-            return
-        self.heading("Free vs Pro", f"Dos ediciones. Una optimización que se adapta a cada PC. {config.PRICE_TEXT}.")
-        nfree = sum(1 for t in self.vis if not t.get("locked")); c = self.card(self.content); c.pack(fill="x", padx=28)
-        rows = [("", "Free", "Pro"), ("Optimizaciones compatibles con tu PC", f"{nfree}", f"{len(self.vis)}"), ("Cambios de rendimiento (kernel, red, GPU, energía)", "Básicos", "Todos"),
-                ("Perfiles inteligentes (Lite, Medio y Avanzado)", "—", "✓"), ("Game Booster automático", "—", "✓"), ("Timer de 0.5 ms", "—", "✓"), ("Limpiador de RAM", "—", "✓"),
-                ("Aplicar el DNS más rápido", "solo ver ranking", "✓"), ("Punto de restauración, historial y reversión", "✓", "✓"), ("Pago único, sin suscripción", "", "✓")]
-        for i, (a, b, p) in enumerate(rows):
-            f = ctk.CTkFrame(c, fg_color=CARD2 if i == 0 else "transparent", corner_radius=8); f.pack(fill="x", padx=12, pady=(12 if i == 0 else 0, 0))
-            for txt, w, col, anc in ((a, 470, TEXT, "w"), (b, 150, MUTE, "center"), (p, 150, GOLD, "center")):
-                ctk.CTkLabel(f, text=txt, width=w, font=self.f_b if i == 0 else self.f_n, text_color=col, anchor=anc).pack(side="left", padx=8, pady=7)
-        self.btn(c, "Comprar Pro", self.go_buy, "gold", width=200, height=44).pack(pady=18)
+        self.heading("Acerca de ZyroTech", "Herramientas locales para entender y ajustar Windows con más control.")
+        body = ctk.CTkScrollableFrame(self.content, fg_color="transparent")
+        body.pack(fill="both", expand=True, padx=28, pady=(0, 16))
+        c = self.card(body, fg="#1B1B2A", corner_radius=18, border_color="#39354F")
+        c.pack(fill="x", pady=(0, 12))
+        ctk.CTkLabel(c, text="ZYROTECH " + ("PRO" if PRO else "FREE"),
+                     font=ctk.CTkFont(family="Segoe UI", size=24, weight="bold"),
+                     text_color=ACC, anchor="w").pack(fill="x", padx=22, pady=(20, 4))
+        ctk.CTkLabel(c, text="Dos aplicaciones independientes. Sin cuentas, claves ni activaciones dentro de la app.",
+                     font=self.f_n, text_color=TEXT, anchor="w").pack(fill="x", padx=22, pady=(0, 16))
+        cards = ctk.CTkFrame(body, fg_color="transparent")
+        cards.pack(fill="x")
+        cards.grid_columnconfigure((0, 1), weight=1, uniform="about")
+        items = [
+            ("PRIVACIDAD", "El análisis se ejecuta localmente. ZyroTech no necesita una cuenta ni un servidor para funcionar."),
+            ("CONTROL", "Cada ajuste muestra su estado. Podés revisar, aplicar y revertir cambios cuando exista una reversión definida."),
+            ("COMPATIBILIDAD", "La detección filtra ajustes según hardware y versión de Windows; lo desconocido no se presenta como seguro."),
+            ("TRANSPARENCIA", "La cobertura representa ajustes comprobados, no una promesa de FPS ni una puntuación de rendimiento."),
+        ]
+        for i, (title, desc) in enumerate(items):
+            cc = ctk.CTkFrame(cards, fg_color=CARD, corner_radius=14, border_width=1, border_color=LINE)
+            cc.grid(row=i//2, column=i%2, sticky="nsew", padx=4, pady=4)
+            ctk.CTkLabel(cc, text=title, font=ctk.CTkFont(family="Segoe UI", size=9, weight="bold"),
+                         text_color=ACC, anchor="w").pack(fill="x", padx=16, pady=(14, 5))
+            ctk.CTkLabel(cc, text=desc, font=self.f_s, text_color=MUTE, anchor="w",
+                         wraplength=410, justify="left").pack(fill="x", padx=16, pady=(0, 15))
+        if not PRO:
+            note = self.card(body, fg=CARD2)
+            note.pack(fill="x", pady=(12, 0))
+            ctk.CTkLabel(note, text="EDICIÓN FREE", font=self.f_b, text_color=ACC,
+                         anchor="w").pack(fill="x", padx=18, pady=(13, 3))
+            ctk.CTkLabel(note, text="Esta aplicación funciona por separado. La edición Pro se distribuye como otro ejecutable y no se desbloquea con una clave dentro de Free.",
+                         font=self.f_s, text_color=MUTE, anchor="w",
+                         wraplength=880, justify="left").pack(fill="x", padx=18, pady=(0, 13))
 
 
 if __name__ == "__main__":
