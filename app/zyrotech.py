@@ -165,6 +165,7 @@ class App(ctk.CTk):
             self.hw = {"nvidia": False, "amd": False, "intel": False, "cpu_intel": False, "cpu_amd": False, "ram": 8, "ssd": False, "laptop": False, "win11": False,
                        "wifi": False, "gpu_name": "No detectada", "cpu_name": "No detectado", "os": "Windows"}
         self.tweaks = load_tweaks(); self.vis = list(self.tweaks)
+        core.clear_tweak_detection_cache()
         for t in self.vis:
             if t.get("mode") == "once": self.statuses[t["id"]] = "once"
             elif not core.applicable(t, self.hw): self.statuses[t["id"]] = "incompatible"
@@ -187,6 +188,7 @@ class App(ctk.CTk):
         def work():
             try:
                 hw = core.hw_profile(core.scan_raw())
+                core.clear_tweak_detection_cache()
                 statuses = {}
                 for t in self.vis:
                     if t.get("mode") == "once":
@@ -475,6 +477,7 @@ class App(ctk.CTk):
                 self.statuses[t["id"]] = "unknown"
             core.save_json(core.data_path("state.json"), self.st); self.log("Revertido", t["name"], not e); errs += e
         reboot = False
+        core.clear_tweak_detection_cache()
         for t in ap:
             n += 1; self.say(f"Aplicando: {t['name']}", n / total)
             try:
