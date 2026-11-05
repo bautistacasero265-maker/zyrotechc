@@ -847,10 +847,10 @@ class App(ctk.CTk):
             tb = ctk.CTkTextbox(c, height=60, fg_color=CARD2, font=ctk.CTkFont(family="Consolas", size=12)); tb.pack(fill="x", padx=18, pady=(2, 8)); tb.insert("1.0", pro.machine_code(self.comps)); tb.configure(state="disabled")
             ctk.CTkLabel(c, text="Si cambiás la placa madre o reinstalás con otro hardware y pierde la licencia, mandá este código para recibir una nueva.", font=self.f_s, text_color=MUTE, wraplength=820, justify="left").pack(fill="x", padx=18, pady=(0, 16))
             return
-        self.heading("Free vs Pro", f"Pago único de {config.PRICE_TEXT}. Sin suscripción, sin renovaciones. Una licencia por equipo.")
+        self.heading("Free vs Pro", f"Dos ediciones. Una optimización que se adapta a cada PC. {config.PRICE_TEXT}.")
         nfree = sum(1 for t in self.vis if not t.get("locked")); c = self.card(self.content); c.pack(fill="x", padx=28)
         rows = [("", "Free", "Pro"), ("Optimizaciones compatibles con tu PC", f"{nfree}", f"{len(self.vis)}"), ("Cambios de rendimiento (kernel, red, GPU, energía)", "Básicos", "Todos"),
-                ("Perfiles listos (Gaming, Competitivo, Notebook...)", "—", "✓"), ("Game Booster automático", "—", "✓"), ("Timer de 0.5 ms", "—", "✓"), ("Limpiador de RAM", "—", "✓"),
+                ("Perfiles inteligentes (Lite, Medio y Avanzado)", "—", "✓"), ("Game Booster automático", "—", "✓"), ("Timer de 0.5 ms", "—", "✓"), ("Limpiador de RAM", "—", "✓"),
                 ("Aplicar el DNS más rápido", "solo ver ranking", "✓"), ("Punto de restauración, historial y reversión", "✓", "✓"), ("Pago único, sin suscripción", "", "✓")]
         for i, (a, b, p) in enumerate(rows):
             f = ctk.CTkFrame(c, fg_color=CARD2 if i == 0 else "transparent", corner_radius=8); f.pack(fill="x", padx=12, pady=(12 if i == 0 else 0, 0))
