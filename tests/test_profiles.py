@@ -89,6 +89,56 @@ class FreeEditionPackagingTests(unittest.TestCase):
 
 
 
+class DetectionPerformanceTests(unittest.TestCase):
+    def test_scheduled_task_states_share_one_powershell_read_per_scan(self):
+        import json
+
+        core.clear_tweak_detection_cache()
+        payload = json.dumps([
+            {"TaskPath": "\\Microsoft\\Windows\\A", "TaskName": "TaskA", "State": "Disabled"},
+            {"TaskPath": "\\Microsoft\\Windows\\B", "TaskName": "TaskB", "State": "Ready"},
+        ])
+        with patch.object(core, "IS_WIN", True), patch.object(core, "ps", return_value=payload) as powershell:
+            self.assertEqual(core._scheduled_task_state("\\Microsoft\\Windows\\A", "TaskA"), "disabled")
+            self.assertEqual(core._scheduled_task_state("\\Microsoft\\Windows\\B", "TaskB"), "ready")
+            self.assertEqual(powershell.call_count, 1)
+        core.clear_tweak_detection_cache()
+
+
+class LightweightUiImportTests(unittest.TestCase):
+    def test_main_ui_imports_without_starting_window(self):
+        import zyrotech
+        self.assertTrue(hasattr(zyrotech, "App"))
+        self.assertEqual(zyrotech.BG, "#080D13")
+
+
+class StandaloneKeyExportTests(unittest.TestCase):
+    def test_export_utility_derives_public_key_without_modifying_private_file(self):
+        import base64
+        import tempfile
+        from cryptography.hazmat.primitives import serialization
+        from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
+
+        key = Ed25519PrivateKey.generate()
+        private_bytes = key.private_bytes(
+            serialization.Encoding.PEM,
+            serialization.PrivateFormat.PKCS8,
+            serialization.NoEncryption(),
+        )
+        with tempfile.TemporaryDirectory() as directory:
+            private_path = Path(directory) / "zyrotech_private.pem"
+            private_path.write_bytes(private_bytes)
+            sys.path.insert(0, str(ROOT / "tools"))
+            import export_public_key
+            encoded = export_public_key.derive_public_key(str(private_path))
+            expected = key.public_key().public_bytes(
+                serialization.Encoding.Raw, serialization.PublicFormat.Raw
+            )
+            self.assertEqual(encoded, base64.b32encode(expected).decode().rstrip("="))
+            self.assertEqual(private_path.read_bytes(), private_bytes)
+            self.assertIn(encoded, export_public_key.public_key_module(encoded))
+
+
 class PublicKeyExportTests(unittest.TestCase):
     def test_export_public_uses_existing_private_key_without_rotating_it(self):
         import tempfile

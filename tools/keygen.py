@@ -19,6 +19,13 @@ def unb32(t):
     t = re.sub(r"[^A-Z2-7]", "", t.upper()); return base64.b32decode(t + "=" * (-len(t) % 8))
 def group(t, n=5): return "-".join(t[i:i + n] for i in range(0, len(t), n))
 
+
+def load_private_key():
+    """Carga la clave del vendedor cerrando el archivo correctamente."""
+    with open(PRIV, "rb") as f:
+        private_bytes = f.read()
+    return serialization.load_pem_private_key(private_bytes, None)
+
 def init():
     if os.path.exists(PRIV):
         sys.exit("Ya existe zyrotech_private.pem. Si la borrás, todas las licencias emitidas dejan de servir.")
@@ -34,7 +41,7 @@ def export_public():
     """Deriva solo la clave pública desde la privada existente, sin crear ni rotar claves."""
     if not os.path.exists(PRIV):
         sys.exit("No se encontró tools/zyrotech_private.pem. No generes otra clave si ya emitiste licencias.")
-    key = serialization.load_pem_private_key(open(PRIV, "rb").read(), None)
+    key = load_private_key()
     pub = key.public_key().public_bytes(serialization.Encoding.Raw, serialization.PublicFormat.Raw)
     encoded = b32(pub)
     if os.path.exists(PUBPY):

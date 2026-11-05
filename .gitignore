@@ -16,3 +16,4 @@ venv/
 build/
 dist/
 *.spec
+dist-tools/\n

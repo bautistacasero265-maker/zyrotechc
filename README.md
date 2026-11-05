@@ -3,6 +3,13 @@
 - `ZyroTech-Free.exe`: gratis. 93 optimizaciones desbloqueadas de 310, punto de restauración, historial, reversión, prueba de DNS, medidor de latencia. Lo de Pro se ve con candado.
 - `ZyroTech-Pro.exe`: las optimizaciones del catálogo, perfiles Lite, Medio y Avanzado, Game Booster automático, timer 0.5 ms, limpiador de RAM, aplicar el DNS más rápido. Licencia atada a la PC.
 
+## Interfaz y rendimiento
+- Identidad visual tipográfica ZyroTech con monograma ZT, paleta grafito/verde para Free y grafito/cian para Pro.
+- Barra superior, navegación lateral compacta, panel con contadores en vivo, hardware detectado y tarjetas de perfiles comparables.
+- Interfaz sin fondos animados, vídeos, servicios web ni telemetría propia.
+- El análisis corre en segundo plano para no congelar la ventana. La lectura de tareas programadas se agrupa en una única consulta por análisis.
+- El Game Booster no purga automáticamente la memoria en espera y usa prioridad Above Normal temporal y reversible cuando corresponde.
+
 ## Perfiles y detección
 - La aplicación detecta Windows, CPU, GPU, RAM, tipo de equipo, disco y conectividad para filtrar los cambios que no correspondan al hardware o versión del sistema.
 - Free y Pro consultan el estado actual de los ajustes reversibles incluidos en la aplicación. Registro y tareas programadas se leen directamente; un estado que no se puede verificar queda como desconocido y no se incluye en los perfiles.
@@ -22,8 +29,7 @@ Editá `app/config.py` y completá `BUY_URL`, `CONTACT` y `PRICE_TEXT`. Hasta qu
 
 La clave privada `tools/zyrotech_private.pem` debe quedarse solamente en tu equipo o en un almacén privado seguro; nunca subirla al repo, a un Release ni al ejecutable. La clave pública sí puede estar en GitHub.
 
-Para habilitar Pro sin cambiar las licencias anteriores, copiá tu archivo privado existente a `tools/zyrotech_private.pem` en tu copia local de esta rama y ejecutá `python tools/keygen.py export-public`. Esto solo deriva `app/public_key.py` desde la clave privada existente. Subí únicamente `app/public_key.py`; no subas el archivo PEM. El siguiente push hará que Actions compile Free y Pro. No ejecutes `init` si ya emitiste licencias.
-
+Para habilitar Pro sin instalar Python ni cambiar las licencias anteriores, descargá el artefacto **ZyroTech-Developer-Tools** desde Actions y ejecutá `ZyroTech-KeyExport.exe`. Seleccioná tu archivo privado existente `tools/zyrotech_private.pem` y guardá el resultado como `app/public_key.py`. La utilidad deriva solo la clave pública; no modifica ni copia la privada. Subí únicamente `app/public_key.py`; nunca subas el PEM. El siguiente push compilará Free y Pro. No ejecutes `init` si ya emitiste licencias.
 ## Cómo vendés una licencia Pro
 1. El cliente abre `ZyroTech-Pro.exe`: ve su **código de equipo** y lo copia. Se genera solo.
 2. Te lo manda. Vos corrés: `python tools\keygen.py sign CODIGO-DEL-CLIENTE`. Te imprime la licencia (y anota el código en `tools/licencias_emitidas.csv`).
