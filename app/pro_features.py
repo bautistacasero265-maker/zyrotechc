@@ -125,24 +125,70 @@ GAMES = {"valorant-win64-shipping.exe", "cs2.exe", "fortniteclient-win64-shippin
          "robloxplayerbeta.exe", "minecraft.exe", "apexlegends.exe", "hogwartslegacy.exe", "rdr2.exe", "witcher3.exe"}
 
 class GameBooster:
-    """Detecta juegos abiertos: prioridad Alta al proceso, timer 0.5 ms y purga de standby. Al cerrarse el juego restaura el timer."""
+    """Detecta juegos y usa prioridad Above Normal reversible; el timer vuelve al cerrar el juego."""
+    NORMAL_PRIORITY_CLASS = 0x20
+    IDLE_PRIORITY_CLASS = 0x40
+    BELOW_NORMAL_PRIORITY_CLASS = 0x4000
+    ABOVE_NORMAL_PRIORITY_CLASS = 0x8000
+    PROCESS_SET_INFORMATION = 0x0200
+    PROCESS_QUERY_INFORMATION = 0x0400
+
     def __init__(self, extra, log):
-        self.extra, self.log, self.stop_ev, self.active, self.boosted = set(extra), log, threading.Event(), False, set()
+        self.extra = set(extra)
+        self.log = log
+        self.stop_ev = threading.Event()
+        self.active = False
+        self.original_priorities = {}
 
     def start(self):
-        self.stop_ev = threading.Event(); ev = self.stop_ev
+        self.stop_ev = threading.Event()
+        ev = self.stop_ev
         threading.Thread(target=self._loop, args=(ev,), daemon=True).start()
+
+    def _priority(self, pid, restore=None):
+        k = ctypes.windll.kernel32
+        access = self.PROCESS_SET_INFORMATION | self.PROCESS_QUERY_INFORMATION
+        h = k.OpenProcess(access, False, int(pid))
+        if not h:
+            return
+        try:
+            if restore is not None:
+                k.SetPriorityClass(h, int(restore))
+                return
+            current = k.GetPriorityClass(h)
+            # No bajamos ni pisamos prioridades altas configuradas por el usuario.
+            if current in (self.IDLE_PRIORITY_CLASS, self.BELOW_NORMAL_PRIORITY_CLASS, self.NORMAL_PRIORITY_CLASS):
+                self.original_priorities[int(pid)] = int(current)
+                k.SetPriorityClass(h, self.ABOVE_NORMAL_PRIORITY_CLASS)
+        finally:
+            k.CloseHandle(h)
+
+    def _restore_priorities(self, running=None):
+        for pid, priority in list(self.original_priorities.items()):
+            if running is not None and pid not in running:
+                self.original_priorities.pop(pid, None)
+                continue
+            try:
+                self._priority(pid, restore=priority)
+            except Exception:
+                pass
+            self.original_priorities.pop(pid, None)
 
     def stop(self):
         self.stop_ev.set()
-        if self.active: core.set_timer(False); self.active = False
+        self._restore_priorities()
+        if self.active:
+            core.set_timer(False, "gamebooster")
+            self.active = False
 
     def _running(self):
-        out = subprocess.run(["tasklist", "/FO", "CSV", "/NH"], capture_output=True, text=True, creationflags=core.NOWIN, encoding="utf-8", errors="replace").stdout
+        out = subprocess.run(["tasklist", "/FO", "CSV", "/NH"], capture_output=True, text=True,
+                             creationflags=core.NOWIN, encoding="utf-8", errors="replace").stdout
         procs = {}
         for line in out.splitlines():
             parts = [p.strip('"') for p in line.split('","')]
-            if len(parts) > 1 and parts[1].isdigit(): procs[int(parts[1])] = parts[0].lower()
+            if len(parts) > 1 and parts[1].isdigit():
+                procs[int(parts[1])] = parts[0].lower()
         return procs
 
     def _loop(self, ev):
@@ -151,18 +197,25 @@ class GameBooster:
             try:
                 games = {pid: n for pid, n in self._running().items() if n in names}
                 if games and not self.active:
-                    core.set_timer(True); self.active = True
-                    try: core.purge_standby()
-                    except Exception: pass
-                    self.log("Game Booster: juego detectado, timer 0.5 ms activo.")
-                for pid in set(games) - self.boosted:
-                    h = ctypes.windll.kernel32.OpenProcess(0x200, False, pid)
-                    if h: ctypes.windll.kernel32.SetPriorityClass(h, 0x80); ctypes.windll.kernel32.CloseHandle(h)
-                self.boosted = set(games)
+                    core.set_timer(True, "gamebooster")
+                    self.active = True
+                    self.log("Game Booster: juego detectado; timer de 0,5 ms solicitado.")
+                for pid in games:
+                    if pid not in self.original_priorities:
+                        self._priority(pid)
+                for pid in list(self.original_priorities):
+                    if pid not in games:
+                        self._restore_priorities(running=games)
                 if not games and self.active:
-                    core.set_timer(False); self.active = False; self.log("Game Booster: juego cerrado, todo restaurado.")
-            except Exception:
-                pass
+                    core.set_timer(False, "gamebooster")
+                    self.active = False
+                    self.log("Game Booster: juego cerrado; timer restaurado.")
+            except Exception as e:
+                self.log(f"Game Booster: no se pudo ajustar el proceso ({e}).")
+        self._restore_priorities()
+        if self.active:
+            core.set_timer(False, "gamebooster")
+            self.active = False
 
 
 # ---------- Limpiador de RAM ----------
