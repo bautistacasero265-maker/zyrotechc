@@ -1,6 +1,14 @@
 # ZyroTech Free
 
-**Diagnóstico y ajustes locales de Windows.** Esta rama pública contiene exclusivamente la edición gratuita.
+**Diagnóstico y ajustes locales de Windows.** Este repositorio público distribuye exclusivamente la edición gratuita.
+
+<details>
+<summary><strong>Descarga directa</strong></summary>
+
+- **[Descargar la última versión desde Releases](https://github.com/bautistacasero265-maker/zyrotechc/releases/latest)**
+- En cada Release vas a encontrar el EXE y el ZIP portable para Windows x64.
+
+</details>
 
 ## Qué incluye
 
@@ -16,16 +24,11 @@
 
 ZyroTech Free utiliza una ventana ligera con navegación horizontal, panel de diagnóstico, métricas verificables y vistas desplazables. El análisis del equipo y de los ajustes corre en un hilo separado para evitar bloquear la interfaz.
 
-## Compilar sin instalar Python en tu PC
+## Releases y compilación automática
 
-El repositorio incluye un workflow de GitHub Actions:
+Cada actualización de `main` que afecte a la aplicación o al proceso de build ejecuta las pruebas y compila en una máquina Windows de GitHub Actions. Cuando el build termina correctamente, publica una Release con el EXE y el ZIP descargables desde la pestaña **Releases**.
 
-1. Abrí la pestaña **Actions** del repositorio.
-2. Entrá a **Build ZyroTech Free**.
-3. Descargá el artefacto **ZyroTech-Free-Windows-x64** del último build exitoso.
-4. Extraé el ZIP y ejecutá `ZyroTech-Free.exe` como administrador para aplicar cambios del sistema.
-
-GitHub compila el ejecutable en una máquina Windows hospedada. El artefacto de Actions tiene retención limitada; guardá una copia del ZIP que descargues.
+Los artefactos temporales de Actions caducan; las Releases permanecen disponibles hasta que se eliminen.
 
 ## Compilación local opcional
 
