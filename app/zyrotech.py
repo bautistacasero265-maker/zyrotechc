@@ -91,7 +91,9 @@ class App(ctk.CTk):
         for x in (self.booster, self.ram):
             if x: x.stop()
         try:
-            if PRO: core.set_timer(False)
+            if PRO:
+                core.set_timer(False, "manual")
+                core.set_timer(False, "gamebooster")
         except Exception: pass
         self.destroy()
 
@@ -223,9 +225,11 @@ class App(ctk.CTk):
         ctk.CTkLabel(c2, text="Cobertura de optimización", font=self.f_b, text_color=ACC, anchor="w").pack(fill="x", padx=18, pady=(16, 0))
         ctk.CTkLabel(c2, text=f"{cov}%", font=self.f_big, text_color=TEXT).pack(pady=(6, 0))
         pb = ctk.CTkProgressBar(c2, height=12, progress_color=ACC, fg_color=CARD2); pb.set(cov / 100); pb.pack(fill="x", padx=20, pady=6)
-        compatible = [t for t in self.vis if core.applicable(t, self.hw) and not t.get("locked") and t["mode"] == "track"]
+        compatible = [t for t in self.vis if core.applicable(t, self.hw) and t["mode"] == "track"]
         active = sum(1 for t in compatible if self.statuses.get(t["id"]) == "active")
-        ctk.CTkLabel(c2, text=f"{active} de {len(compatible)} cambios compatibles activos", font=self.f_b, text_color=GREEN, wraplength=260).pack(pady=(2, 6))
+        partial = sum(1 for t in compatible if self.statuses.get(t["id"]) == "partial")
+        ctk.CTkLabel(c2, text=f"{active} de {len(compatible)} tweaks compatibles activos", font=self.f_b, text_color=GREEN, wraplength=260).pack(pady=(2, 3))
+        ctk.CTkLabel(c2, text=f"{partial} parcialmente activos · incluye ajustes Pro detectados", font=self.f_s, text_color=GOLD, wraplength=260).pack(pady=(0, 6))
         cap_txt = "Con Pro llegás al 100% de lo compatible." if PRO else f"Free llega hasta {cap}%. Pro desbloquea el 100%."
         ctk.CTkLabel(c2, text=cap_txt, font=self.f_s, text_color=GOLD if not PRO else MUTE, wraplength=260).pack(pady=(0, 6))
         ctk.CTkLabel(c2, text="Mide cuánto de los cambios compatibles aplicaste. No es una promesa de FPS.", font=self.f_s, text_color=MUTE, wraplength=260).pack(pady=(0, 14))
@@ -518,7 +522,7 @@ class App(ctk.CTk):
         self.heading("Gaming", "Funciones que actúan mientras jugás.")
         self.v_boost, self.v_timer, self.v_ram = (ctk.BooleanVar(value=bool(self.booster)), ctk.BooleanVar(), ctk.BooleanVar(value=bool(self.ram)))
         self.feature("Game Booster automático", "Detecta tu juego al abrirlo: prioridad Alta al proceso, timer de 0.5 ms y purga de memoria en espera. Al cerrarlo, todo vuelve a la normalidad.", self.v_boost, self.toggle_boost)
-        self.feature("Timer de 0.5 ms", "Baja la resolución del temporizador de Windows mientras ZyroTech está abierto. Puede mejorar la consistencia del frame pacing; el efecto depende del juego y del equipo.", self.v_timer, lambda: core.set_timer(self.v_timer.get()))
+        self.feature("Timer de 0.5 ms", "Baja la resolución del temporizador de Windows mientras ZyroTech está abierto. Puede mejorar la consistencia del frame pacing; el efecto depende del juego y del equipo.", self.v_timer, lambda: core.set_timer(self.v_timer.get(), "manual"))
         self.feature("Limpiador de RAM", "Libera la lista de memoria en espera solo cuando ocupa 40% o más de tu RAM y queda menos de 15% libre. Puede reducir tirones cuando la memoria se llena.", self.v_ram, self.toggle_ram)
         c = self.card(self.content); c.pack(fill="x", padx=28, pady=5)
         ctk.CTkLabel(c, text="Perfiles Lite, Medio y Avanzado", font=self.f_b, text_color=TEXT, anchor="w").pack(fill="x", padx=18, pady=(14, 2))
