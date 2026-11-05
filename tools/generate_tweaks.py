@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Genera tweaks.json. Editar acá y correr: python tools/generate_tweaks.py"""
-import json, os, collections
+import json, os, collections, re
 T = []
 SYS = "HKLM\\SYSTEM\\CurrentControlSet"
 POL = "HKLM\\SOFTWARE\\Policies\\Microsoft"
@@ -356,6 +356,23 @@ for t in T:
     t["badge"], t["warn"] = "", ""
     for k, b, w in WARNS:
         if k in t["name"]: t["badge"], t["warn"] = b, w; break
+# Metadatos de solo lectura: permiten que Free detecte también el estado de
+# los tweaks Pro sin incluir sus comandos de modificación en el ejecutable Free.
+for t in T:
+    checks = []
+    for a in t["actions"]:
+        if a["type"] == "reg":
+            checks.append({"type": "reg", "path": a["path"], "name": a["name"],
+                           "value": a["value"], "vtype": a["vtype"]})
+            continue
+        match = re.search(r"Disable-ScheduledTask\\s+-TaskPath\\s+'([^']+)'\\s+-TaskName\\s+'([^']+)'", a.get("cmd", ""), re.I)
+        if match:
+            checks.append({"type": "scheduled_task", "path": match.group(1),
+                           "name": match.group(2), "state": "Disabled"})
+        else:
+            checks.append({"type": "unknown"})
+    t["detect"] = checks
+
 seen = collections.Counter()
 for t in T:
     assert t["actions"], t["id"]
