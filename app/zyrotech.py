@@ -572,14 +572,20 @@ class App(ctk.CTk):
                     # completa un tweak parcialmente aplicado.
                     if t["id"] not in self.st["applied"]:
                         self.st["applied"][t["id"]] = undo
-                    try:
-                        self.statuses[t["id"]] = core.tweak_status(t)
-                    except Exception:
-                        self.statuses[t["id"]] = "unknown"
+                    self.statuses[t["id"]] = "active"  # estado provisional hasta verificar al final
                     core.save_json(core.data_path("state.json"), self.st)
                 self.log("Aplicado", t["name"], True); reboot = reboot or t.get("reboot", False)
             except Exception as e:
                 errs.append(f'{t["name"]}: {e}'); self.log("Error", t["name"], False)
+        # Verificar todos los cambios después de que el lote terminó, no durante
+        # el lote: así la caché de tareas programadas no queda desactualizada.
+        core.clear_tweak_detection_cache()
+        for t in ap:
+            if t["mode"] == "track":
+                try:
+                    self.statuses[t["id"]] = core.tweak_status(t)
+                except Exception:
+                    self.statuses[t["id"]] = "unknown"
         def done():
             for t in ap:
                 if t["mode"] == "once": self.vars[t["id"]].set(False)
@@ -829,6 +835,7 @@ class App(ctk.CTk):
     def revert_one(self, tid):
         if not self.need_admin(): return
         e = core.run_undo(self.st["applied"].pop(tid, []))
+        core.clear_tweak_detection_cache()
         try:
             self.statuses[tid] = core.tweak_status(next(t for t in self.vis if t["id"] == tid)) if not e else "unknown"
         except Exception:
