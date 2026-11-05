@@ -65,7 +65,7 @@ class FreeReleaseTests(unittest.TestCase):
 
     def test_new_workspace_sidebar_layout(self):
         self.assertIn('self.navbar.grid(row=1, column=0, sticky="nsew")', self.ui)
-        self.assertIn("WORKSPACE", self.ui)
+        self.assertIn("MENÚ PRINCIPAL", self.ui)
 
     def test_category_navigation_updates_content_without_rebuilding_page(self):
         method = self.ui.split("def set_cat(self, m):", 1)[1].split("def fill_list", 1)[0]
@@ -80,6 +80,7 @@ class FreeReleaseTests(unittest.TestCase):
         self.assertIn("Resultados de búsqueda", self.ui)
         self.assertIn("status_bg =", self.ui)
         self.assertIn("LOCAL MODE", self.ui)
+        self.assertIn("Controlá cada cambio", self.ui)
 
     def test_private_timer_and_ram_actions_are_not_in_free_core(self):
         self.assertNotIn("NtSetTimerResolution", self.core)
