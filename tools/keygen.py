@@ -47,8 +47,8 @@ def export_public():
             print("La clave pública ya coincide con la clave privada existente.")
             return
     with open(PUBPY, "w", encoding="utf-8") as f:
-        f.write("# Clave PÚBLICA derivada de tu clave privada existente. Se puede subir a GitHub.\\n")
-        f.write('PUBLIC_KEY_B32 = "%s"\\n' % encoded)
+        f.write("# Clave PÚBLICA derivada de tu clave privada existente. Se puede subir a GitHub.\n")
+        f.write('PUBLIC_KEY_B32 = "%s"\n' % encoded)
     print("Clave pública exportada a app/public_key.py.")
     print("Subí solamente app/public_key.py. Nunca subas tools/zyrotech_private.pem.")
 
