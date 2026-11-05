@@ -88,5 +88,42 @@ class FreeEditionPackagingTests(unittest.TestCase):
         self.assertEqual(staged[1]["detect"], [{"type": "reg", "value": 1}])
 
 
+
+class PublicKeyExportTests(unittest.TestCase):
+    def test_export_public_uses_existing_private_key_without_rotating_it(self):
+        import tempfile
+        from cryptography.hazmat.primitives import serialization
+        from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
+
+        key = Ed25519PrivateKey.generate()
+        with tempfile.TemporaryDirectory() as directory:
+            private_path = Path(directory) / "seller.pem"
+            public_path = Path(directory) / "public_key.py"
+            private_bytes = key.private_bytes(
+                serialization.Encoding.PEM,
+                serialization.PrivateFormat.PKCS8,
+                serialization.NoEncryption(),
+            )
+            private_path.write_bytes(private_bytes)
+            with patch.object(build_module, "__name__", "not_main"):
+                pass
+            keygen_spec = importlib.util.spec_from_file_location(
+                "zyrotech_keygen", ROOT / "tools" / "keygen.py"
+            )
+            keygen = importlib.util.module_from_spec(keygen_spec)
+            keygen_spec.loader.exec_module(keygen)
+            with patch.object(keygen, "PRIV", str(private_path)), patch.object(keygen, "PUBPY", str(public_path)):
+                keygen.export_public()
+                generated = {}
+                exec(public_path.read_text(encoding="utf-8"), generated)
+                expected = key.public_key().public_bytes(
+                    serialization.Encoding.Raw, serialization.PublicFormat.Raw
+                )
+                import base64
+                expected_b32 = base64.b32encode(expected).decode().rstrip("=")
+                self.assertEqual(generated["PUBLIC_KEY_B32"], expected_b32)
+                self.assertEqual(private_path.read_bytes(), private_bytes)
+
+
 if __name__ == "__main__":
     unittest.main()
