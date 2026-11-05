@@ -35,7 +35,10 @@ jobs:
       - name: Validate and regenerate tweak catalog
         run: python tools/generate_tweaks.py
 
-      - name: Test profile rules and Free packaging
+      - name: Check Python syntax
+        run: python -m compileall -q app tools tests
+
+      - name: Test profile rules, Free packaging, and UI import
         run: python -m unittest discover -s tests -v
 
       - name: Build Free edition
