@@ -1,10 +1,9 @@
-name: Build ZyroTech Free
+name: Build and Release ZyroTech Free
 
 on:
   push:
     branches:
       - main
-      - zyrotech-separate-editions
     paths:
       - "app/**"
       - "tools/build.py"
@@ -15,7 +14,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   build-free:
@@ -41,10 +40,41 @@ jobs:
       - name: Build ZyroTech Free
         run: python tools/build.py
 
-      - name: Upload ZyroTech Free
+      - name: Package ZIP for direct download
+        shell: pwsh
+        run: Compress-Archive -Path dist/ZyroTech-Free.exe -DestinationPath dist/ZyroTech-Free-Windows-x64.zip -Force
+
+      - name: Upload build artifact
         uses: actions/upload-artifact@v4
         with:
           name: ZyroTech-Free-Windows-x64
-          path: dist/ZyroTech-Free.exe
+          path: |
+            dist/ZyroTech-Free.exe
+            dist/ZyroTech-Free-Windows-x64.zip
           if-no-files-found: error
           retention-days: 14
+
+      - name: Publish GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: free-v1.${{ github.run_number }}
+          name: ZyroTech Free v1.${{ github.run_number }}
+          target_commitish: ${{ github.sha }}
+          body: |
+            ## ZyroTech Free para Windows x64
+
+            Descarga el ejecutable o el ZIP portable desde **Assets**.
+
+            - Diagnóstico local de hardware.
+            - Catálogo Free de 93 ajustes con detección de estado y compatibilidad.
+            - Aplicación de un ajuste por vez.
+            - Punto de restauración, historial y reversión cuando existe una acción inversa.
+
+            Ejecutar como administrador para aplicar cambios del sistema. Revisá cada ajuste antes de aplicarlo.
+          files: |
+            dist/ZyroTech-Free.exe
+            dist/ZyroTech-Free-Windows-x64.zip
+          fail_on_unmatched_files: true
+          make_latest: true
+          draft: false
+          prerelease: false
