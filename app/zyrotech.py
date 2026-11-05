@@ -269,19 +269,34 @@ class App(ctk.CTk):
 
     # ---------- activación Pro ----------
     def gate_view(self):
-        self.clear(); code = pro.machine_code(self.comps) if self.comps else ""
-        ctk.CTkLabel(self.content, text="Activar ZyroTech Pro", font=self.f_h1, text_color=GOLD).pack(pady=(70, 6))
-        ctk.CTkLabel(self.content, text="La licencia queda atada a este equipo. Copiá el código, mandalo para recibir tu licencia y pegala acá.\n" + config.CONTACT,
-                     font=self.f_n, text_color=MUTE, justify="center").pack()
-        c = self.card(self.content); c.pack(padx=120, pady=22, fill="x")
-        ctk.CTkLabel(c, text="Código de este equipo", font=self.f_b, text_color=TEXT, anchor="w").pack(fill="x", padx=18, pady=(14, 4))
-        tb = ctk.CTkTextbox(c, height=64, fg_color=CARD2, font=ctk.CTkFont(family="Consolas", size=12)); tb.pack(fill="x", padx=18)
-        tb.insert("1.0", code or "No se pudo leer el hardware. Ejecutá como Administrador."); tb.configure(state="disabled")
-        self.btn(c, "Copiar código", lambda: (self.clipboard_clear(), self.clipboard_append(code), self.say("Código copiado.")), "ghost", width=150).pack(anchor="w", padx=18, pady=(8, 4))
-        ctk.CTkLabel(c, text="Tu licencia", font=self.f_b, text_color=TEXT, anchor="w").pack(fill="x", padx=18, pady=(10, 4))
-        self.lic_box = ctk.CTkTextbox(c, height=90, fg_color=CARD2, font=ctk.CTkFont(family="Consolas", size=12)); self.lic_box.pack(fill="x", padx=18)
-        self.gate_msg = ctk.CTkLabel(c, text="", font=self.f_n, text_color=RED); self.gate_msg.pack(pady=(8, 0))
-        self.btn(c, "Activar", self.activate, "gold", width=160).pack(pady=(4, 16))
+        self.clear()
+        code = pro.machine_code(self.comps) if self.comps else ""
+        wrap = ctk.CTkFrame(self.content, fg_color="transparent")
+        wrap.pack(fill="both", expand=True, padx=70, pady=34)
+        ctk.CTkLabel(wrap, text="ZYROTECH PRO  /  ACTIVACIÓN", font=ctk.CTkFont(family="Segoe UI", size=10, weight="bold"),
+                     text_color=ACC, anchor="w").pack(fill="x", pady=(18, 4))
+        ctk.CTkLabel(wrap, text="Desbloqueá toda la suite.", font=ctk.CTkFont(family="Segoe UI", size=28, weight="bold"),
+                     text_color=TEXT, anchor="w").pack(fill="x")
+        ctk.CTkLabel(wrap, text="La licencia se valida localmente y queda vinculada a este equipo. No necesitamos una cuenta para iniciar la aplicación.",
+                     font=self.f_n, text_color=MUTE, anchor="w", wraplength=780).pack(fill="x", pady=(5, 18))
+        c = self.card(wrap)
+        c.pack(fill="x", pady=(0, 12))
+        ctk.CTkLabel(c, text="01  ·  CÓDIGO DE ESTE EQUIPO", font=ctk.CTkFont(family="Segoe UI", size=10, weight="bold"),
+                     text_color=ACC, anchor="w").pack(fill="x", padx=20, pady=(18, 6))
+        tb = ctk.CTkTextbox(c, height=68, fg_color=CARD2, font=self.f_mono, corner_radius=10)
+        tb.pack(fill="x", padx=20)
+        tb.insert("1.0", code or "No se pudo leer el hardware. Ejecutá como administrador.")
+        tb.configure(state="disabled")
+        self.btn(c, "Copiar código", lambda: (self.clipboard_clear(), self.clipboard_append(code), self.say("Código copiado.")),
+                 "ghost", width=145).pack(anchor="w", padx=20, pady=(8, 14))
+        ctk.CTkLabel(c, text="02  ·  PEGÁ TU LICENCIA PRO", font=ctk.CTkFont(family="Segoe UI", size=10, weight="bold"),
+                     text_color=ACC, anchor="w").pack(fill="x", padx=20, pady=(2, 6))
+        self.lic_box = ctk.CTkTextbox(c, height=90, fg_color=CARD2, font=self.f_mono, corner_radius=10)
+        self.lic_box.pack(fill="x", padx=20)
+        self.gate_msg = ctk.CTkLabel(c, text="", font=self.f_n, text_color=RED, anchor="w")
+        self.gate_msg.pack(fill="x", padx=20, pady=(7, 0))
+        self.btn(c, "Activar ZyroTech Pro", self.activate, "gold", width=205, height=42).pack(anchor="w", padx=20, pady=(8, 18))
+        ctk.CTkLabel(wrap, text=config.CONTACT, font=self.f_s, text_color=MUTE, anchor="w").pack(fill="x", pady=(2, 0))
 
     def activate(self):
         txt = self.lic_box.get("1.0", "end").strip(); ok, why = pro.verify(txt, self.comps)
@@ -424,24 +439,24 @@ class App(ctk.CTk):
         self.heading("Optimizar", "Activá lo que querés, revisá la lista de cambios pendientes y aplicá. Todo se puede revertir.")
         cats = self.cats(); self.cat = self.cat if self.cat in cats else (cats[0] if cats else None)
         body = ctk.CTkFrame(self.content, fg_color="transparent"); body.pack(fill="both", expand=True, padx=28)
-        left = ctk.CTkScrollableFrame(body, width=240, fg_color=CARD, corner_radius=14); left.pack(side="left", fill="y", padx=(0, 12))
+        left = ctk.CTkScrollableFrame(body, width=236, fg_color=CARD, corner_radius=15, border_width=1, border_color=LINE); left.pack(side="left", fill="y", padx=(0, 12))
         for m in cats:
             n = sum(1 for t in self.vis if t["module"] == m and core.applicable(t, self.hw)); locked = sum(1 for t in self.vis if t["module"] == m and t.get("locked") and core.applicable(t, self.hw))
             txt = f"{m}  ({n})" + (f"  ·  {locked} PRO" if locked else "")
             ctk.CTkButton(left, text=txt, anchor="w", fg_color=CARD2 if m == self.cat else "transparent", text_color=TEXT if m == self.cat else MUTE, hover_color=CARD2,
-                          corner_radius=8, height=34, font=self.f_n, command=lambda m=m: self.set_cat(m)).pack(fill="x", pady=1)
+                          corner_radius=9, height=37, font=self.f_n, command=lambda m=m: self.set_cat(m)).pack(fill="x", pady=2)
         right = ctk.CTkFrame(body, fg_color="transparent"); right.pack(side="left", fill="both", expand=True)
         top = ctk.CTkFrame(right, fg_color="transparent"); top.pack(fill="x", pady=(0, 8))
-        self.search = ctk.CTkEntry(top, placeholder_text="Buscar en todas las categorías...", fg_color=CARD, border_color=LINE, height=36); self.search.pack(side="left", fill="x", expand=True)
+        self.search = ctk.CTkEntry(top, placeholder_text="Buscar tweaks por nombre o categoría...", fg_color=CARD, border_color=LINE, height=40, corner_radius=10); self.search.pack(side="left", fill="x", expand=True)
         self.search.bind("<KeyRelease>", lambda e: self.fill_list())
-        self.btn(top, "Marcar recomendados", self.recommended, "ghost", width=170).pack(side="left", padx=(8, 0))
+        self.btn(top, "✦  Recomendarme", self.recommended, "ghost", width=170, height=40).pack(side="left", padx=(8, 0))
         self.listf = ctk.CTkScrollableFrame(right, fg_color="transparent"); self.listf.pack(fill="both", expand=True)
         self.banner = ctk.CTkLabel(self.content, text="", fg_color=RED, text_color="white", font=self.f_s, wraplength=900, justify="left", corner_radius=8)
         bar = self.card(self.content); bar.pack(fill="x", padx=28, pady=(8, 10))
         self.pending_lbl = ctk.CTkLabel(bar, text="", font=self.f_b, text_color=TEXT); self.pending_lbl.pack(side="left", padx=18, pady=12)
         self.risk_ok = ctk.BooleanVar(value=False)
         ctk.CTkCheckBox(bar, text="Entiendo los riesgos", variable=self.risk_ok, font=self.f_s, fg_color=ACC, hover_color=ACC, text_color=MUTE).pack(side="left", padx=10)
-        self.btn(bar, "Aplicar" if PRO else "Aplicar uno", self.on_apply, width=120).pack(side="right", padx=14)
+        self.btn(bar, "Aplicar cambios" if PRO else "Aplicar uno", self.on_apply, width=145, height=40).pack(side="right", padx=14)
         self.btn(bar, "Ver pendientes", self.show_pending, "ghost", width=140).pack(side="right")
         self.fill_list(); self.update_pending()
 
@@ -663,29 +678,51 @@ class App(ctk.CTk):
 
     def preview_profile(self, name):
         result = pro.profile_preview(name, self.vis, self.hw, self.statuses)
-        w = ctk.CTkToplevel(self); w.wm_title(f"Vista previa · {name}"); w.geometry("760x640"); w.minsize(640, 480); w.configure(fg_color=BG); w.after(120, w.lift)
-        ctk.CTkLabel(w, text=f"Perfil {name}", font=self.f_h1, text_color=ACC, anchor="w").pack(fill="x", padx=20, pady=(18, 2))
-        ctk.CTkLabel(w, text=f'{len(result["apply"])} disponibles para aplicar · {len(result["active"])} ya activos · {len(result["partial"])} parcialmente activos (se completan) · {len(result["incompatible"])} incompatibles o sin lectura · {len(result["unsafe"])} excluidos por seguridad', font=self.f_s, text_color=MUTE, anchor="w", wraplength=700).pack(fill="x", padx=20, pady=(0, 10))
-        box = ctk.CTkScrollableFrame(w, fg_color="transparent"); box.pack(fill="both", expand=True, padx=16)
+        w = ctk.CTkToplevel(self); w.wm_title(f"ZyroTech Pro · Perfil {name}")
+        w.geometry("820x680"); w.minsize(680, 520); w.configure(fg_color=BG); w.after(120, w.lift)
+        header = ctk.CTkFrame(w, fg_color=SIDE, corner_radius=0)
+        header.pack(fill="x")
+        ctk.CTkLabel(header, text=f"PERFIL / {name.upper()}", font=ctk.CTkFont(family="Segoe UI", size=10, weight="bold"),
+                     text_color=ACC, anchor="w").pack(fill="x", padx=22, pady=(17, 2))
+        ctk.CTkLabel(header, text=f'{len(result["apply"])} listos · {len(result["active"])} activos · {len(result["partial"])} parciales',
+                     font=self.f_h2, text_color=TEXT, anchor="w").pack(fill="x", padx=22, pady=(0, 15))
+        box = ctk.CTkScrollableFrame(w, fg_color="transparent")
+        box.pack(fill="both", expand=True, padx=16, pady=12)
         choices = {}
         for t in result["apply"]:
             v = ctk.BooleanVar(value=True); choices[t["id"]] = v
-            row = ctk.CTkFrame(box, fg_color=CARD, corner_radius=10); row.pack(fill="x", pady=2)
-            ctk.CTkCheckBox(row, text=t["name"], variable=v, font=self.f_n, text_color=TEXT, fg_color=ACC, hover_color=ACC).pack(fill="x", padx=10, pady=8)
-            ctk.CTkLabel(row, text=f'{t["module"]}{" · requiere reinicio" if t.get("reboot") else ""}', font=self.f_s, text_color=MUTE, anchor="w").pack(fill="x", padx=38, pady=(0, 7))
-        for key, title, color in [("active", "YA ACTIVOS · SE OMITEN", GREEN), ("partial", "PARCIALMENTE ACTIVOS · SE COMPLETAN", GOLD), ("incompatible", "INCOMPATIBLES O SIN LECTURA FIABLE · SE OMITEN", MUTE), ("unsafe", "EXCLUIDOS POR SEGURIDAD", RED), ("locked", "BLOQUEADOS EN FREE", GOLD), ("once", "ACCIONES PUNTUALES · NO INCLUIDAS EN PERFILES", MUTE)]:
+            row = self.card(box, fg=CARD, corner_radius=10)
+            row.pack(fill="x", pady=3)
+            ctk.CTkCheckBox(row, text=t["name"], variable=v, font=self.f_n, text_color=TEXT,
+                            fg_color=ACC, hover_color=ACC, corner_radius=6).pack(fill="x", padx=12, pady=(9, 2))
+            ctk.CTkLabel(row, text=f'{t["module"]}{"  ·  requiere reinicio" if t.get("reboot") else ""}',
+                         font=self.f_s, text_color=MUTE, anchor="w").pack(fill="x", padx=39, pady=(0, 8))
+        for key, title, color in [
+            ("active", "YA ACTIVOS · SE OMITEN", GREEN),
+            ("partial", "PARCIALES · SE COMPLETAN", GOLD),
+            ("incompatible", "NO COMPATIBLES O SIN LECTURA FIABLE", MUTE),
+            ("unsafe", "EXCLUIDOS POR SEGURIDAD", RED),
+            ("locked", "BLOQUEADOS EN FREE", GOLD),
+            ("once", "ACCIONES PUNTUALES · FUERA DE PERFILES", MUTE),
+        ]:
             items = result[key]
             if items:
-                ctk.CTkLabel(box, text=f"{title} ({len(items)})", font=self.f_b, text_color=color, anchor="w").pack(fill="x", pady=(12, 3))
+                ctk.CTkLabel(box, text=f"{title}  ·  {len(items)}", font=self.f_b,
+                             text_color=color, anchor="w").pack(fill="x", pady=(13, 4))
                 for t in items:
-                    ctk.CTkLabel(box, text=f'• {t["name"]}', font=self.f_s, text_color=MUTE, anchor="w", wraplength=690, justify="left").pack(fill="x", padx=8, pady=1)
+                    ctk.CTkLabel(box, text=f'—  {t["name"]}', font=self.f_s, text_color=MUTE,
+                                 anchor="w", wraplength=730, justify="left").pack(fill="x", padx=8, pady=2)
         if not result["apply"]:
-            ctk.CTkLabel(box, text="No hay cambios elegibles para aplicar con este perfil en este equipo.", font=self.f_n, text_color=MUTE).pack(pady=18)
-        bar = ctk.CTkFrame(w, fg_color="transparent"); bar.pack(fill="x", padx=20, pady=14)
-        self.btn(bar, "Marcar todos", lambda: [v.set(True) for v in choices.values()], "ghost", width=120).pack(side="left")
-        self.btn(bar, "Desmarcar todos", lambda: [v.set(False) for v in choices.values()], "ghost", width=140).pack(side="left", padx=8)
-        self.btn(bar, "Aplicar seleccionados", lambda: self.execute_profile(w, result["apply"], choices, name), "ghost", width=200).pack(side="right")
-        self.btn(bar, "Aplicar todo", lambda: self.apply_all_profile(w, result["apply"], choices, name), "gold", width=140).pack(side="right", padx=(0, 8))
+            ctk.CTkLabel(box, text="Este perfil no tiene cambios pendientes para tu PC.",
+                         font=self.f_n, text_color=MUTE).pack(pady=22)
+        bar = ctk.CTkFrame(w, fg_color=SIDE, corner_radius=0)
+        bar.pack(fill="x")
+        self.btn(bar, "Marcar todos", lambda: [v.set(True) for v in choices.values()], "ghost", width=125).pack(side="left", padx=16, pady=13)
+        self.btn(bar, "Desmarcar", lambda: [v.set(False) for v in choices.values()], "ghost", width=125).pack(side="left", padx=4, pady=13)
+        self.btn(bar, "Aplicar seleccionados", lambda: self.execute_profile(w, result["apply"], choices, name),
+                 "ghost", width=185).pack(side="right", padx=(4, 16), pady=13)
+        self.btn(bar, "Aplicar todo", lambda: self.apply_all_profile(w, result["apply"], choices, name),
+                 "gold", width=135).pack(side="right", padx=4, pady=13)
 
     def apply_all_profile(self, window, candidates, choices, name):
         """Selecciona todos los cambios elegibles del perfil y abre la confirmación final."""
