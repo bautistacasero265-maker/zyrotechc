@@ -3,6 +3,7 @@ name: Build ZyroTech
 on:
   push:
     branches:
+      - main
       - zyrotech-profiles-auto-detection
     paths:
       - "app/**"
