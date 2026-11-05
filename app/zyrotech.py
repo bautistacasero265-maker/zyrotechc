@@ -41,9 +41,9 @@ class App(ctk.CTk):
         self.minsize(1040, 700)
         self.configure(fg_color=BG)
 
-        self.f_logo = ctk.CTkFont(family="Segoe UI", size=19, weight="bold")
-        self.f_h1 = ctk.CTkFont(family="Segoe UI", size=29, weight="bold")
-        self.f_h2 = ctk.CTkFont(family="Segoe UI", size=17, weight="bold")
+        self.f_logo = ctk.CTkFont(family="Segoe UI", size=20, weight="bold")
+        self.f_h1 = ctk.CTkFont(family="Segoe UI", size=31, weight="bold")
+        self.f_h2 = ctk.CTkFont(family="Segoe UI", size=18, weight="bold")
         self.f_b = ctk.CTkFont(family="Segoe UI", size=13, weight="bold")
         self.f_n = ctk.CTkFont(family="Segoe UI", size=13)
         self.f_s = ctk.CTkFont(family="Segoe UI", size=11)
@@ -268,22 +268,32 @@ class App(ctk.CTk):
             ("hist", "◷", "Actividad"),
             ("about", "⋯", "Acerca de"),
         ]
-        ctk.CTkLabel(self.navbar, text="WORKSPACE", font=ctk.CTkFont(family="Segoe UI", size=9, weight="bold"),
-                     text_color="#64748B", anchor="w").pack(fill="x", padx=20, pady=(24, 10))
+        self.nav_rails = {}
+        ctk.CTkLabel(self.navbar, text="MENÚ PRINCIPAL", font=ctk.CTkFont(family="Segoe UI", size=9, weight="bold"),
+                     text_color="#71849D", anchor="w").pack(fill="x", padx=19, pady=(25, 12))
         for key, glyph, label in nav_items:
+            tile = ctk.CTkFrame(self.navbar, fg_color="transparent", corner_radius=11)
+            tile.pack(fill="x", padx=10, pady=3)
+            rail = ctk.CTkFrame(tile, fg_color="transparent", width=3, corner_radius=2)
+            rail.pack(side="left", fill="y", padx=(0, 5), pady=8)
             button = ctk.CTkButton(
-                self.navbar, text=f"  {glyph}     {label}", anchor="w",
-                fg_color="transparent", text_color=MUTE, hover_color=CARD2,
-                corner_radius=10, height=45, font=self.f_b,
+                tile, text=f"{glyph}     {label}", anchor="w",
+                fg_color="transparent", text_color=MUTE, hover_color="#1B293B",
+                corner_radius=9, height=44, font=self.f_n,
                 command=lambda selected=key: self.show(selected)
             )
-            button.pack(fill="x", padx=12, pady=4)
+            button.pack(side="left", fill="x", expand=True)
             self.nav[key] = button
+            self.nav_rails[key] = (tile, rail)
         ctk.CTkFrame(self.navbar, fg_color=LINE, height=1).pack(fill="x", padx=18, pady=(22, 14))
-        ctk.CTkLabel(self.navbar, text="ZYROTECH FREE", font=ctk.CTkFont(family="Segoe UI", size=9, weight="bold"),
-                     text_color=ACC, anchor="w").pack(fill="x", padx=20)
-        ctk.CTkLabel(self.navbar, text="Local performance tools\nControl · Diagnose · Optimize",
-                     font=self.f_s, text_color=MUTE, anchor="w", justify="left").pack(fill="x", padx=20, pady=(5, 0))
+        edition = ctk.CTkFrame(self.navbar, fg_color="#141F2E", corner_radius=13,
+                               border_width=1, border_color="#26384D")
+        edition.pack(side="bottom", fill="x", padx=12, pady=15)
+        ctk.CTkLabel(edition, text="ZYROTECH  /  FREE", font=ctk.CTkFont(family="Segoe UI", size=9, weight="bold"),
+                     text_color=ACC, anchor="w").pack(fill="x", padx=12, pady=(12, 4))
+        ctk.CTkLabel(edition, text="Optimización local para Windows.\nControlá cada cambio. Revertí cuando quieras.",
+                     font=self.f_s, text_color="#9AAAC0", anchor="w", justify="left",
+                     wraplength=155).pack(fill="x", padx=12, pady=(0, 12))
         self.show("home")
 
     def show(self, key):
@@ -301,8 +311,13 @@ class App(ctk.CTk):
         self.clear()
         for k, b in self.nav.items():
             active = (k == key)
-            b.configure(fg_color=CARD2 if active else "transparent",
-                        text_color=ACC if active else MUTE)
+            b.configure(fg_color="#1B293B" if active else "transparent",
+                        text_color=TEXT if active else MUTE,
+                        font=self.f_b if active else self.f_n)
+            if k in getattr(self, "nav_rails", {}):
+                tile, rail = self.nav_rails[k]
+                tile.configure(fg_color="#142337" if active else "transparent")
+                rail.configure(fg_color=ACC if active else "transparent")
         getattr(self, "page_" + key)()
 
 
