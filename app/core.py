@@ -146,12 +146,14 @@ def applicable(t, hw):
     return True
 
 def tweak_status(t):
-    """Lee el estado actual de acciones reversibles; devuelve active, inactive o unknown."""
+    """Lee el estado actual: active, inactive, partial o unknown."""
     if not IS_WIN: return "unknown"
+    checks = t.get("detect", t.get("actions", []))
     states = []
-    for a in t.get("actions", []):
+    for a in checks:
         try:
-            if a["type"] == "reg":
+            kind = a.get("type")
+            if kind == "reg":
                 value, vtype = reg_get(a)
                 want = a.get("value")
                 if value is None:
@@ -161,19 +163,15 @@ def tweak_status(t):
                 else:
                     states.append(type(value) is type(want) and value == want)
                 continue
-            # Las tareas programadas exponen un estado verificable. No asumimos
-            # que cualquier comando PowerShell esté aplicado solo por el historial.
-            command = a.get("cmd", "")
-            match = re.search(r"Disable-ScheduledTask\s+-TaskPath\s+'([^']+)'\s+-TaskName\s+'([^']+)'", command, re.I)
-            if match:
-                path, name = match.groups()
+            if kind == "scheduled_task":
+                path, name = a["path"], a["name"]
                 query = ("$t=Get-ScheduledTask -TaskPath '" + path + "' -TaskName '" + name +
-                         "' -ErrorAction SilentlyContinue; if($null -eq $t){'missing'} "
-                         "elseif($t.State -eq 'Disabled'){'active'}else{'inactive'}")
+                         "' -ErrorAction SilentlyContinue; if($null -eq $t){'missing'} else{$t.State.ToString()}")
                 result = ps(query).strip().lower()
                 if result == "missing": states.append(None)
-                else: states.append(result == "active")
+                else: states.append(result == str(a.get("state", "Disabled")).lower())
                 continue
+            # Sin una lectura fiable no inferimos el estado por el historial.
             states.append(None)
         except Exception:
             states.append(None)
