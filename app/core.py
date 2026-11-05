@@ -1,4 +1,4 @@
-"""Núcleo compartido Free/Pro: registro, PowerShell, tweaks, hardware, medición. Solo stdlib."""
+"""Núcleo de ZyroTech Free: registro, PowerShell, detección de hardware y mediciones de diagnóstico."""
 import base64, ctypes, json, os, re, socket, statistics, subprocess, sys, time
 
 IS_WIN = sys.platform == "win32"
@@ -244,43 +244,3 @@ def dns_rtt(server, port=53, rounds=6, timeout=1.5):
         except OSError: pass
         finally: s.close()
     return statistics.median(xs) if len(xs) >= max(2, rounds // 2) else None
-
-
-# ---------- Timer / RAM (se usan desde Pro) ----------
-_TIMER_LOCK = __import__("threading").RLock()
-_TIMER_REQUESTS = set()
-
-def set_timer(on, source="default"):
-    """Administra solicitudes de resolución del timer sin que una función pise a otra."""
-    if not IS_WIN:
-        return
-    with _TIMER_LOCK:
-        if on:
-            _TIMER_REQUESTS.add(str(source))
-        else:
-            _TIMER_REQUESTS.discard(str(source))
-        cur = ctypes.c_ulong()
-        ctypes.windll.ntdll.NtSetTimerResolution(5000, bool(_TIMER_REQUESTS), ctypes.byref(cur))
-
-def _priv(name):
-    adv, k = ctypes.windll.advapi32, ctypes.windll.kernel32
-    class LUID(ctypes.Structure): _fields_ = [("Lo", wintypes.DWORD), ("Hi", wintypes.LONG)]
-    class LA(ctypes.Structure): _fields_ = [("Luid", LUID), ("Attr", wintypes.DWORD)]
-    class TP(ctypes.Structure): _fields_ = [("Count", wintypes.DWORD), ("Priv", LA * 1)]
-    k.GetCurrentProcess.restype = wintypes.HANDLE
-    adv.OpenProcessToken.argtypes = [wintypes.HANDLE, wintypes.DWORD, ctypes.POINTER(wintypes.HANDLE)]
-    tok = wintypes.HANDLE()
-    if not adv.OpenProcessToken(k.GetCurrentProcess(), 0x28, ctypes.byref(tok)): return False
-    luid = LUID(); adv.LookupPrivilegeValueW(None, name, ctypes.byref(luid))
-    adv.AdjustTokenPrivileges(tok, False, ctypes.byref(TP(1, (LA * 1)(LA(luid, 2)))), 0, None, None)
-    ok = ctypes.GetLastError() == 0; k.CloseHandle(tok); return ok
-
-def purge_standby():
-    _priv("SeProfileSingleProcessPrivilege")
-    ctypes.windll.ntdll.NtSetSystemInformation(80, ctypes.byref(ctypes.c_int(4)), 4)
-
-def memory_state():
-    out = ps("$m=Get-CimInstance Win32_PerfFormattedData_PerfOS_Memory; $t=(Get-CimInstance Win32_ComputerSystem).TotalPhysicalMemory; "
-             "$s=$m.StandbyCacheNormalPriorityBytes+$m.StandbyCacheReserveBytes+$m.StandbyCacheCoreBytes; "
-             "[pscustomobject]@{total=$t;free=$m.FreeAndZeroPageListBytes;standby=$s} | ConvertTo-Json -Compress")
-    return json.loads(out)

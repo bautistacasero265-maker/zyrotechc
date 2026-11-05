@@ -1,14 +1,12 @@
-# Private signing material and license issuance logs
-tools/zyrotech_private.pem
-tools/licencias_emitidas.csv
+# Local secrets
 *.pem
 *.key
-.env
-.env.*
 *.p12
 *.pfx
+.env
+.env.*
 
-# Python/build outputs
+# Python / build outputs
 __pycache__/
 *.py[cod]
 .venv/
@@ -16,4 +14,3 @@ venv/
 build/
 dist/
 *.spec
-dist-tools/\n

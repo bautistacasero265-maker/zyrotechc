@@ -1,16 +1,16 @@
-name: Build ZyroTech
+name: Build ZyroTech Free
 
 on:
   push:
     branches:
       - main
-      - zyrotech-profiles-auto-detection
+      - zyrotech-separate-editions
     paths:
       - "app/**"
-      - "tools/**"
+      - "tools/build.py"
       - "tests/**"
-      - "tweaks.json"
       - "build.bat"
+      - "requirements-build.txt"
       - ".github/workflows/build.yml"
   workflow_dispatch:
 
@@ -18,7 +18,7 @@ permissions:
   contents: read
 
 jobs:
-  build:
+  build-free:
     runs-on: windows-latest
     steps:
       - name: Checkout
@@ -30,65 +30,21 @@ jobs:
           python-version: "3.12"
 
       - name: Install build dependencies
-        run: python -m pip install --upgrade pip pyinstaller customtkinter cryptography
+        run: python -m pip install --upgrade pip -r requirements-build.txt
 
-      - name: Validate and regenerate tweak catalog
-        run: python tools/generate_tweaks.py
-
-      - name: Check Python syntax
+      - name: Validate Python syntax
         run: python -m compileall -q app tools tests
 
-      - name: Test profile rules, Free packaging, and UI import
+      - name: Run Free edition tests
         run: python -m unittest discover -s tests -v
 
-      - name: Build Free edition
-        run: python tools/build.py free
+      - name: Build ZyroTech Free
+        run: python tools/build.py
 
-      - name: Build standalone Pro key exporter
-        run: >-
-          python -m PyInstaller --onefile --noconsole
-          --name ZyroTech-KeyExport
-          --hidden-import cryptography.hazmat.primitives.asymmetric.ed25519
-          --distpath dist-tools
-          --workpath build/work_keyexport
-          --specpath build
-          tools/export_public_key.py
-
-      - name: Check whether Pro signing key is configured
-        id: pro-key
-        shell: pwsh
-        run: |
-          $value = python -c "import runpy; print(runpy.run_path('app/public_key.py').get('PUBLIC_KEY_B32', ''))"
-          if ([string]::IsNullOrWhiteSpace($value)) {
-            "configured=false" >> $env:GITHUB_OUTPUT
-            Write-Host "Pro no se compila: app/public_key.py no contiene la clave pública del vendedor."
-          } else {
-            "configured=true" >> $env:GITHUB_OUTPUT
-          }
-
-      - name: Build Pro edition
-        if: steps.pro-key.outputs.configured == 'true'
-        run: python tools/build.py pro
-
-      - name: Explain Pro build skip
-        if: steps.pro-key.outputs.configured != 'true'
-        shell: pwsh
-        run: |
-          Write-Host "Se publicó el artefacto Free. Para compilar Pro, el propietario debe cargar únicamente su clave PÚBLICA en app/public_key.py."
-          Write-Host "Nunca subir tools/zyrotech_private.pem."
-
-      - name: Upload ZyroTech product executables
+      - name: Upload ZyroTech Free
         uses: actions/upload-artifact@v4
         with:
-          name: ZyroTech-Windows-x64
-          path: dist/ZyroTech-*.exe
+          name: ZyroTech-Free-Windows-x64
+          path: dist/ZyroTech-Free.exe
           if-no-files-found: error
           retention-days: 14
-
-      - name: Upload seller key-export utility
-        uses: actions/upload-artifact@v4
-        with:
-          name: ZyroTech-Developer-Tools
-          path: dist-tools/ZyroTech-KeyExport.exe
-          if-no-files-found: error
-          retention-days: 30

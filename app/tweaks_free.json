@@ -1,0 +1,2092 @@
+[
+  {
+    "module": "Privacidad",
+    "name": "Telemetría al mínimo (política)",
+    "risk": "normal",
+    "req": {},
+    "reboot": false,
+    "mode": "track",
+    "actions": [
+      {
+        "type": "reg",
+        "path": "HKLM\\SOFTWARE\\Policies\\Microsoft\\Windows\\DataCollection",
+        "name": "AllowTelemetry",
+        "value": 0,
+        "vtype": "REG_DWORD"
+      }
+    ],
+    "id": "ZT-0001",
+    "w": 1,
+    "tier": "free",
+    "badge": "",
+    "warn": ""
+  },
+  {
+    "module": "Privacidad",
+    "name": "Sin notificaciones de feedback",
+    "risk": "normal",
+    "req": {},
+    "reboot": false,
+    "mode": "track",
+    "actions": [
+      {
+        "type": "reg",
+        "path": "HKLM\\SOFTWARE\\Policies\\Microsoft\\Windows\\DataCollection",
+        "name": "DoNotShowFeedbackNotifications",
+        "value": 1,
+        "vtype": "REG_DWORD"
+      }
+    ],
+    "id": "ZT-0003",
+    "w": 1,
+    "tier": "free",
+    "badge": "",
+    "warn": ""
+  },
+  {
+    "module": "Privacidad",
+    "name": "Sin descargas OneSettings",
+    "risk": "normal",
+    "req": {},
+    "reboot": false,
+    "mode": "track",
+    "actions": [
+      {
+        "type": "reg",
+        "path": "HKLM\\SOFTWARE\\Policies\\Microsoft\\Windows\\DataCollection",
+        "name": "DisableOneSettingsDownloads",
+        "value": 1,
+        "vtype": "REG_DWORD"
+      }
+    ],
+    "id": "ZT-0005",
+    "w": 1,
+    "tier": "free",
+    "badge": "",
+    "warn": ""
+  },
+  {
+    "module": "Privacidad",
+    "name": "ID de publicidad desactivado (política)",
+    "risk": "normal",
+    "req": {},
+    "reboot": false,
+    "mode": "track",
+    "actions": [
+      {
+        "type": "reg",
+        "path": "HKLM\\SOFTWARE\\Policies\\Microsoft\\Windows\\AdvertisingInfo",
+        "name": "DisabledByGroupPolicy",
+        "value": 1,
+        "vtype": "REG_DWORD"
+      }
+    ],
+    "id": "ZT-0008",
+    "w": 1,
+    "tier": "free",
+    "badge": "",
+    "warn": ""
+  },
+  {
+    "module": "Privacidad",
+    "name": "No rastrear apps lanzadas",
+    "risk": "normal",
+    "req": {},
+    "reboot": false,
+    "mode": "track",
+    "actions": [
+      {
+        "type": "reg",
+        "path": "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced",
+        "name": "Start_TrackProgs",
+        "value": 0,
+        "vtype": "REG_DWORD"
+      }
+    ],
+    "id": "ZT-0011",
+    "w": 1,
+    "tier": "free",
+    "badge": "",
+    "warn": ""
+  },
+  {
+    "module": "Privacidad",
+    "name": "Ubicación desactivada (política)",
+    "risk": "normal",
+    "req": {},
+    "reboot": false,
+    "mode": "track",
+    "actions": [
+      {
+        "type": "reg",
+        "path": "HKLM\\SOFTWARE\\Policies\\Microsoft\\Windows\\LocationAndSensors",
+        "name": "DisableLocation",
+        "value": 1,
+        "vtype": "REG_DWORD"
+      },
+      {
+        "type": "reg",
+        "path": "HKLM\\SOFTWARE\\Policies\\Microsoft\\Windows\\LocationAndSensors",
+        "name": "DisableLocationScripting",
+        "value": 1,
+        "vtype": "REG_DWORD"
+      }
+    ],
+    "id": "ZT-0013",
+    "w": 1,
+    "tier": "free",
+    "badge": "",
+    "warn": ""
+  },
+  {
+    "module": "Privacidad",
+    "name": "Telemetría de compatibilidad OFF",
+    "risk": "normal",
+    "req": {},
+    "reboot": false,
+    "mode": "track",
+    "actions": [
+      {
+        "type": "reg",
+        "path": "HKLM\\SOFTWARE\\Policies\\Microsoft\\Windows\\AppCompat",
+        "name": "AITEnable",
+        "value": 0,
+        "vtype": "REG_DWORD"
+      },
+      {
+        "type": "reg",
+        "path": "HKLM\\SOFTWARE\\Policies\\Microsoft\\Windows\\AppCompat",
+        "name": "DisableInventory",
+        "value": 1,
+        "vtype": "REG_DWORD"
+      },
+      {
+        "type": "reg",
+        "path": "HKLM\\SOFTWARE\\Policies\\Microsoft\\Windows\\AppCompat",
+        "name": "DisableUAR",
+        "value": 1,
+        "vtype": "REG_DWORD"
+      },
+      {
+        "type": "reg",
+        "path": "HKLM\\SOFTWARE\\Policies\\Microsoft\\Windows\\AppCompat",
+        "name": "DisablePCA",
+        "value": 1,
+        "vtype": "REG_DWORD"
+      }
+    ],
+    "id": "ZT-0016",
+    "w": 1,
+    "tier": "free",
+    "badge": "",
+    "warn": ""
+  },
+  {
+    "module": "Privacidad",
+    "name": "Sincronización de configuración OFF",
+    "risk": "normal",
+    "req": {},
+    "reboot": false,
+    "mode": "track",
+    "actions": [
+      {
+        "type": "reg",
+        "path": "HKLM\\SOFTWARE\\Policies\\Microsoft\\Windows\\SettingSync",
+        "name": "DisableSettingSync",
+        "value": 2,
+        "vtype": "REG_DWORD"
+      },
+      {
+        "type": "reg",
+        "path": "HKLM\\SOFTWARE\\Policies\\Microsoft\\Windows\\SettingSync",
+        "name": "DisableSettingSyncUserOverride",
+        "value": 1,
+        "vtype": "REG_DWORD"
+      }
+    ],
+    "id": "ZT-0019",
+    "w": 1,
+    "tier": "free",
+    "badge": "",
+    "warn": ""
+  },
+  {
+    "module": "Privacidad",
+    "name": "Cortana desactivada",
+    "risk": "normal",
+    "req": {},
+    "reboot": false,
+    "mode": "track",
+    "actions": [
+      {
+        "type": "reg",
+        "path": "HKLM\\SOFTWARE\\Policies\\Microsoft\\Windows\\Windows Search",
+        "name": "AllowCortana",
+        "value": 0,
+        "vtype": "REG_DWORD"
+      }
+    ],
+    "id": "ZT-0021",
+    "w": 1,
+    "tier": "free",
+    "badge": "",
+    "warn": ""
+  },
+  {
+    "module": "Privacidad",
+    "name": "Sugerencias del cuadro de búsqueda OFF",
+    "risk": "normal",
+    "req": {},
+    "reboot": false,
+    "mode": "track",
+    "actions": [
+      {
+        "type": "reg",
+        "path": "HKCU\\Software\\Policies\\Microsoft\\Windows\\Explorer",
+        "name": "DisableSearchBoxSuggestions",
+        "value": 1,
+        "vtype": "REG_DWORD"
+      }
+    ],
+    "id": "ZT-0024",
+    "w": 1,
+    "tier": "free",
+    "badge": "",
+    "warn": ""
+  },
+  {
+    "module": "Privacidad",
+    "name": "Copilot desactivado",
+    "risk": "normal",
+    "req": {},
+    "reboot": false,
+    "mode": "track",
+    "actions": [
+      {
+        "type": "reg",
+        "path": "HKCU\\Software\\Policies\\Microsoft\\Windows\\WindowsCopilot",
+        "name": "TurnOffWindowsCopilot",
+        "value": 1,
+        "vtype": "REG_DWORD"
+      },
+      {
+        "type": "reg",
+        "path": "HKLM\\SOFTWARE\\Policies\\Microsoft\\Windows\\WindowsCopilot",
+        "name": "TurnOffWindowsCopilot",
+        "value": 1,
+        "vtype": "REG_DWORD"
+      }
+    ],
+    "id": "ZT-0026",
+    "w": 1,
+    "tier": "free",
+    "badge": "",
+    "warn": ""
+  },
+  {
+    "module": "Privacidad",
+    "name": "Botón de Copilot oculto",
+    "risk": "normal",
+    "req": {
+      "win11": true
+    },
+    "reboot": false,
+    "mode": "track",
+    "actions": [
+      {
+        "type": "reg",
+        "path": "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced",
+        "name": "ShowCopilotButton",
+        "value": 0,
+        "vtype": "REG_DWORD"
+      }
+    ],
+    "id": "ZT-0027",
+    "w": 1,
+    "tier": "free",
+    "badge": "",
+    "warn": ""
+  },
+  {
+    "module": "Privacidad",
+    "name": "Windows Ink Workspace OFF",
+    "risk": "normal",
+    "req": {},
+    "reboot": false,
+    "mode": "track",
+    "actions": [
+      {
+        "type": "reg",
+        "path": "HKLM\\SOFTWARE\\Policies\\Microsoft\\WindowsInkWorkspace",
+        "name": "AllowWindowsInkWorkspace",
+        "value": 0,
+        "vtype": "REG_DWORD"
+      }
+    ],
+    "id": "ZT-0029",
+    "w": 1,
+    "tier": "free",
+    "badge": "",
+    "warn": ""
+  },
+  {
+    "module": "Privacidad",
+    "name": "Chrome: sin métricas ni modo segundo plano",
+    "risk": "normal",
+    "req": {},
+    "reboot": false,
+    "mode": "track",
+    "actions": [
+      {
+        "type": "reg",
+        "path": "HKLM\\SOFTWARE\\Policies\\Google\\Chrome",
+        "name": "MetricsReportingEnabled",
+        "value": 0,
+        "vtype": "REG_DWORD"
+      },
+      {
+        "type": "reg",
+        "path": "HKLM\\SOFTWARE\\Policies\\Google\\Chrome",
+        "name": "BackgroundModeEnabled",
+        "value": 0,
+        "vtype": "REG_DWORD"
+      }
+    ],
+    "id": "ZT-0032",
+    "w": 1,
+    "tier": "free",
+    "badge": "",
+    "warn": ""
+  },
+  {
+    "module": "Privacidad",
+    "name": "LLMNR desactivado",
+    "risk": "normal",
+    "req": {},
+    "reboot": false,
+    "mode": "track",
+    "actions": [
+      {
+        "type": "reg",
+        "path": "HKLM\\SOFTWARE\\Policies\\Microsoft\\Windows NT\\DNSClient",
+        "name": "EnableMulticast",
+        "value": 0,
+        "vtype": "REG_DWORD"
+      }
+    ],
+    "id": "ZT-0035",
+    "w": 1,
+    "tier": "free",
+    "badge": "",
+    "warn": ""
+  },
+  {
+    "module": "Privacidad",
+    "name": "Sin archivos recientes en Acceso rápido",
+    "risk": "normal",
+    "req": {},
+    "reboot": false,
+    "mode": "track",
+    "actions": [
+      {
+        "type": "reg",
+        "path": "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer",
+        "name": "ShowRecent",
+        "value": 0,
+        "vtype": "REG_DWORD"
+      }
+    ],
+    "id": "ZT-0037",
+    "w": 1,
+    "tier": "free",
+    "badge": "",
+    "warn": ""
+  },
+  {
+    "module": "Debloat",
+    "name": "Sugerencias en Inicio OFF",
+    "risk": "normal",
+    "req": {},
+    "reboot": false,
+    "mode": "track",
+    "actions": [
+      {
+        "type": "reg",
+        "path": "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\ContentDeliveryManager",
+        "name": "SystemPaneSuggestionsEnabled",
+        "value": 0,
+        "vtype": "REG_DWORD"
+      },
+      {
+        "type": "reg",
+        "path": "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\ContentDeliveryManager",
+        "name": "SubscribedContent-338388Enabled",
+        "value": 0,
+        "vtype": "REG_DWORD"
+      }
+    ],
+    "id": "ZT-0040",
+    "w": 1,
+    "tier": "free",
+    "badge": "",
+    "warn": ""
+  },
+  {
+    "module": "Debloat",
+    "name": "Spotlight en pantalla de bloqueo OFF",
+    "risk": "normal",
+    "req": {},
+    "reboot": false,
+    "mode": "track",
+    "actions": [
+      {
+        "type": "reg",
+        "path": "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\ContentDeliveryManager",
+        "name": "RotatingLockScreenEnabled",
+        "value": 0,
+        "vtype": "REG_DWORD"
+      },
+      {
+        "type": "reg",
+        "path": "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\ContentDeliveryManager",
+        "name": "RotatingLockScreenOverlayEnabled",
+        "value": 0,
+        "vtype": "REG_DWORD"
+      },
+      {
+        "type": "reg",
+        "path": "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\ContentDeliveryManager",
+        "name": "SubscribedContent-338387Enabled",
+        "value": 0,
+        "vtype": "REG_DWORD"
+      }
+    ],
+    "id": "ZT-0043",
+    "w": 1,
+    "tier": "free",
+    "badge": "",
+    "warn": ""
+  },
+  {
+    "module": "Debloat",
+    "name": "Pantalla de bienvenida post-actualización OFF",
+    "risk": "normal",
+    "req": {},
+    "reboot": false,
+    "mode": "track",
+    "actions": [
+      {
+        "type": "reg",
+        "path": "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\UserProfileEngagement",
+        "name": "ScoobeSystemSettingEnabled",
+        "value": 0,
+        "vtype": "REG_DWORD"
+      }
+    ],
+    "id": "ZT-0045",
+    "w": 1,
+    "tier": "free",
+    "badge": "",
+    "warn": ""
+  },
+  {
+    "module": "Debloat",
+    "name": "Anuncios del explorador (OneDrive) OFF",
+    "risk": "normal",
+    "req": {},
+    "reboot": false,
+    "mode": "track",
+    "actions": [
+      {
+        "type": "reg",
+        "path": "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced",
+        "name": "ShowSyncProviderNotifications",
+        "value": 0,
+        "vtype": "REG_DWORD"
+      }
+    ],
+    "id": "ZT-0048",
+    "w": 1,
+    "tier": "free",
+    "badge": "",
+    "warn": ""
+  },
+  {
+    "module": "Debloat",
+    "name": "Contenido optimizado en la nube OFF",
+    "risk": "normal",
+    "req": {},
+    "reboot": false,
+    "mode": "track",
+    "actions": [
+      {
+        "type": "reg",
+        "path": "HKLM\\SOFTWARE\\Policies\\Microsoft\\Windows\\CloudContent",
+        "name": "DisableCloudOptimizedContent",
+        "value": 1,
+        "vtype": "REG_DWORD"
+      }
+    ],
+    "id": "ZT-0051",
+    "w": 1,
+    "tier": "free",
+    "badge": "",
+    "warn": ""
+  },
+  {
+    "module": "Debloat",
+    "name": "Widgets desactivados",
+    "risk": "normal",
+    "req": {
+      "win11": true
+    },
+    "reboot": false,
+    "mode": "track",
+    "actions": [
+      {
+        "type": "reg",
+        "path": "HKLM\\SOFTWARE\\Policies\\Microsoft\\Dsh",
+        "name": "AllowNewsAndInterests",
+        "value": 0,
+        "vtype": "REG_DWORD"
+      }
+    ],
+    "id": "ZT-0053",
+    "w": 1,
+    "tier": "free",
+    "badge": "",
+    "warn": ""
+  },
+  {
+    "module": "Debloat",
+    "name": "Noticias e intereses OFF",
+    "risk": "normal",
+    "req": {},
+    "reboot": false,
+    "mode": "track",
+    "actions": [
+      {
+        "type": "reg",
+        "path": "HKLM\\SOFTWARE\\Policies\\Microsoft\\Windows\\Windows Feeds",
+        "name": "EnableFeeds",
+        "value": 0,
+        "vtype": "REG_DWORD"
+      }
+    ],
+    "id": "ZT-0056",
+    "w": 1,
+    "tier": "free",
+    "badge": "",
+    "warn": ""
+  },
+  {
+    "module": "Inicio",
+    "name": "Steam no arranca con Windows",
+    "risk": "normal",
+    "req": {},
+    "reboot": false,
+    "mode": "track",
+    "actions": [
+      {
+        "type": "reg",
+        "path": "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Run",
+        "name": "Steam",
+        "value": null,
+        "vtype": "REG_SZ"
+      }
+    ],
+    "id": "ZT-0059",
+    "w": 2,
+    "tier": "free",
+    "badge": "",
+    "warn": ""
+  },
+  {
+    "module": "Inicio",
+    "name": "Discord no arranca con Windows",
+    "risk": "normal",
+    "req": {},
+    "reboot": false,
+    "mode": "track",
+    "actions": [
+      {
+        "type": "reg",
+        "path": "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Run",
+        "name": "Discord",
+        "value": null,
+        "vtype": "REG_SZ"
+      }
+    ],
+    "id": "ZT-0060",
+    "w": 2,
+    "tier": "free",
+    "badge": "",
+    "warn": ""
+  },
+  {
+    "module": "Inicio",
+    "name": "Spotify no arranca con Windows",
+    "risk": "normal",
+    "req": {},
+    "reboot": false,
+    "mode": "track",
+    "actions": [
+      {
+        "type": "reg",
+        "path": "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Run",
+        "name": "Spotify",
+        "value": null,
+        "vtype": "REG_SZ"
+      }
+    ],
+    "id": "ZT-0061",
+    "w": 2,
+    "tier": "free",
+    "badge": "",
+    "warn": ""
+  },
+  {
+    "module": "Debloat",
+    "name": "Edge: sin Startup Boost",
+    "risk": "normal",
+    "req": {},
+    "reboot": false,
+    "mode": "track",
+    "actions": [
+      {
+        "type": "reg",
+        "path": "HKLM\\SOFTWARE\\Policies\\Microsoft\\Edge",
+        "name": "StartupBoostEnabled",
+        "value": 0,
+        "vtype": "REG_DWORD"
+      }
+    ],
+    "id": "ZT-0064",
+    "w": 1,
+    "tier": "free",
+    "badge": "",
+    "warn": ""
+  },
+  {
+    "module": "Debloat",
+    "name": "Edge: sin personalización",
+    "risk": "normal",
+    "req": {},
+    "reboot": false,
+    "mode": "track",
+    "actions": [
+      {
+        "type": "reg",
+        "path": "HKLM\\SOFTWARE\\Policies\\Microsoft\\Edge",
+        "name": "PersonalizationReportingEnabled",
+        "value": 0,
+        "vtype": "REG_DWORD"
+      }
+    ],
+    "id": "ZT-0067",
+    "w": 1,
+    "tier": "free",
+    "badge": "",
+    "warn": ""
+  },
+  {
+    "module": "Debloat",
+    "name": "Edge: sin barra lateral",
+    "risk": "normal",
+    "req": {},
+    "reboot": false,
+    "mode": "track",
+    "actions": [
+      {
+        "type": "reg",
+        "path": "HKLM\\SOFTWARE\\Policies\\Microsoft\\Edge",
+        "name": "HubsSidebarEnabled",
+        "value": 0,
+        "vtype": "REG_DWORD"
+      }
+    ],
+    "id": "ZT-0069",
+    "w": 1,
+    "tier": "free",
+    "badge": "",
+    "warn": ""
+  },
+  {
+    "module": "Debloat",
+    "name": "Edge: sin Follow",
+    "risk": "normal",
+    "req": {},
+    "reboot": false,
+    "mode": "track",
+    "actions": [
+      {
+        "type": "reg",
+        "path": "HKLM\\SOFTWARE\\Policies\\Microsoft\\Edge",
+        "name": "EdgeFollowEnabled",
+        "value": 0,
+        "vtype": "REG_DWORD"
+      }
+    ],
+    "id": "ZT-0072",
+    "w": 1,
+    "tier": "free",
+    "badge": "",
+    "warn": ""
+  },
+  {
+    "module": "Debloat",
+    "name": "Edge: Do Not Track activado",
+    "risk": "normal",
+    "req": {},
+    "reboot": false,
+    "mode": "track",
+    "actions": [
+      {
+        "type": "reg",
+        "path": "HKLM\\SOFTWARE\\Policies\\Microsoft\\Edge",
+        "name": "ConfigureDoNotTrack",
+        "value": 1,
+        "vtype": "REG_DWORD"
+      }
+    ],
+    "id": "ZT-0075",
+    "w": 1,
+    "tier": "free",
+    "badge": "",
+    "warn": ""
+  },
+  {
+    "module": "Debloat",
+    "name": "Quitar app: Noticias (irreversible)",
+    "risk": "normal",
+    "req": {},
+    "reboot": false,
+    "mode": "once",
+    "actions": [
+      {
+        "type": "ps",
+        "cmd": "Get-AppxPackage -AllUsers -Name 'Microsoft.BingNews' | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue; Get-AppxProvisionedPackage -Online | ? DisplayName -eq 'Microsoft.BingNews' | Remove-AppxProvisionedPackage -Online -ErrorAction SilentlyContinue | Out-Null; exit 0"
+      }
+    ],
+    "id": "ZT-0077",
+    "w": 1,
+    "tier": "free",
+    "badge": "Irreversible",
+    "warn": "Para recuperarla hay que reinstalarla desde Microsoft Store"
+  },
+  {
+    "module": "Debloat",
+    "name": "Quitar app: Consejos (irreversible)",
+    "risk": "normal",
+    "req": {},
+    "reboot": false,
+    "mode": "once",
+    "actions": [
+      {
+        "type": "ps",
+        "cmd": "Get-AppxPackage -AllUsers -Name 'Microsoft.Getstarted' | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue; Get-AppxProvisionedPackage -Online | ? DisplayName -eq 'Microsoft.Getstarted' | Remove-AppxProvisionedPackage -Online -ErrorAction SilentlyContinue | Out-Null; exit 0"
+      }
+    ],
+    "id": "ZT-0080",
+    "w": 1,
+    "tier": "free",
+    "badge": "Irreversible",
+    "warn": "Para recuperarla hay que reinstalarla desde Microsoft Store"
+  },
+  {
+    "module": "Debloat",
+    "name": "Quitar app: Solitario (irreversible)",
+    "risk": "normal",
+    "req": {},
+    "reboot": false,
+    "mode": "once",
+    "actions": [
+      {
+        "type": "ps",
+        "cmd": "Get-AppxPackage -AllUsers -Name 'Microsoft.MicrosoftSolitaireCollection' | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue; Get-AppxProvisionedPackage -Online | ? DisplayName -eq 'Microsoft.MicrosoftSolitaireCollection' | Remove-AppxProvisionedPackage -Online -ErrorAction SilentlyContinue | Out-Null; exit 0"
+      }
+    ],
+    "id": "ZT-0083",
+    "w": 1,
+    "tier": "free",
+    "badge": "Irreversible",
+    "warn": "Para recuperarla hay que reinstalarla desde Microsoft Store"
+  },
+  {
+    "module": "Debloat",
+    "name": "Quitar app: Contactos (irreversible)",
+    "risk": "normal",
+    "req": {},
+    "reboot": false,
+    "mode": "once",
+    "actions": [
+      {
+        "type": "ps",
+        "cmd": "Get-AppxPackage -AllUsers -Name 'Microsoft.People' | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue; Get-AppxProvisionedPackage -Online | ? DisplayName -eq 'Microsoft.People' | Remove-AppxProvisionedPackage -Online -ErrorAction SilentlyContinue | Out-Null; exit 0"
+      }
+    ],
+    "id": "ZT-0085",
+    "w": 1,
+    "tier": "free",
+    "badge": "Irreversible",
+    "warn": "Para recuperarla hay que reinstalarla desde Microsoft Store"
+  },
+  {
+    "module": "Debloat",
+    "name": "Quitar app: Vínculo con el móvil (irreversible)",
+    "risk": "normal",
+    "req": {},
+    "reboot": false,
+    "mode": "once",
+    "actions": [
+      {
+        "type": "ps",
+        "cmd": "Get-AppxPackage -AllUsers -Name 'Microsoft.YourPhone' | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue; Get-AppxProvisionedPackage -Online | ? DisplayName -eq 'Microsoft.YourPhone' | Remove-AppxProvisionedPackage -Online -ErrorAction SilentlyContinue | Out-Null; exit 0"
+      }
+    ],
+    "id": "ZT-0088",
+    "w": 1,
+    "tier": "free",
+    "badge": "Irreversible",
+    "warn": "Para recuperarla hay que reinstalarla desde Microsoft Store"
+  },
+  {
+    "module": "Debloat",
+    "name": "Quitar app: Clipchamp (irreversible)",
+    "risk": "normal",
+    "req": {},
+    "reboot": false,
+    "mode": "once",
+    "actions": [
+      {
+        "type": "ps",
+        "cmd": "Get-AppxPackage -AllUsers -Name 'Clipchamp.Clipchamp' | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue; Get-AppxProvisionedPackage -Online | ? DisplayName -eq 'Clipchamp.Clipchamp' | Remove-AppxProvisionedPackage -Online -ErrorAction SilentlyContinue | Out-Null; exit 0"
+      }
+    ],
+    "id": "ZT-0091",
+    "w": 1,
+    "tier": "free",
+    "badge": "Irreversible",
+    "warn": "Para recuperarla hay que reinstalarla desde Microsoft Store"
+  },
+  {
+    "module": "Debloat",
+    "name": "Quitar app: Teams (personal) (irreversible)",
+    "risk": "normal",
+    "req": {},
+    "reboot": false,
+    "mode": "once",
+    "actions": [
+      {
+        "type": "ps",
+        "cmd": "Get-AppxPackage -AllUsers -Name 'MicrosoftTeams' | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue; Get-AppxProvisionedPackage -Online | ? DisplayName -eq 'MicrosoftTeams' | Remove-AppxProvisionedPackage -Online -ErrorAction SilentlyContinue | Out-Null; exit 0"
+      }
+    ],
+    "id": "ZT-0093",
+    "w": 1,
+    "tier": "free",
+    "badge": "Irreversible",
+    "warn": "Para recuperarla hay que reinstalarla desde Microsoft Store"
+  },
+  {
+    "module": "Debloat",
+    "name": "Quitar app: Bing Search (irreversible)",
+    "risk": "normal",
+    "req": {},
+    "reboot": false,
+    "mode": "once",
+    "actions": [
+      {
+        "type": "ps",
+        "cmd": "Get-AppxPackage -AllUsers -Name 'Microsoft.BingSearch' | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue; Get-AppxProvisionedPackage -Online | ? DisplayName -eq 'Microsoft.BingSearch' | Remove-AppxProvisionedPackage -Online -ErrorAction SilentlyContinue | Out-Null; exit 0"
+      }
+    ],
+    "id": "ZT-0096",
+    "w": 1,
+    "tier": "free",
+    "badge": "Irreversible",
+    "warn": "Para recuperarla hay que reinstalarla desde Microsoft Store"
+  },
+  {
+    "module": "Servicios",
+    "name": "Servicio Telemetría (DiagTrack) desactivado",
+    "risk": "normal",
+    "req": {},
+    "reboot": false,
+    "mode": "track",
+    "actions": [
+      {
+        "type": "reg",
+        "path": "HKLM\\SYSTEM\\CurrentControlSet\\Services\\DiagTrack",
+        "name": "Start",
+        "value": 4,
+        "vtype": "REG_DWORD"
+      }
+    ],
+    "id": "ZT-0099",
+    "w": 2,
+    "tier": "free",
+    "badge": "",
+    "warn": ""
+  },
+  {
+    "module": "Servicios",
+    "name": "Servicio Mapas descargados desactivado",
+    "risk": "normal",
+    "req": {},
+    "reboot": false,
+    "mode": "track",
+    "actions": [
+      {
+        "type": "reg",
+        "path": "HKLM\\SYSTEM\\CurrentControlSet\\Services\\MapsBroker",
+        "name": "Start",
+        "value": 4,
+        "vtype": "REG_DWORD"
+      }
+    ],
+    "id": "ZT-0101",
+    "w": 2,
+    "tier": "free",
+    "badge": "",
+    "warn": ""
+  },
+  {
+    "module": "Servicios",
+    "name": "Servicio Fax desactivado",
+    "risk": "normal",
+    "req": {},
+    "reboot": false,
+    "mode": "track",
+    "actions": [
+      {
+        "type": "reg",
+        "path": "HKLM\\SYSTEM\\CurrentControlSet\\Services\\Fax",
+        "name": "Start",
+        "value": 4,
+        "vtype": "REG_DWORD"
+      }
+    ],
+    "id": "ZT-0104",
+    "w": 2,
+    "tier": "free",
+    "badge": "",
+    "warn": ""
+  },
+  {
+    "module": "Servicios",
+    "name": "Servicio Control parental desactivado",
+    "risk": "normal",
+    "req": {},
+    "reboot": false,
+    "mode": "track",
+    "actions": [
+      {
+        "type": "reg",
+        "path": "HKLM\\SYSTEM\\CurrentControlSet\\Services\\WpcMonSvc",
+        "name": "Start",
+        "value": 4,
+        "vtype": "REG_DWORD"
+      }
+    ],
+    "id": "ZT-0107",
+    "w": 2,
+    "tier": "free",
+    "badge": "",
+    "warn": ""
+  },
+  {
+    "module": "Servicios",
+    "name": "Servicio Zona móvil desactivado",
+    "risk": "normal",
+    "req": {},
+    "reboot": false,
+    "mode": "track",
+    "actions": [
+      {
+        "type": "reg",
+        "path": "HKLM\\SYSTEM\\CurrentControlSet\\Services\\icssvc",
+        "name": "Start",
+        "value": 4,
+        "vtype": "REG_DWORD"
+      }
+    ],
+    "id": "ZT-0109",
+    "w": 2,
+    "tier": "free",
+    "badge": "",
+    "warn": ""
+  },
+  {
+    "module": "Servicios",
+    "name": "Servicio Recolector de diagnóstico desactivado",
+    "risk": "normal",
+    "req": {},
+    "reboot": false,
+    "mode": "track",
+    "actions": [
+      {
+        "type": "reg",
+        "path": "HKLM\\SYSTEM\\CurrentControlSet\\Services\\diagnosticshub.standardcollector.service",
+        "name": "Start",
+        "value": 4,
+        "vtype": "REG_DWORD"
+      }
+    ],
+    "id": "ZT-0112",
+    "w": 2,
+    "tier": "free",
+    "badge": "",
+    "warn": ""
+  },
+  {
+    "module": "Servicios",
+    "name": "Servicio Xbox Networking desactivado",
+    "risk": "normal",
+    "req": {},
+    "reboot": false,
+    "mode": "track",
+    "actions": [
+      {
+        "type": "reg",
+        "path": "HKLM\\SYSTEM\\CurrentControlSet\\Services\\XboxNetApiSvc",
+        "name": "Start",
+        "value": 4,
+        "vtype": "REG_DWORD"
+      }
+    ],
+    "id": "ZT-0115",
+    "w": 2,
+    "tier": "free",
+    "badge": "Breaking",
+    "warn": "Xbox, Game Pass y juegos de Microsoft Store pueden dejar de funcionar"
+  },
+  {
+    "module": "Servicios",
+    "name": "Servicio AllJoyn desactivado",
+    "risk": "normal",
+    "req": {},
+    "reboot": false,
+    "mode": "track",
+    "actions": [
+      {
+        "type": "reg",
+        "path": "HKLM\\SYSTEM\\CurrentControlSet\\Services\\AJRouter",
+        "name": "Start",
+        "value": 4,
+        "vtype": "REG_DWORD"
+      }
+    ],
+    "id": "ZT-0117",
+    "w": 2,
+    "tier": "free",
+    "badge": "",
+    "warn": ""
+  },
+  {
+    "module": "Servicios",
+    "name": "Servicio Wallet desactivado",
+    "risk": "normal",
+    "req": {},
+    "reboot": false,
+    "mode": "track",
+    "actions": [
+      {
+        "type": "reg",
+        "path": "HKLM\\SYSTEM\\CurrentControlSet\\Services\\WalletService",
+        "name": "Start",
+        "value": 4,
+        "vtype": "REG_DWORD"
+      }
+    ],
+    "id": "ZT-0120",
+    "w": 2,
+    "tier": "free",
+    "badge": "",
+    "warn": ""
+  },
+  {
+    "module": "Servicios",
+    "name": "Servicio Asistente de compatibilidad desactivado",
+    "risk": "normal",
+    "req": {},
+    "reboot": false,
+    "mode": "track",
+    "actions": [
+      {
+        "type": "reg",
+        "path": "HKLM\\SYSTEM\\CurrentControlSet\\Services\\PcaSvc",
+        "name": "Start",
+        "value": 4,
+        "vtype": "REG_DWORD"
+      }
+    ],
+    "id": "ZT-0123",
+    "w": 2,
+    "tier": "free",
+    "badge": "",
+    "warn": ""
+  },
+  {
+    "module": "Servicios",
+    "name": "Servicio Windows Search (pierde la búsqueda indexada) desactivado",
+    "risk": "normal",
+    "req": {},
+    "reboot": false,
+    "mode": "track",
+    "actions": [
+      {
+        "type": "reg",
+        "path": "HKLM\\SYSTEM\\CurrentControlSet\\Services\\WSearch",
+        "name": "Start",
+        "value": 4,
+        "vtype": "REG_DWORD"
+      }
+    ],
+    "id": "ZT-0125",
+    "w": 2,
+    "tier": "free",
+    "badge": "Breaking",
+    "warn": "Se pierde la búsqueda indexada de Windows"
+  },
+  {
+    "module": "Tareas",
+    "name": "Tarea programada: ProgramDataUpdater",
+    "risk": "normal",
+    "req": {},
+    "reboot": false,
+    "mode": "track",
+    "actions": [
+      {
+        "type": "ps",
+        "cmd": "Disable-ScheduledTask -TaskPath '\\Microsoft\\Windows\\Application Experience\\' -TaskName 'ProgramDataUpdater' -ErrorAction SilentlyContinue | Out-Null; exit 0",
+        "undo": "Enable-ScheduledTask -TaskPath '\\Microsoft\\Windows\\Application Experience\\' -TaskName 'ProgramDataUpdater' -ErrorAction SilentlyContinue | Out-Null; exit 0"
+      }
+    ],
+    "id": "ZT-0128",
+    "w": 1,
+    "tier": "free",
+    "badge": "",
+    "warn": ""
+  },
+  {
+    "module": "Tareas",
+    "name": "Tarea programada: Feedback DmClient",
+    "risk": "normal",
+    "req": {},
+    "reboot": false,
+    "mode": "track",
+    "actions": [
+      {
+        "type": "ps",
+        "cmd": "Disable-ScheduledTask -TaskPath '\\Microsoft\\Windows\\Feedback\\Siuf\\' -TaskName 'DmClient' -ErrorAction SilentlyContinue | Out-Null; exit 0",
+        "undo": "Enable-ScheduledTask -TaskPath '\\Microsoft\\Windows\\Feedback\\Siuf\\' -TaskName 'DmClient' -ErrorAction SilentlyContinue | Out-Null; exit 0"
+      }
+    ],
+    "id": "ZT-0133",
+    "w": 1,
+    "tier": "free",
+    "badge": "",
+    "warn": ""
+  },
+  {
+    "module": "Tareas",
+    "name": "Tarea programada: Disk Diagnostic",
+    "risk": "normal",
+    "req": {},
+    "reboot": false,
+    "mode": "track",
+    "actions": [
+      {
+        "type": "ps",
+        "cmd": "Disable-ScheduledTask -TaskPath '\\Microsoft\\Windows\\DiskDiagnostic\\' -TaskName 'Microsoft-Windows-DiskDiagnosticDataCollector' -ErrorAction SilentlyContinue | Out-Null; exit 0",
+        "undo": "Enable-ScheduledTask -TaskPath '\\Microsoft\\Windows\\DiskDiagnostic\\' -TaskName 'Microsoft-Windows-DiskDiagnosticDataCollector' -ErrorAction SilentlyContinue | Out-Null; exit 0"
+      }
+    ],
+    "id": "ZT-0136",
+    "w": 1,
+    "tier": "free",
+    "badge": "",
+    "warn": ""
+  },
+  {
+    "module": "Tareas",
+    "name": "Tarea programada: Maps Toast",
+    "risk": "normal",
+    "req": {},
+    "reboot": false,
+    "mode": "track",
+    "actions": [
+      {
+        "type": "ps",
+        "cmd": "Disable-ScheduledTask -TaskPath '\\Microsoft\\Windows\\Maps\\' -TaskName 'MapsToastTask' -ErrorAction SilentlyContinue | Out-Null; exit 0",
+        "undo": "Enable-ScheduledTask -TaskPath '\\Microsoft\\Windows\\Maps\\' -TaskName 'MapsToastTask' -ErrorAction SilentlyContinue | Out-Null; exit 0"
+      }
+    ],
+    "id": "ZT-0139",
+    "w": 1,
+    "tier": "free",
+    "badge": "",
+    "warn": ""
+  },
+  {
+    "module": "Tareas",
+    "name": "Tarea programada: SQM Tasks",
+    "risk": "normal",
+    "req": {},
+    "reboot": false,
+    "mode": "track",
+    "actions": [
+      {
+        "type": "ps",
+        "cmd": "Disable-ScheduledTask -TaskPath '\\Microsoft\\Windows\\PI\\' -TaskName 'Sqm-Tasks' -ErrorAction SilentlyContinue | Out-Null; exit 0",
+        "undo": "Enable-ScheduledTask -TaskPath '\\Microsoft\\Windows\\PI\\' -TaskName 'Sqm-Tasks' -ErrorAction SilentlyContinue | Out-Null; exit 0"
+      }
+    ],
+    "id": "ZT-0141",
+    "w": 1,
+    "tier": "free",
+    "badge": "",
+    "warn": ""
+  },
+  {
+    "module": "Tareas",
+    "name": "Tarea programada: Family Safety Refresh",
+    "risk": "normal",
+    "req": {},
+    "reboot": false,
+    "mode": "track",
+    "actions": [
+      {
+        "type": "ps",
+        "cmd": "Disable-ScheduledTask -TaskPath '\\Microsoft\\Windows\\Shell\\' -TaskName 'FamilySafetyRefreshTask' -ErrorAction SilentlyContinue | Out-Null; exit 0",
+        "undo": "Enable-ScheduledTask -TaskPath '\\Microsoft\\Windows\\Shell\\' -TaskName 'FamilySafetyRefreshTask' -ErrorAction SilentlyContinue | Out-Null; exit 0"
+      }
+    ],
+    "id": "ZT-0144",
+    "w": 1,
+    "tier": "free",
+    "badge": "",
+    "warn": ""
+  },
+  {
+    "module": "Gaming",
+    "name": "Game DVR desactivado",
+    "risk": "normal",
+    "req": {},
+    "reboot": false,
+    "mode": "track",
+    "actions": [
+      {
+        "type": "reg",
+        "path": "HKCU\\System\\GameConfigStore",
+        "name": "GameDVR_Enabled",
+        "value": 0,
+        "vtype": "REG_DWORD"
+      }
+    ],
+    "id": "ZT-0146",
+    "w": 3,
+    "tier": "free",
+    "badge": "",
+    "warn": ""
+  },
+  {
+    "module": "Gaming",
+    "name": "Captura en segundo plano OFF",
+    "risk": "normal",
+    "req": {},
+    "reboot": false,
+    "mode": "track",
+    "actions": [
+      {
+        "type": "reg",
+        "path": "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\GameDVR",
+        "name": "AppCaptureEnabled",
+        "value": 0,
+        "vtype": "REG_DWORD"
+      }
+    ],
+    "id": "ZT-0147",
+    "w": 3,
+    "tier": "free",
+    "badge": "",
+    "warn": ""
+  },
+  {
+    "module": "Gaming",
+    "name": "Game DVR desactivado (política)",
+    "risk": "normal",
+    "req": {},
+    "reboot": false,
+    "mode": "track",
+    "actions": [
+      {
+        "type": "reg",
+        "path": "HKLM\\SOFTWARE\\Policies\\Microsoft\\Windows\\GameDVR",
+        "name": "AllowGameDVR",
+        "value": 0,
+        "vtype": "REG_DWORD"
+      }
+    ],
+    "id": "ZT-0149",
+    "w": 3,
+    "tier": "free",
+    "badge": "",
+    "warn": ""
+  },
+  {
+    "module": "Gaming",
+    "name": "Optimizaciones de pantalla completa OFF",
+    "risk": "normal",
+    "req": {},
+    "reboot": false,
+    "mode": "track",
+    "actions": [
+      {
+        "type": "reg",
+        "path": "HKCU\\System\\GameConfigStore",
+        "name": "GameDVR_FSEBehaviorMode",
+        "value": 2,
+        "vtype": "REG_DWORD"
+      },
+      {
+        "type": "reg",
+        "path": "HKCU\\System\\GameConfigStore",
+        "name": "GameDVR_HonorUserFSEBehaviorMode",
+        "value": 1,
+        "vtype": "REG_DWORD"
+      },
+      {
+        "type": "reg",
+        "path": "HKCU\\System\\GameConfigStore",
+        "name": "GameDVR_DXGIHonorFSEWindowsCompatible",
+        "value": 1,
+        "vtype": "REG_DWORD"
+      },
+      {
+        "type": "reg",
+        "path": "HKCU\\System\\GameConfigStore",
+        "name": "GameDVR_EFSEFeatureFlags",
+        "value": 0,
+        "vtype": "REG_DWORD"
+      }
+    ],
+    "id": "ZT-0151",
+    "w": 3,
+    "tier": "free",
+    "badge": "",
+    "warn": ""
+  },
+  {
+    "module": "Gaming",
+    "name": "Modo Juego activado",
+    "risk": "normal",
+    "req": {},
+    "reboot": false,
+    "mode": "track",
+    "actions": [
+      {
+        "type": "reg",
+        "path": "HKCU\\Software\\Microsoft\\GameBar",
+        "name": "AutoGameModeEnabled",
+        "value": 1,
+        "vtype": "REG_DWORD"
+      },
+      {
+        "type": "reg",
+        "path": "HKCU\\Software\\Microsoft\\GameBar",
+        "name": "AllowAutoGameMode",
+        "value": 1,
+        "vtype": "REG_DWORD"
+      }
+    ],
+    "id": "ZT-0152",
+    "w": 3,
+    "tier": "free",
+    "badge": "",
+    "warn": ""
+  },
+  {
+    "module": "Kernel",
+    "name": "Reloj de plataforma por defecto (quita useplatformclock)",
+    "risk": "normal",
+    "req": {},
+    "reboot": true,
+    "mode": "once",
+    "actions": [
+      {
+        "type": "ps",
+        "cmd": "bcdedit /deletevalue useplatformclock; exit 0"
+      }
+    ],
+    "id": "ZT-0165",
+    "w": 3,
+    "tier": "free",
+    "badge": "",
+    "warn": ""
+  },
+  {
+    "module": "Kernel",
+    "name": "Inicio rápido desactivado",
+    "risk": "normal",
+    "req": {},
+    "reboot": false,
+    "mode": "track",
+    "actions": [
+      {
+        "type": "reg",
+        "path": "HKLM\\SYSTEM\\CurrentControlSet\\Control\\Session Manager\\Power",
+        "name": "HiberbootEnabled",
+        "value": 0,
+        "vtype": "REG_DWORD"
+      }
+    ],
+    "id": "ZT-0169",
+    "w": 3,
+    "tier": "free",
+    "badge": "",
+    "warn": ""
+  },
+  {
+    "module": "Kernel",
+    "name": "Cierre rápido de apps",
+    "risk": "normal",
+    "req": {},
+    "reboot": false,
+    "mode": "track",
+    "actions": [
+      {
+        "type": "reg",
+        "path": "HKCU\\Control Panel\\Desktop",
+        "name": "WaitToKillAppTimeout",
+        "value": "2000",
+        "vtype": "REG_SZ"
+      }
+    ],
+    "id": "ZT-0176",
+    "w": 3,
+    "tier": "free",
+    "badge": "",
+    "warn": ""
+  },
+  {
+    "module": "Kernel",
+    "name": "Retraso de inicio de apps = 0",
+    "risk": "normal",
+    "req": {},
+    "reboot": false,
+    "mode": "track",
+    "actions": [
+      {
+        "type": "reg",
+        "path": "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Serialize",
+        "name": "StartupDelayInMSec",
+        "value": 0,
+        "vtype": "REG_DWORD"
+      }
+    ],
+    "id": "ZT-0184",
+    "w": 3,
+    "tier": "free",
+    "badge": "",
+    "warn": ""
+  },
+  {
+    "module": "Energía",
+    "name": "Plan de energía ZyroTech Ultimate Performance",
+    "risk": "normal",
+    "req": {},
+    "reboot": false,
+    "mode": "track",
+    "actions": [
+      {
+        "type": "ps",
+        "cmd": "$l=(powercfg -list | Out-String); $m=[regex]::Match(($l -split '\\r?\\n' | ? {$_ -match 'ZyroTech'} | Select -First 1),'[0-9a-f-]{36}'); if($m.Success){$g=$m.Value}else{$o=(powercfg -duplicatescheme e9a42b02-d5df-448d-aa00-03f14749eb61 | Out-String); if($o -notmatch '[0-9a-f-]{36}'){$o=(powercfg -duplicatescheme 8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c | Out-String)}; $g=[regex]::Match($o,'[0-9a-f-]{36}').Value; powercfg -changename $g 'ZyroTech Ultimate Performance' | Out-Null}; powercfg -setactive $g",
+        "undo": "powercfg -setactive {captured}; $l=(powercfg -list | Out-String); $m=[regex]::Match(($l -split '\\r?\\n' | ? {$_ -match 'ZyroTech'} | Select -First 1),'[0-9a-f-]{36}'); if($m.Success){powercfg -delete $m.Value}",
+        "capture": "[regex]::Match((powercfg /getactivescheme | Out-String),'[0-9a-f-]{36}').Value"
+      }
+    ],
+    "id": "ZT-0185",
+    "w": 3,
+    "tier": "free",
+    "badge": "Energía",
+    "warn": "Más consumo; en notebooks reduce la autonomía"
+  },
+  {
+    "module": "Red",
+    "name": "Teredo desactivado",
+    "risk": "normal",
+    "req": {},
+    "reboot": false,
+    "mode": "track",
+    "actions": [
+      {
+        "type": "ps",
+        "cmd": "netsh interface teredo set state disabled",
+        "undo": "netsh interface teredo set state default"
+      }
+    ],
+    "id": "ZT-0237",
+    "w": 2,
+    "tier": "free",
+    "badge": "",
+    "warn": ""
+  },
+  {
+    "module": "Red",
+    "name": "Optimización de entrega (P2P) desactivada",
+    "risk": "normal",
+    "req": {},
+    "reboot": false,
+    "mode": "track",
+    "actions": [
+      {
+        "type": "reg",
+        "path": "HKLM\\SOFTWARE\\Policies\\Microsoft\\Windows\\DeliveryOptimization",
+        "name": "DODownloadMode",
+        "value": 0,
+        "vtype": "REG_DWORD"
+      }
+    ],
+    "id": "ZT-0240",
+    "w": 2,
+    "tier": "free",
+    "badge": "",
+    "warn": ""
+  },
+  {
+    "module": "Periféricos",
+    "name": "Mouse: sin aceleración",
+    "risk": "normal",
+    "req": {},
+    "reboot": false,
+    "mode": "track",
+    "actions": [
+      {
+        "type": "reg",
+        "path": "HKCU\\Control Panel\\Mouse",
+        "name": "MouseSpeed",
+        "value": "0",
+        "vtype": "REG_SZ"
+      },
+      {
+        "type": "reg",
+        "path": "HKCU\\Control Panel\\Mouse",
+        "name": "MouseThreshold1",
+        "value": "0",
+        "vtype": "REG_SZ"
+      },
+      {
+        "type": "reg",
+        "path": "HKCU\\Control Panel\\Mouse",
+        "name": "MouseThreshold2",
+        "value": "0",
+        "vtype": "REG_SZ"
+      }
+    ],
+    "id": "ZT-0242",
+    "w": 2,
+    "tier": "free",
+    "badge": "",
+    "warn": ""
+  },
+  {
+    "module": "Periféricos",
+    "name": "Mouse: sensibilidad 6/11 (1:1)",
+    "risk": "normal",
+    "req": {},
+    "reboot": false,
+    "mode": "track",
+    "actions": [
+      {
+        "type": "reg",
+        "path": "HKCU\\Control Panel\\Mouse",
+        "name": "MouseSensitivity",
+        "value": "10",
+        "vtype": "REG_SZ"
+      }
+    ],
+    "id": "ZT-0243",
+    "w": 2,
+    "tier": "free",
+    "badge": "",
+    "warn": ""
+  },
+  {
+    "module": "Periféricos",
+    "name": "Sin aviso de Toggle Keys",
+    "risk": "normal",
+    "req": {},
+    "reboot": false,
+    "mode": "track",
+    "actions": [
+      {
+        "type": "reg",
+        "path": "HKCU\\Control Panel\\Accessibility\\ToggleKeys",
+        "name": "Flags",
+        "value": "58",
+        "vtype": "REG_SZ"
+      }
+    ],
+    "id": "ZT-0248",
+    "w": 2,
+    "tier": "free",
+    "badge": "",
+    "warn": ""
+  },
+  {
+    "module": "Periféricos",
+    "name": "Sin sonido de inicio",
+    "risk": "normal",
+    "req": {},
+    "reboot": false,
+    "mode": "track",
+    "actions": [
+      {
+        "type": "reg",
+        "path": "HKLM\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Authentication\\LogonUI\\BootAnimation",
+        "name": "DisableStartupSound",
+        "value": 1,
+        "vtype": "REG_DWORD"
+      }
+    ],
+    "id": "ZT-0251",
+    "w": 2,
+    "tier": "free",
+    "badge": "",
+    "warn": ""
+  },
+  {
+    "module": "Periféricos",
+    "name": "Aero Shake desactivado",
+    "risk": "normal",
+    "req": {},
+    "reboot": false,
+    "mode": "track",
+    "actions": [
+      {
+        "type": "reg",
+        "path": "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced",
+        "name": "DisallowShaking",
+        "value": 1,
+        "vtype": "REG_DWORD"
+      }
+    ],
+    "id": "ZT-0253",
+    "w": 2,
+    "tier": "free",
+    "badge": "",
+    "warn": ""
+  },
+  {
+    "module": "Interfaz",
+    "name": "Menús sin retardo",
+    "risk": "normal",
+    "req": {},
+    "reboot": false,
+    "mode": "track",
+    "actions": [
+      {
+        "type": "reg",
+        "path": "HKCU\\Control Panel\\Desktop",
+        "name": "MenuShowDelay",
+        "value": "0",
+        "vtype": "REG_SZ"
+      }
+    ],
+    "id": "ZT-0254",
+    "w": 1,
+    "tier": "free",
+    "badge": "",
+    "warn": ""
+  },
+  {
+    "module": "Interfaz",
+    "name": "Efectos visuales: mejor rendimiento",
+    "risk": "normal",
+    "req": {},
+    "reboot": false,
+    "mode": "track",
+    "actions": [
+      {
+        "type": "reg",
+        "path": "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\VisualEffects",
+        "name": "VisualFXSetting",
+        "value": 2,
+        "vtype": "REG_DWORD"
+      }
+    ],
+    "id": "ZT-0255",
+    "w": 1,
+    "tier": "free",
+    "badge": "",
+    "warn": ""
+  },
+  {
+    "module": "Interfaz",
+    "name": "Máscara de efectos visuales mínima",
+    "risk": "normal",
+    "req": {},
+    "reboot": false,
+    "mode": "track",
+    "actions": [
+      {
+        "type": "reg",
+        "path": "HKCU\\Control Panel\\Desktop",
+        "name": "UserPreferencesMask",
+        "value": "9012038010000000",
+        "vtype": "REG_BINARY"
+      }
+    ],
+    "id": "ZT-0256",
+    "w": 1,
+    "tier": "free",
+    "badge": "",
+    "warn": ""
+  },
+  {
+    "module": "Interfaz",
+    "name": "Transparencia desactivada",
+    "risk": "normal",
+    "req": {},
+    "reboot": false,
+    "mode": "track",
+    "actions": [
+      {
+        "type": "reg",
+        "path": "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize",
+        "name": "EnableTransparency",
+        "value": 0,
+        "vtype": "REG_DWORD"
+      }
+    ],
+    "id": "ZT-0259",
+    "w": 1,
+    "tier": "free",
+    "badge": "",
+    "warn": ""
+  },
+  {
+    "module": "Interfaz",
+    "name": "Sin sombras en listas",
+    "risk": "normal",
+    "req": {},
+    "reboot": false,
+    "mode": "track",
+    "actions": [
+      {
+        "type": "reg",
+        "path": "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced",
+        "name": "ListviewShadow",
+        "value": 0,
+        "vtype": "REG_DWORD"
+      }
+    ],
+    "id": "ZT-0261",
+    "w": 1,
+    "tier": "free",
+    "badge": "",
+    "warn": ""
+  },
+  {
+    "module": "Mantenimiento",
+    "name": "Limpiar temporales del usuario",
+    "risk": "normal",
+    "req": {},
+    "reboot": false,
+    "mode": "once",
+    "actions": [
+      {
+        "type": "ps",
+        "cmd": "Remove-Item -Path ($env:TEMP+'\\*') -Recurse -Force -ErrorAction SilentlyContinue; exit 0"
+      }
+    ],
+    "id": "ZT-0278",
+    "w": 1,
+    "tier": "free",
+    "badge": "",
+    "warn": ""
+  },
+  {
+    "module": "Mantenimiento",
+    "name": "Limpiar temporales de Windows",
+    "risk": "normal",
+    "req": {},
+    "reboot": false,
+    "mode": "once",
+    "actions": [
+      {
+        "type": "ps",
+        "cmd": "Remove-Item -Path ($env:WINDIR+'\\Temp\\*') -Recurse -Force -ErrorAction SilentlyContinue; exit 0"
+      }
+    ],
+    "id": "ZT-0279",
+    "w": 1,
+    "tier": "free",
+    "badge": "",
+    "warn": ""
+  },
+  {
+    "module": "Mantenimiento",
+    "name": "Limpiar caché de shaders DirectX",
+    "risk": "normal",
+    "req": {},
+    "reboot": false,
+    "mode": "once",
+    "actions": [
+      {
+        "type": "ps",
+        "cmd": "Remove-Item -Path ($env:LOCALAPPDATA+'\\D3DSCache\\*') -Recurse -Force -ErrorAction SilentlyContinue; exit 0"
+      }
+    ],
+    "id": "ZT-0280",
+    "w": 1,
+    "tier": "free",
+    "badge": "",
+    "warn": ""
+  },
+  {
+    "module": "Mantenimiento",
+    "name": "Limpiar caché de Chrome (cerrarlo antes)",
+    "risk": "normal",
+    "req": {},
+    "reboot": false,
+    "mode": "once",
+    "actions": [
+      {
+        "type": "ps",
+        "cmd": "Remove-Item -Path ($env:LOCALAPPDATA+'\\Google\\Chrome\\User Data\\Default\\Cache\\*') -Recurse -Force -ErrorAction SilentlyContinue; Remove-Item -Path ($env:LOCALAPPDATA+'\\Google\\Chrome\\User Data\\Default\\Code Cache\\*') -Recurse -Force -ErrorAction SilentlyContinue; exit 0"
+      }
+    ],
+    "id": "ZT-0283",
+    "w": 1,
+    "tier": "free",
+    "badge": "",
+    "warn": ""
+  },
+  {
+    "module": "Mantenimiento",
+    "name": "Limpiar caché de Firefox (cerrarlo antes)",
+    "risk": "normal",
+    "req": {},
+    "reboot": false,
+    "mode": "once",
+    "actions": [
+      {
+        "type": "ps",
+        "cmd": "Remove-Item -Path ($env:LOCALAPPDATA+'\\Mozilla\\Firefox\\Profiles\\*\\cache2') -Recurse -Force -ErrorAction SilentlyContinue; exit 0"
+      }
+    ],
+    "id": "ZT-0285",
+    "w": 1,
+    "tier": "free",
+    "badge": "",
+    "warn": ""
+  },
+  {
+    "module": "Mantenimiento",
+    "name": "Limpiar caché web de Epic Games",
+    "risk": "normal",
+    "req": {},
+    "reboot": false,
+    "mode": "once",
+    "actions": [
+      {
+        "type": "ps",
+        "cmd": "Remove-Item -Path ($env:LOCALAPPDATA+'\\EpicGamesLauncher\\Saved\\webcache*') -Recurse -Force -ErrorAction SilentlyContinue; exit 0"
+      }
+    ],
+    "id": "ZT-0288",
+    "w": 1,
+    "tier": "free",
+    "badge": "",
+    "warn": ""
+  },
+  {
+    "module": "Mantenimiento",
+    "name": "Limpiar logs de CBS",
+    "risk": "normal",
+    "req": {},
+    "reboot": false,
+    "mode": "once",
+    "actions": [
+      {
+        "type": "ps",
+        "cmd": "Remove-Item -Path ($env:WINDIR+'\\Logs\\CBS\\*.log') -Recurse -Force -ErrorAction SilentlyContinue; exit 0"
+      }
+    ],
+    "id": "ZT-0291",
+    "w": 1,
+    "tier": "free",
+    "badge": "",
+    "warn": ""
+  },
+  {
+    "module": "Mantenimiento",
+    "name": "Vaciar papelera",
+    "risk": "normal",
+    "req": {},
+    "reboot": false,
+    "mode": "once",
+    "actions": [
+      {
+        "type": "ps",
+        "cmd": "Clear-RecycleBin -Force -ErrorAction SilentlyContinue; exit 0"
+      }
+    ],
+    "id": "ZT-0293",
+    "w": 1,
+    "tier": "free",
+    "badge": "",
+    "warn": ""
+  },
+  {
+    "module": "Mantenimiento",
+    "name": "Limpiar descargas de Windows Update",
+    "risk": "normal",
+    "req": {},
+    "reboot": false,
+    "mode": "once",
+    "actions": [
+      {
+        "type": "ps",
+        "cmd": "Stop-Service wuauserv,bits -Force -ErrorAction SilentlyContinue; Remove-Item -Path ($env:WINDIR+'\\SoftwareDistribution\\Download\\*') -Recurse -Force -ErrorAction SilentlyContinue; Start-Service wuauserv,bits -ErrorAction SilentlyContinue; exit 0"
+      }
+    ],
+    "id": "ZT-0296",
+    "w": 1,
+    "tier": "free",
+    "badge": "",
+    "warn": ""
+  },
+  {
+    "module": "Mantenimiento",
+    "name": "Borrar residuos del instalador AMD",
+    "risk": "normal",
+    "req": {
+      "gpu": "amd"
+    },
+    "reboot": false,
+    "mode": "once",
+    "actions": [
+      {
+        "type": "ps",
+        "cmd": "Remove-Item -Path ('C:\\AMD') -Recurse -Force -ErrorAction SilentlyContinue; exit 0"
+      }
+    ],
+    "id": "ZT-0299",
+    "w": 1,
+    "tier": "free",
+    "badge": "",
+    "warn": ""
+  },
+  {
+    "module": "Interfaz",
+    "name": "Mostrar extensiones de archivo",
+    "risk": "normal",
+    "req": {},
+    "reboot": false,
+    "mode": "track",
+    "actions": [
+      {
+        "type": "reg",
+        "path": "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced",
+        "name": "HideFileExt",
+        "value": 0,
+        "vtype": "REG_DWORD"
+      }
+    ],
+    "id": "ZT-0300",
+    "w": 1,
+    "tier": "free",
+    "badge": "",
+    "warn": ""
+  },
+  {
+    "module": "Interfaz",
+    "name": "Mostrar archivos ocultos",
+    "risk": "normal",
+    "req": {},
+    "reboot": false,
+    "mode": "track",
+    "actions": [
+      {
+        "type": "reg",
+        "path": "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced",
+        "name": "Hidden",
+        "value": 1,
+        "vtype": "REG_DWORD"
+      }
+    ],
+    "id": "ZT-0301",
+    "w": 1,
+    "tier": "free",
+    "badge": "",
+    "warn": ""
+  },
+  {
+    "module": "Interfaz",
+    "name": "Ocultar cuadro de búsqueda de la barra",
+    "risk": "normal",
+    "req": {},
+    "reboot": false,
+    "mode": "track",
+    "actions": [
+      {
+        "type": "reg",
+        "path": "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Search",
+        "name": "SearchboxTaskbarMode",
+        "value": 0,
+        "vtype": "REG_DWORD"
+      }
+    ],
+    "id": "ZT-0304",
+    "w": 1,
+    "tier": "free",
+    "badge": "",
+    "warn": ""
+  },
+  {
+    "module": "Seguridad básica",
+    "name": "Autoplay desactivado",
+    "risk": "normal",
+    "req": {},
+    "reboot": false,
+    "mode": "track",
+    "actions": [
+      {
+        "type": "reg",
+        "path": "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\AutoplayHandlers",
+        "name": "DisableAutoplay",
+        "value": 1,
+        "vtype": "REG_DWORD"
+      }
+    ],
+    "id": "ZT-0307",
+    "w": 1,
+    "tier": "free",
+    "badge": "",
+    "warn": ""
+  },
+  {
+    "module": "Privacidad",
+    "name": "Telemetría de PowerShell 7 OFF",
+    "risk": "normal",
+    "req": {},
+    "reboot": false,
+    "mode": "track",
+    "actions": [
+      {
+        "type": "ps",
+        "cmd": "[Environment]::SetEnvironmentVariable('POWERSHELL_TELEMETRY_OPTOUT','1','Machine')",
+        "undo": "[Environment]::SetEnvironmentVariable('POWERSHELL_TELEMETRY_OPTOUT',$null,'Machine')"
+      }
+    ],
+    "id": "ZT-0309",
+    "w": 1,
+    "tier": "free",
+    "badge": "",
+    "warn": ""
+  }
+]
