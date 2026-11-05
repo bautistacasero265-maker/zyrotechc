@@ -237,7 +237,7 @@ class App(ctk.CTk):
         ctk.CTkLabel(c3, text="Latencia del sistema", font=self.f_b, text_color=ACC, anchor="w").pack(fill="x", padx=18, pady=(16, 6))
         self.lat_lbl = ctk.CTkLabel(c3, text=self.lat_text(), font=self.f_n, text_color=TEXT, justify="left", anchor="w", wraplength=270); self.lat_lbl.pack(fill="x", padx=18)
         self.btn(c3, "Medir ahora", self.measure, "ghost", width=140).pack(anchor="w", padx=18, pady=10)
-        ctk.CTkLabel(c3, text="Un Sleep(1) tarda ~15 ms por defecto. " + ("Con el timer de Pro baja a ~1 ms mientras jugás." if not PRO else "Activá el timer en Gaming para bajarlo."), font=self.f_s, text_color=MUTE, wraplength=270, justify="left").pack(fill="x", padx=18, pady=(0, 14))
+        ctk.CTkLabel(c3, text="Sleep(1) es una medición orientativa de temporización de Windows; no predice por sí sola los FPS ni la latencia del juego.", font=self.f_s, text_color=MUTE, wraplength=270, justify="left").pack(fill="x", padx=18, pady=(0, 14))
         act = self.card(self.content); act.pack(fill="x", padx=28, pady=14)
         ctk.CTkLabel(act, text="Acciones rápidas", font=self.f_b, text_color=TEXT, anchor="w").pack(fill="x", padx=18, pady=(14, 6))
         r = ctk.CTkFrame(act, fg_color="transparent"); r.pack(fill="x", padx=18, pady=(0, 16))
@@ -521,7 +521,7 @@ class App(ctk.CTk):
     def page_game(self):
         self.heading("Gaming", "Funciones que actúan mientras jugás.")
         self.v_boost, self.v_timer, self.v_ram = (ctk.BooleanVar(value=bool(self.booster)), ctk.BooleanVar(), ctk.BooleanVar(value=bool(self.ram)))
-        self.feature("Game Booster automático", "Detecta tu juego al abrirlo: prioridad Alta al proceso, timer de 0.5 ms y purga de memoria en espera. Al cerrarlo, todo vuelve a la normalidad.", self.v_boost, self.toggle_boost)
+        self.feature("Game Booster automático", "Detecta los juegos compatibles, solicita temporalmente el timer de 0,5 ms y usa prioridad Above Normal solo si el proceso estaba en Normal o inferior. Restaura la prioridad al terminar el juego; no vacía automáticamente la memoria en espera.", self.v_boost, self.toggle_boost)
         self.feature("Timer de 0.5 ms", "Baja la resolución del temporizador de Windows mientras ZyroTech está abierto. Puede mejorar la consistencia del frame pacing; el efecto depende del juego y del equipo.", self.v_timer, lambda: core.set_timer(self.v_timer.get(), "manual"))
         self.feature("Limpiador de RAM", "Libera la lista de memoria en espera solo cuando ocupa 40% o más de tu RAM y queda menos de 15% libre. Puede reducir tirones cuando la memoria se llena.", self.v_ram, self.toggle_ram)
         c = self.card(self.content); c.pack(fill="x", padx=28, pady=5)
