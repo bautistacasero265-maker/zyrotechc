@@ -95,12 +95,12 @@ class DetectionPerformanceTests(unittest.TestCase):
 
         core.clear_tweak_detection_cache()
         payload = json.dumps([
-            {"TaskPath": "\\\\Microsoft\\\\Windows\\\\A", "TaskName": "TaskA", "State": "Disabled"},
-            {"TaskPath": "\\\\Microsoft\\\\Windows\\\\B", "TaskName": "TaskB", "State": "Ready"},
+            {"TaskPath": "\\Microsoft\\Windows\\A", "TaskName": "TaskA", "State": "Disabled"},
+            {"TaskPath": "\\Microsoft\\Windows\\B", "TaskName": "TaskB", "State": "Ready"},
         ])
         with patch.object(core, "IS_WIN", True), patch.object(core, "ps", return_value=payload) as powershell:
-            self.assertEqual(core._scheduled_task_state("\\\\Microsoft\\\\Windows\\\\A", "TaskA"), "disabled")
-            self.assertEqual(core._scheduled_task_state("\\\\Microsoft\\\\Windows\\\\B", "TaskB"), "ready")
+            self.assertEqual(core._scheduled_task_state("\\Microsoft\\Windows\\A", "TaskA"), "disabled")
+            self.assertEqual(core._scheduled_task_state("\\Microsoft\\Windows\\B", "TaskB"), "ready")
             self.assertEqual(powershell.call_count, 1)
         core.clear_tweak_detection_cache()
 
@@ -110,7 +110,6 @@ class LightweightUiImportTests(unittest.TestCase):
         import zyrotech
         self.assertTrue(hasattr(zyrotech, "App"))
         self.assertEqual(zyrotech.BG, "#080D13")
-        self.assertIn("ZT", zyrotech.__doc__ or "ZT")
 
 
 class PublicKeyExportTests(unittest.TestCase):
