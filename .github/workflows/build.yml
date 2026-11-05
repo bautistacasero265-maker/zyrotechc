@@ -44,6 +44,16 @@ jobs:
       - name: Build Free edition
         run: python tools/build.py free
 
+      - name: Build standalone Pro key exporter
+        run: >-
+          python -m PyInstaller --onefile --noconsole
+          --name ZyroTech-KeyExport
+          --hidden-import cryptography.hazmat.primitives.asymmetric.ed25519
+          --distpath dist-tools
+          --workpath build/work_keyexport
+          --specpath build
+          tools/export_public_key.py
+
       - name: Check whether Pro signing key is configured
         id: pro-key
         shell: pwsh
@@ -67,10 +77,18 @@ jobs:
           Write-Host "Se publicó el artefacto Free. Para compilar Pro, el propietario debe cargar únicamente su clave PÚBLICA en app/public_key.py."
           Write-Host "Nunca subir tools/zyrotech_private.pem."
 
-      - name: Upload executable artifacts
+      - name: Upload ZyroTech product executables
         uses: actions/upload-artifact@v4
         with:
           name: ZyroTech-Windows-x64
-          path: dist/*.exe
+          path: dist/ZyroTech-*.exe
           if-no-files-found: error
           retention-days: 14
+
+      - name: Upload seller key-export utility
+        uses: actions/upload-artifact@v4
+        with:
+          name: ZyroTech-Developer-Tools
+          path: dist-tools/ZyroTech-KeyExport.exe
+          if-no-files-found: error
+          retention-days: 30
