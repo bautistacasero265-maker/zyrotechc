@@ -293,44 +293,109 @@ class App(ctk.CTk):
         applied = {i for i, s in self.statuses.items() if s == "active"}
         return core.coverage([t for t in self.vis if core.applicable(t, self.hw)], applied, include_locked)
     def page_home(self):
-        self.heading("Panel", "Estado de tu equipo y qué tan cubierto está por las optimizaciones compatibles.")
-        row = ctk.CTkFrame(self.content, fg_color="transparent"); row.pack(fill="x", padx=28)
-        for i in range(3): row.grid_columnconfigure(i, weight=1, uniform="a")
-        hw = self.hw; c1 = self.card(row); c1.grid(row=0, column=0, sticky="nsew", padx=(0, 8))
-        ctk.CTkLabel(c1, text="Tu equipo", font=self.f_b, text_color=ACC, anchor="w").pack(fill="x", padx=18, pady=(16, 6))
-        for k, v in [("GPU", hw["gpu_name"]), ("CPU", hw["cpu_name"]), ("RAM", f'{hw["ram"]} GB'), ("Disco", "SSD / NVMe" if hw["ssd"] else "HDD"), ("Sistema", hw["os"]), ("Tipo", "Notebook" if hw["laptop"] else "Escritorio")]:
-            ctk.CTkLabel(c1, text=f"{k}:  {v}", font=self.f_n, text_color=TEXT, anchor="w", wraplength=270, justify="left").pack(fill="x", padx=18, pady=1)
-        ctk.CTkLabel(c1, text="").pack(pady=4)
-        cov = self.coverage(); cap = core.coverage([t for t in self.vis if core.applicable(t, self.hw)], {t["id"] for t in self.vis if not t.get("locked") and core.applicable(t, self.hw)})
-        c2 = self.card(row); c2.grid(row=0, column=1, sticky="nsew", padx=8)
-        ctk.CTkLabel(c2, text="Cobertura de optimización", font=self.f_b, text_color=ACC, anchor="w").pack(fill="x", padx=18, pady=(16, 0))
-        ctk.CTkLabel(c2, text=f"{cov}%", font=self.f_big, text_color=TEXT).pack(pady=(6, 0))
-        pb = ctk.CTkProgressBar(c2, height=12, progress_color=ACC, fg_color=CARD2); pb.set(cov / 100); pb.pack(fill="x", padx=20, pady=6)
-        compatible = [t for t in self.vis if core.applicable(t, self.hw) and t["mode"] == "track"]
-        active = sum(1 for t in compatible if self.statuses.get(t["id"]) == "active")
-        partial = sum(1 for t in compatible if self.statuses.get(t["id"]) == "partial")
-        ctk.CTkLabel(c2, text=f"{active} de {len(compatible)} tweaks compatibles activos", font=self.f_b, text_color=GREEN, wraplength=260).pack(pady=(2, 3))
-        ctk.CTkLabel(c2, text=f"{partial} parcialmente activos · incluye ajustes Pro detectados", font=self.f_s, text_color=GOLD, wraplength=260).pack(pady=(0, 6))
-        cap_txt = "Con Pro llegás al 100% de lo compatible." if PRO else f"Free llega hasta {cap}%. Pro desbloquea el 100%."
-        ctk.CTkLabel(c2, text=cap_txt, font=self.f_s, text_color=GOLD if not PRO else MUTE, wraplength=260).pack(pady=(0, 6))
-        ctk.CTkLabel(c2, text="Mide cuánto de los cambios compatibles aplicaste. No es una promesa de FPS.", font=self.f_s, text_color=MUTE, wraplength=260).pack(pady=(0, 14))
-        c3 = self.card(row); c3.grid(row=0, column=2, sticky="nsew", padx=(8, 0))
-        ctk.CTkLabel(c3, text="Latencia del sistema", font=self.f_b, text_color=ACC, anchor="w").pack(fill="x", padx=18, pady=(16, 6))
-        self.lat_lbl = ctk.CTkLabel(c3, text=self.lat_text(), font=self.f_n, text_color=TEXT, justify="left", anchor="w", wraplength=270); self.lat_lbl.pack(fill="x", padx=18)
-        self.btn(c3, "Medir ahora", self.measure, "ghost", width=140).pack(anchor="w", padx=18, pady=10)
-        ctk.CTkLabel(c3, text="Sleep(1) es una medición orientativa de temporización de Windows; no predice por sí sola los FPS ni la latencia del juego.", font=self.f_s, text_color=MUTE, wraplength=270, justify="left").pack(fill="x", padx=18, pady=(0, 14))
-        act = self.card(self.content); act.pack(fill="x", padx=28, pady=14)
-        ctk.CTkLabel(act, text="Acciones rápidas", font=self.f_b, text_color=TEXT, anchor="w").pack(fill="x", padx=18, pady=(14, 6))
-        r = ctk.CTkFrame(act, fg_color="transparent"); r.pack(fill="x", padx=18, pady=(0, 16))
-        self.btn(r, "Optimización recomendada", self.recommended, width=230).pack(side="left")
-        self.btn(r, "Crear punto de restauración", self.make_restore, "ghost", width=230).pack(side="left", padx=10)
-        self.btn(r, "Revertir todo", self.revert_all, "ghost", width=150).pack(side="left")
-        self.btn(r, "Actualizar análisis", self.refresh_scan, "ghost", width=165).pack(side="left", padx=10)
+        self.heading("Panel principal", "Una lectura clara del estado de tu PC y de las optimizaciones que realmente corresponden a tu equipo.")
+
+        eligible = [t for t in self.vis if t.get("mode") == "track" and core.applicable(t, self.hw)]
+        active = sum(1 for t in eligible if self.statuses.get(t["id"]) == "active")
+        partial = sum(1 for t in eligible if self.statuses.get(t["id"]) == "partial")
+        pending = sum(1 for t in eligible if self.statuses.get(t["id"]) == "inactive" and not t.get("locked"))
+        unknown = sum(1 for t in eligible if self.statuses.get(t["id"]) == "unknown")
+        incompatible = sum(1 for t in self.vis if self.statuses.get(t["id"]) == "incompatible")
+        coverage = self.coverage()
+
+        hero = self.card(self.content, fg="#101E2A")
+        hero.pack(fill="x", padx=30, pady=(0, 14))
+        hero_left = ctk.CTkFrame(hero, fg_color="transparent")
+        hero_left.pack(side="left", fill="both", expand=True, padx=20, pady=17)
+        ctk.CTkLabel(hero_left, text="ZYROTECH  /  SYSTEM OVERVIEW", font=ctk.CTkFont(family="Segoe UI", size=9, weight="bold"),
+                     text_color=ACC, anchor="w").pack(anchor="w")
+        ctk.CTkLabel(hero_left, text="Tu PC. Tu rendimiento. Tu control.", font=ctk.CTkFont(family="Segoe UI", size=20, weight="bold"),
+                     text_color=TEXT, anchor="w").pack(anchor="w", pady=(4, 3))
+        ctk.CTkLabel(hero_left, text="Análisis local · sin telemetría de ZyroTech · cambios reversibles cuando el tweak lo permite",
+                     font=self.f_s, text_color=MUTE, anchor="w").pack(anchor="w")
+        self.btn(hero, "↻  Actualizar análisis", self.refresh_scan, "ghost", width=175, height=40).pack(side="right", padx=20, pady=18)
+
+        stats = ctk.CTkFrame(self.content, fg_color="transparent")
+        stats.pack(fill="x", padx=30, pady=(0, 14))
+        for i in range(4): stats.grid_columnconfigure(i, weight=1, uniform="stats")
+
+        def stat(parent, col, label, value, note, tint):
+            box = self.card(parent, fg=CARD)
+            box.grid(row=0, column=col, sticky="nsew", padx=(0 if col == 0 else 6, 0 if col == 3 else 6))
+            ctk.CTkLabel(box, text=label.upper(), font=ctk.CTkFont(family="Segoe UI", size=9, weight="bold"),
+                         text_color=MUTE, anchor="w").pack(fill="x", padx=15, pady=(13, 1))
+            ctk.CTkLabel(box, text=str(value), font=ctk.CTkFont(family="Segoe UI", size=29, weight="bold"),
+                         text_color=tint, anchor="w").pack(fill="x", padx=15, pady=(0, 0))
+            ctk.CTkLabel(box, text=note, font=self.f_s, text_color=MUTE, anchor="w").pack(fill="x", padx=15, pady=(0, 13))
+
+        stat(stats, 0, "Tweaks activos", active, "Estado verificado en Windows", GREEN)
+        stat(stats, 1, "Recomendados", pending, "Compatibles y aún pendientes", ACC)
+        stat(stats, 2, "Parciales / sin lectura", partial + unknown, f"{partial} parciales · {unknown} no verificables", GOLD)
+        stat(stats, 3, "No compatibles", incompatible, "Se omiten automáticamente", MUTE)
+
+        row = ctk.CTkFrame(self.content, fg_color="transparent")
+        row.pack(fill="both", expand=True, padx=30, pady=(0, 12))
+        row.grid_columnconfigure(0, weight=3, uniform="home")
+        row.grid_columnconfigure(1, weight=2, uniform="home")
+        row.grid_rowconfigure(0, weight=1)
+
+        hw = self.hw
+        device = self.card(row)
+        device.grid(row=0, column=0, sticky="nsew", padx=(0, 7))
+        ctk.CTkLabel(device, text="HARDWARE DETECTADO", font=ctk.CTkFont(family="Segoe UI", size=10, weight="bold"),
+                     text_color=ACC, anchor="w").pack(fill="x", padx=19, pady=(16, 10))
+        specs = [
+            ("CPU", hw.get("cpu_name", "No detectado")),
+            ("GPU", hw.get("gpu_name", "No detectada")),
+            ("MEMORIA", f'{hw.get("ram", 0)} GB RAM'),
+            ("ALMACENAMIENTO", "SSD / NVMe" if hw.get("ssd") else "HDD / no identificado como SSD"),
+            ("SISTEMA", hw.get("os", "Windows")),
+            ("FORMATO", "Notebook" if hw.get("laptop") else "PC de escritorio"),
+        ]
+        spec_grid = ctk.CTkFrame(device, fg_color="transparent")
+        spec_grid.pack(fill="both", expand=True, padx=16, pady=(0, 15))
+        spec_grid.grid_columnconfigure(0, weight=1, uniform="spec")
+        spec_grid.grid_columnconfigure(1, weight=1, uniform="spec")
+        for idx, (label, value) in enumerate(specs):
+            rr, cc = divmod(idx, 2)
+            cell = ctk.CTkFrame(spec_grid, fg_color=CARD2, corner_radius=10)
+            cell.grid(row=rr, column=cc, sticky="nsew", padx=3, pady=3)
+            ctk.CTkLabel(cell, text=label, font=ctk.CTkFont(family="Segoe UI", size=9, weight="bold"),
+                         text_color=MUTE, anchor="w").pack(fill="x", padx=11, pady=(8, 1))
+            ctk.CTkLabel(cell, text=value, font=self.f_n, text_color=TEXT, anchor="w",
+                         wraplength=290, justify="left").pack(fill="x", padx=11, pady=(0, 8))
+
+        overview = self.card(row)
+        overview.grid(row=0, column=1, sticky="nsew", padx=(7, 0))
+        ctk.CTkLabel(overview, text="ESTADO DE OPTIMIZACIÓN", font=ctk.CTkFont(family="Segoe UI", size=10, weight="bold"),
+                     text_color=ACC, anchor="w").pack(fill="x", padx=18, pady=(16, 4))
+        ctk.CTkLabel(overview, text=f"{coverage}%", font=ctk.CTkFont(family="Segoe UI", size=39, weight="bold"),
+                     text_color=TEXT).pack(anchor="w", padx=17, pady=(0, 0))
+        pb = ctk.CTkProgressBar(overview, height=9, progress_color=ACC, fg_color=CARD2, corner_radius=6)
+        pb.set(coverage / 100); pb.pack(fill="x", padx=19, pady=(3, 9))
+        ctk.CTkLabel(overview, text=f"{active} ajustes activos de los compatibles y verificables.",
+                     font=self.f_s, text_color=MUTE, wraplength=300, justify="left").pack(fill="x", padx=18, pady=(0, 10))
+        ctk.CTkFrame(overview, fg_color=LINE, height=1).pack(fill="x", padx=18, pady=(0, 10))
+        ctk.CTkLabel(overview, text="LATENCIA DE TEMPORIZACIÓN", font=ctk.CTkFont(family="Segoe UI", size=9, weight="bold"),
+                     text_color=MUTE, anchor="w").pack(fill="x", padx=18)
+        self.lat_lbl = ctk.CTkLabel(overview, text=self.lat_text(), font=self.f_n, text_color=TEXT, anchor="w", justify="left")
+        self.lat_lbl.pack(fill="x", padx=18, pady=(4, 7))
+        self.btn(overview, "Medir ahora", self.measure, "ghost", width=130, height=34).pack(anchor="w", padx=18, pady=(0, 12))
+        ctk.CTkLabel(overview, text="La medición no equivale a FPS ni garantiza menor latencia dentro del juego.",
+                     font=ctk.CTkFont(family="Segoe UI", size=9), text_color=MUTE, wraplength=300,
+                     justify="left").pack(fill="x", padx=18, pady=(0, 12))
+
+        actions = self.card(self.content)
+        actions.pack(fill="x", padx=30, pady=(0, 18))
+        ctk.CTkLabel(actions, text="ACCIONES RÁPIDAS", font=ctk.CTkFont(family="Segoe UI", size=10, weight="bold"),
+                     text_color=ACC, anchor="w").pack(fill="x", padx=18, pady=(13, 8))
+        action_row = ctk.CTkFrame(actions, fg_color="transparent")
+        action_row.pack(fill="x", padx=18, pady=(0, 14))
+        self.btn(action_row, "◈  Ver recomendaciones", self.recommended, "acc", width=195).pack(side="left")
+        self.btn(action_row, "＋  Punto de restauración", self.make_restore, "ghost", width=205).pack(side="left", padx=8)
+        self.btn(action_row, "↶  Revertir todo", self.revert_all, "ghost", width=150).pack(side="left")
         if not PRO:
-            up = self.card(self.content, border_width=1, border_color=GOLD); up.pack(fill="x", padx=28)
-            ctk.CTkLabel(up, text=f"Pro: {sum(1 for t in self.vis if t.get('locked'))} optimizaciones más, Game Booster, perfiles, timer 0.5 ms y limpiador de RAM · {config.PRICE_TEXT}, pago único",
-                         font=self.f_b, text_color=GOLD, wraplength=720, justify="left").pack(side="left", padx=18, pady=14)
-            self.btn(up, "Ver Pro", self.go_buy, "gold", width=110).pack(side="right", padx=18)
+            self.badge(action_row, "PRO").pack(side="right", padx=8)
 
     def lat_text(self):
         l = self.settings.get("last_latency")
