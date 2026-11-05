@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Generador de licencias ZyroTech Pro (lo usás SOLO vos).
-  python tools/keygen.py init            crea tu clave privada (guardala y NO la subas) y escribe app/public_key.py
+  python tools/keygen.py init            crea el par inicial (solo si todavía no existe)
+  python tools/keygen.py export-public    deriva app/public_key.py desde tu clave privada existente
   python tools/keygen.py sign <CODIGO>   convierte el código de equipo del cliente en su licencia
 """
 import base64, csv, datetime, os, re, sys
@@ -29,6 +30,29 @@ def init():
         f.write("# Clave PÚBLICA (se puede subir a GitHub). La genera tools/keygen.py init\nPUBLIC_KEY_B32 = \"%s\"\n" % b32(pub))
     print("Listo. Guardá una copia de tools/zyrotech_private.pem en un lugar seguro (pendrive/nube privada). NO la subas a GitHub.")
 
+def export_public():
+    """Deriva solo la clave pública desde la privada existente, sin crear ni rotar claves."""
+    if not os.path.exists(PRIV):
+        sys.exit("No se encontró tools/zyrotech_private.pem. No generes otra clave si ya emitiste licencias.")
+    key = serialization.load_pem_private_key(open(PRIV, "rb").read(), None)
+    pub = key.public_key().public_bytes(serialization.Encoding.Raw, serialization.PublicFormat.Raw)
+    encoded = b32(pub)
+    if os.path.exists(PUBPY):
+        with open(PUBPY, encoding="utf-8") as f:
+            current = f.read()
+        match = re.search(r'PUBLIC_KEY_B32\\s*=\\s*"([^"]*)"', current)
+        if match and match.group(1) and match.group(1) != encoded:
+            sys.exit("La clave pública actual no coincide con la privada. No se modificó ningún archivo.")
+        if match and match.group(1) == encoded:
+            print("La clave pública ya coincide con la clave privada existente.")
+            return
+    with open(PUBPY, "w", encoding="utf-8") as f:
+        f.write("# Clave PÚBLICA derivada de tu clave privada existente. Se puede subir a GitHub.\\n")
+        f.write('PUBLIC_KEY_B32 = "%s"\\n' % encoded)
+    print("Clave pública exportada a app/public_key.py.")
+    print("Subí solamente app/public_key.py. Nunca subas tools/zyrotech_private.pem.")
+
+
 def sign(code):
     if not os.path.exists(PRIV): sys.exit("Falta la clave privada: corré primero `python tools/keygen.py init`.")
     payload = unb32(code)
@@ -46,5 +70,6 @@ def sign(code):
 if __name__ == "__main__":
     a = sys.argv[1:]
     if a[:1] == ["init"]: init()
+    elif a[:1] == ["export-public"]: export_public()
     elif a[:1] == ["sign"] and len(a) == 2: sign(a[1])
     else: print(__doc__)
