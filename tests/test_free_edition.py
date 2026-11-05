@@ -67,6 +67,20 @@ class FreeReleaseTests(unittest.TestCase):
         self.assertIn('self.navbar.grid(row=1, column=0, sticky="nsew")', self.ui)
         self.assertIn("WORKSPACE", self.ui)
 
+    def test_category_navigation_updates_content_without_rebuilding_page(self):
+        method = self.ui.split("def set_cat(self, m):", 1)[1].split("def fill_list", 1)[0]
+        self.assertIn("self.fill_list()", method)
+        self.assertNotIn('self.show("opt")', method)
+        self.assertIn("self.cat_buttons", method)
+        self.assertIn("self.category_title.configure(text=m)", method)
+
+    def test_free_ui_has_refined_dashboard_and_tweak_cards(self):
+        self.assertIn("Tu PC. Tu rendimiento.", self.ui)
+        self.assertIn("ESTADO DEL SISTEMA", self.ui)
+        self.assertIn("Resultados de búsqueda", self.ui)
+        self.assertIn("status_bg =", self.ui)
+        self.assertIn("LOCAL MODE", self.ui)
+
     def test_private_timer_and_ram_actions_are_not_in_free_core(self):
         self.assertNotIn("NtSetTimerResolution", self.core)
         self.assertNotIn("purge_standby", self.core)
