@@ -1,24 +1,18 @@
-"""ZyroTech Optimizer (Free / Pro). Ejecutar como Administrador."""
-import os, sys, threading, time, webbrowser
+"""ZyroTech Free · diagnóstico y ajustes locales de Windows."""
+import os, sys, threading, time
 import customtkinter as ctk
 from tkinter import messagebox
-import config, core, edition
+import core
 
-PRO = edition.EDITION == "pro"
-try:
-    import pro_features as pro
-except ImportError:
-    pro = None
-if PRO and pro is None: sys.exit("Falta pro_features.py")
 
 # ---------- Identidad visual ZyroTech / nueva interfaz ----------
 BG, SIDE, CARD, CARD2, LINE = "#0D0E14", "#14151E", "#191A25", "#222432", "#303245"
 TEXT, MUTE, RED, GOLD, GREEN = "#F3F2FA", "#9899AF", "#FF718B", "#FFC66D", "#C5FF55"
 CYAN, BLUE, PURPLE = "#A78BFA", "#72B7FF", "#B38BFF"
-ACC = CYAN if PRO else GREEN
+ACC = GREEN
 ACC_TXT = "#111019"
 HOVER = "#303146"
-BADGE = {"Breaking": RED, "Seguridad": RED, "Irreversible": RED, "Beta": PURPLE, "Energía": GOLD, "Info": BLUE, "Reinicio": BLUE, "Una vez": "#77798E", "PRO": GOLD}
+BADGE = {"Breaking": RED, "Seguridad": RED, "Irreversible": RED, "Beta": PURPLE, "Energía": GOLD, "Info": BLUE, "Reinicio": BLUE, "Una vez": "#77798E"}
 WARN_BANNER = ("Algunos cambios marcados bajan la seguridad del equipo. Revisá cada acción antes de aplicarla.")
 BAD_FOR_AUTO = {"Breaking", "Irreversible", "Beta", "Seguridad"}
 ORDER = ["Privacidad", "Debloat", "Gaming", "Kernel", "Energía", "Red", "Periféricos", "Interfaz", "Servicios", "Tareas", "Inicio", "Mantenimiento", "Seguridad básica", "Seguridad"]
@@ -28,11 +22,7 @@ ORDER = ["Privacidad", "Debloat", "Gaming", "Kernel", "Energía", "Red", "Perif�
 
 
 def load_tweaks():
-    f = os.path.join(core.BASE, f"tweaks_{edition.EDITION}.json")
-    if os.path.exists(f): return core.load_json(f, [])
-    full = core.load_json(os.path.join(core.BASE, "..", "tweaks.json"), [])  # modo desarrollo
-    if PRO: return full
-    return [t if t["tier"] == "free" else {**{k: v for k, v in t.items() if k != "actions"}, "locked": True} for t in full]
+    return core.load_json(os.path.join(core.BASE, "tweaks_free.json"), [])
 
 
 def headless_revert():
@@ -46,7 +36,7 @@ class App(ctk.CTk):
     def __init__(self):
         super().__init__()
         ctk.set_appearance_mode("dark")
-        self.wm_title("ZyroTech " + ("Pro" if PRO else "Free"))
+        self.wm_title("ZyroTech Free")
         self.geometry("1200x800")
         self.minsize(920, 640)
         self.configure(fg_color=BG)
@@ -67,7 +57,6 @@ class App(ctk.CTk):
         self.tweaks, self.vis, self.vars, self.hw, self.statuses = [], [], {}, None, {}
         self.restore_ok, self.cat, self.page = False, None, None
         self.licensed, self.comps = True, []
-        self.booster = self.ram = None
         self.pending_lbl = self.banner = None
 
         # Layout principal: cabecera + navegación horizontal + espacio de trabajo + estado.
@@ -92,9 +81,9 @@ class App(ctk.CTk):
 
         top_right = ctk.CTkFrame(self.topbar, fg_color="transparent")
         top_right.pack(side="right", padx=24)
-        ctk.CTkLabel(top_right, text="●  PROCESAMIENTO LOCAL" if PRO else "●  MODO LOCAL",
+        ctk.CTkLabel(top_right, text="●  MODO LOCAL",
                      font=self.f_s, text_color=GREEN).pack(side="left", padx=(0, 16))
-        self.edition_tag = ctk.CTkLabel(top_right, text="PRO" if PRO else "FREE",
+        self.edition_tag = ctk.CTkLabel(top_right, text="FREE",
                      fg_color=CARD2, text_color=ACC, corner_radius=8, font=self.f_s, padx=13, pady=7)
         self.edition_tag.pack(side="left")
         self.btn(top_right, "↻  ESCANEAR", self.refresh_scan, "ghost", height=34, width=125).pack(side="left", padx=(13, 0))
@@ -185,23 +174,9 @@ class App(ctk.CTk):
     def log(self, action, name, ok):
         self.hist.append({"t": time.strftime("%d/%m %H:%M"), "a": action, "n": name, "ok": ok}); self.hist = self.hist[-200:]
         core.save_json(core.data_path("history.json"), self.hist)
-    def go_buy(self):
-        url = (config.BUY_URL or "").strip()
-        if not url or "XXXXXXXX" in url.upper() or "XXX" in url.upper():
-            messagebox.showinfo("ZyroTech Pro", "El canal de compra todavía no está configurado.\n" + config.CONTACT)
-            return
-        webbrowser.open(url)
     def on_close(self):
-        for x in (self.booster, self.ram):
-            if x: x.stop()
-        try:
-            if PRO:
-                core.set_timer(False, "manual")
-                core.set_timer(False, "gamebooster")
-        except Exception: pass
         self.destroy()
 
-    # ---------- arranque ----------
     def boot(self):
         try: self.hw = core.hw_profile(core.scan_raw())
         except Exception:
@@ -215,7 +190,7 @@ class App(ctk.CTk):
             else:
                 try: self.statuses[t["id"]] = core.tweak_status(t)
                 except Exception: self.statuses[t["id"]] = "unknown"
-        # Free y Pro son ejecutables separados; no existe pantalla de licencia ni verificación por clave.
+        # Esta edición no contiene activación ni módulos Pro.
 
         self.after(0, self.ready)
 
@@ -271,25 +246,31 @@ class App(ctk.CTk):
         messagebox.showwarning("ZyroTech", f"No se pudo actualizar la detección: {message}")
 
     def ready(self):
-        self.vars = {t["id"]: ctk.BooleanVar(value=(self.statuses.get(t["id"]) in ("active", "partial") or
-                       (self.statuses.get(t["id"]) == "unknown" and t["id"] in self.st["applied"]))) for t in self.vis}
-        for w in self.navbar.winfo_children():
-            w.destroy()
+        self.vars = {
+            t["id"]: ctk.BooleanVar(value=(
+                self.statuses.get(t["id"]) in ("active", "partial")
+                or (self.statuses.get(t["id"]) == "unknown" and t["id"] in self.st["applied"])
+            )) for t in self.vis
+        }
+        for widget in self.navbar.winfo_children():
+            widget.destroy()
         self.nav = {}
         nav_items = [
             ("home", "◫", "Inicio"),
             ("opt", "⌁", "Ajustes"),
+            ("net", "⌘", "Red"),
+            ("hist", "◷", "Actividad"),
+            ("about", "⋯", "Acerca de"),
         ]
-        if PRO:
-            nav_items.extend([("profiles", "▦", "Perfiles"), ("game", "◉", "Gaming")])
-        nav_items.extend([("net", "⌘", "Red"), ("hist", "◷", "Actividad"), ("pro", "⋯", "Acerca de")])
         for key, glyph, label in nav_items:
-            b = ctk.CTkButton(self.navbar, text=f"{glyph}   {label}", anchor="center",
-                              fg_color="transparent", text_color=MUTE, hover_color=CARD2,
-                              corner_radius=9, height=38, font=self.f_b,
-                              command=lambda k=key: self.show(k))
-            b.pack(side="left", padx=(14 if key == "home" else 3, 3), pady=7)
-            self.nav[key] = b
+            button = ctk.CTkButton(
+                self.navbar, text=f"{glyph}   {label}", anchor="center",
+                fg_color="transparent", text_color=MUTE, hover_color=CARD2,
+                corner_radius=9, height=38, font=self.f_b,
+                command=lambda selected=key: self.show(selected)
+            )
+            button.pack(side="left", padx=(14 if key == "home" else 3, 3), pady=7)
+            self.nav[key] = button
         self.show("home")
 
     def show(self, key):
@@ -303,9 +284,11 @@ class App(ctk.CTk):
 
 
     # ---------- Panel ----------
-    def coverage(self, include_locked=True):
-        applied = {i for i, s in self.statuses.items() if s == "active"}
-        return core.coverage([t for t in self.vis if core.applicable(t, self.hw)], applied, include_locked)
+    def coverage(self):
+        applied = {tid for tid, state in self.statuses.items() if state == "active"}
+        applicable = [t for t in self.vis if core.applicable(t, self.hw)]
+        return core.coverage(applicable, applied)
+
     def page_home(self):
         eligible = [t for t in self.vis if t.get("mode") == "track" and core.applicable(t, self.hw)]
         active = sum(1 for t in eligible if self.statuses.get(t["id"]) == "active")
@@ -438,14 +421,18 @@ class App(ctk.CTk):
         threading.Thread(target=work, daemon=True).start()
 
     def recommended(self):
-        for t in self.vis:
-            ok = (not t.get("locked") and t["risk"] != "extreme" and t["mode"] == "track" and
-                  t.get("badge") not in BAD_FOR_AUTO and core.applicable(t, self.hw) and
-                  self.statuses.get(t["id"]) == "inactive")
-            self.vars[t["id"]].set(self.vars[t["id"]].get() or ok)
-        self.cat = ORDER[0]; self.show("opt")
+        for tweak in self.vis:
+            suitable = (
+                tweak["risk"] != "extreme"
+                and tweak["mode"] == "track"
+                and tweak.get("badge") not in BAD_FOR_AUTO
+                and core.applicable(tweak, self.hw)
+                and self.statuses.get(tweak["id"]) == "inactive"
+            )
+            self.vars[tweak["id"]].set(self.vars[tweak["id"]].get() or suitable)
+        self.cat = ORDER[0]
+        self.show("opt")
 
-    # ---------- Optimizar ----------
     def cats(self): return [m for m in ORDER if any(t["module"] == m and core.applicable(t, self.hw) for t in self.vis)]
     def page_opt(self):
         self.heading("Optimizar", "Activá lo que querés, revisá la lista de cambios pendientes y aplicá. Todo se puede revertir.")
@@ -468,7 +455,7 @@ class App(ctk.CTk):
         self.pending_lbl = ctk.CTkLabel(bar, text="", font=self.f_b, text_color=TEXT); self.pending_lbl.pack(side="left", padx=18, pady=12)
         self.risk_ok = ctk.BooleanVar(value=False)
         ctk.CTkCheckBox(bar, text="Entiendo los riesgos", variable=self.risk_ok, font=self.f_s, fg_color=ACC, hover_color=ACC, text_color=MUTE).pack(side="left", padx=10)
-        self.btn(bar, "Aplicar cambios" if PRO else "Aplicar uno", self.on_apply, width=145, height=40).pack(side="right", padx=14)
+        self.btn(bar, "Aplicar uno", self.on_apply, width=145, height=40).pack(side="right", padx=14)
         self.btn(bar, "Ver pendientes", self.show_pending, "ghost", width=140).pack(side="right")
         self.fill_list(); self.update_pending()
 
@@ -480,51 +467,95 @@ class App(ctk.CTk):
         for t in rows[:70]: self.tweak_row(t)
         if len(rows) > 70: ctk.CTkLabel(self.listf, text=f"Mostrando 70 de {len(rows)}. Afiná la búsqueda.", font=self.f_s, text_color=MUTE).pack(pady=8)
 
-    def tweak_row(self, t):
-        locked = bool(t.get("locked")); compatible = core.applicable(t, self.hw); status = self.statuses.get(t["id"], "unknown")
-        c = self.card(self.listf, fg=CARD, corner_radius=12, border_color=LINE); c.pack(fill="x", pady=4)
-        managed = t["id"] in self.st["applied"]
-        disabled = locked or not compatible or (t["mode"] == "track" and status == "unknown") or (status == "active" and not managed)
-        sw = ctk.CTkSwitch(c, text="", variable=self.vars[t["id"]], onvalue=True, offvalue=False,
-                           command=self.update_pending, progress_color=ACC, width=42,
-                           state="disabled" if disabled else "normal")
-        sw.pack(side="left", padx=(13, 5), pady=11)
-        title_color = GOLD if locked else RED if t["risk"] == "extreme" else TEXT
-        ctk.CTkLabel(c, text=t["name"], font=self.f_n, text_color=title_color, anchor="w",
-                     wraplength=390, justify="left").pack(side="left", fill="x", expand=True, padx=5)
-        tags = ([("PRO")] if locked else []) + ([t["badge"]] if t.get("badge") else []) + (["Reinicio"] if t.get("reboot") else []) + (["Una vez"] if t["mode"] == "once" else [])
-        state_label = ("No compatible" if not compatible else
-                       "Acción puntual" if status == "once" else
-                       "Activo" if status == "active" and managed else
-                       "Activo detectado" if status == "active" else
-                       "Parcialmente activo" if status == "partial" else
-                       "Estado no disponible" if status == "unknown" else "Disponible")
-        state_color = MUTE if not compatible or status == "unknown" else GREEN if status == "active" else GOLD if status == "partial" else TEXT
-        ctk.CTkLabel(c, text=state_label, font=self.f_s, text_color=state_color).pack(side="right", padx=7)
-        for b in tags: self.badge(c, b).pack(side="right", padx=3)
-        ctk.CTkButton(c, text="i", width=28, height=28, corner_radius=9, fg_color=CARD2,
-                      text_color=MUTE, hover_color=HOVER, command=lambda: self.info(t)).pack(side="right", padx=(0, 7))
+    def tweak_row(self, tweak):
+        compatible = core.applicable(tweak, self.hw)
+        status = self.statuses.get(tweak["id"], "unknown")
+        card = self.card(self.listf, fg=CARD, corner_radius=12, border_color=LINE)
+        card.pack(fill="x", pady=4)
+        managed = tweak["id"] in self.st["applied"]
+        disabled = (
+            not compatible
+            or (tweak["mode"] == "track" and status == "unknown")
+            or (status == "active" and not managed)
+        )
+        switch = ctk.CTkSwitch(
+            card, text="", variable=self.vars[tweak["id"]], onvalue=True, offvalue=False,
+            command=self.update_pending, progress_color=ACC, width=42,
+            state="disabled" if disabled else "normal"
+        )
+        switch.pack(side="left", padx=(13, 5), pady=11)
+        title_color = RED if tweak["risk"] == "extreme" else TEXT
+        ctk.CTkLabel(
+            card, text=tweak["name"], font=self.f_n, text_color=title_color,
+            anchor="w", wraplength=390, justify="left"
+        ).pack(side="left", fill="x", expand=True, padx=5)
+        tags = ([tweak["badge"]] if tweak.get("badge") else [])
+        if tweak.get("reboot"):
+            tags.append("Reinicio")
+        if tweak["mode"] == "once":
+            tags.append("Una vez")
+        status_label = (
+            "No compatible" if not compatible else
+            "Acción puntual" if status == "once" else
+            "Activo" if status == "active" and managed else
+            "Activo detectado" if status == "active" else
+            "Parcialmente activo" if status == "partial" else
+            "Estado no disponible" if status == "unknown" else "Disponible"
+        )
+        status_color = MUTE if not compatible or status == "unknown" else GREEN if status == "active" else GOLD if status == "partial" else TEXT
+        ctk.CTkLabel(card, text=status_label, font=self.f_s, text_color=status_color).pack(side="right", padx=7)
+        for tag in tags:
+            self.badge(card, tag).pack(side="right", padx=3)
+        ctk.CTkButton(
+            card, text="i", width=28, height=28, corner_radius=9,
+            fg_color=CARD2, text_color=MUTE, hover_color=HOVER,
+            command=lambda item=tweak: self.info(item)
+        ).pack(side="right", padx=(0, 7))
 
-    def info(self, t):
-        w = ctk.CTkToplevel(self); w.wm_title(t["name"]); w.geometry("640x420"); w.configure(fg_color=BG); w.after(120, w.lift)
-        ctk.CTkLabel(w, text=t["name"], font=self.f_b, text_color=TEXT, wraplength=590, justify="left").pack(anchor="w", padx=20, pady=(18, 4))
-        if t.get("warn"): ctk.CTkLabel(w, text=f'{t["badge"]}: {t["warn"]}', font=self.f_n, text_color=GOLD, wraplength=590, justify="left").pack(anchor="w", padx=20)
-        tb = ctk.CTkTextbox(w, fg_color=CARD, font=ctk.CTkFont(family="Consolas", size=11)); tb.pack(fill="both", expand=True, padx=20, pady=12)
-        if t.get("locked"): tb.insert("1.0", "Este cambio es parte de Pro. El detalle técnico se muestra al desbloquearlo.")
-        else:
-            for a in t["actions"]:
-                tb.insert("end", f'{a["path"]}\\{a["name"]} = {a["value"]}  ({a["vtype"]})\n' if a["type"] == "reg" else f'PowerShell: {a["cmd"]}\n')
-            tb.insert("end", "\nSe puede revertir al valor anterior." if t["mode"] == "track" else "\nSe ejecuta una vez y no se puede deshacer.")
-        tb.configure(state="disabled")
+    def info(self, tweak):
+        window = ctk.CTkToplevel(self)
+        window.wm_title(tweak["name"])
+        window.geometry("640x420")
+        window.configure(fg_color=BG)
+        window.after(120, window.lift)
+        ctk.CTkLabel(
+            window, text=tweak["name"], font=self.f_b, text_color=TEXT,
+            wraplength=590, justify="left"
+        ).pack(anchor="w", padx=20, pady=(18, 4))
+        if tweak.get("warn"):
+            ctk.CTkLabel(
+                window, text=f'{tweak.get("badge", "Aviso")}: {tweak["warn"]}',
+                font=self.f_n, text_color=GOLD, wraplength=590, justify="left"
+            ).pack(anchor="w", padx=20)
+        textbox = ctk.CTkTextbox(window, fg_color=CARD, font=ctk.CTkFont(family="Consolas", size=11))
+        textbox.pack(fill="both", expand=True, padx=20, pady=12)
+        for action in tweak["actions"]:
+            if action["type"] == "reg":
+                textbox.insert("end", f'{action["path"]}\\{action["name"]} = {action["value"]} ({action.get("vtype", "REG_DWORD")})\n')
+            elif action["type"] == "ps":
+                textbox.insert("end", f'PowerShell: {action["cmd"]}\n')
+            elif action["type"] == "scheduled_task":
+                textbox.insert("end", f'Tarea: {action["path"]}\\{action["name"]}\n')
+        ending = "Se puede revertir al valor anterior." if tweak["mode"] == "track" else "Acción puntual: no tiene reversión automática."
+        textbox.insert("end", "\n" + ending)
+        textbox.configure(state="disabled")
 
-    # ---------- pendientes y aplicar ----------
     def pending(self):
-        want = {t["id"] for t in self.vis if self.vars[t["id"]].get() and not t.get("locked")}; done = set(self.st["applied"])
-        ap = [t for t in self.vis if t["id"] in want and core.applicable(t, self.hw) and
-              self.statuses.get(t["id"]) != "unknown" and self.statuses.get(t["id"]) != "active" and
-              (t["id"] not in done or t["mode"] == "once" or self.statuses.get(t["id"]) == "partial")]
-        rv = [t for t in self.vis if t["id"] in done and t["id"] not in want]
-        return ap, rv
+        selected_ids = {t["id"] for t in self.vis if self.vars[t["id"]].get()}
+        applied_ids = set(self.st["applied"])
+        apply_items = [
+            t for t in self.vis
+            if t["id"] in selected_ids
+            and core.applicable(t, self.hw)
+            and self.statuses.get(t["id"]) not in ("unknown", "active")
+            and (t["id"] not in applied_ids or t["mode"] == "once" or self.statuses.get(t["id"]) == "partial")
+        ]
+        revert_items = [
+            t for t in self.vis
+            if t["id"] in applied_ids and t["id"] not in selected_ids
+        ]
+        return apply_items, revert_items
+
     def update_pending(self):
         if not self.pending_lbl or not self.pending_lbl.winfo_exists(): return
         ap, rv = self.pending(); self.pending_lbl.configure(text=f"{len(ap)} por aplicar · {len(rv)} por revertir")
@@ -549,7 +580,7 @@ class App(ctk.CTk):
     def on_apply(self):
         ap, rv = self.pending()
         if not ap and not rv: return
-        if not PRO and len(ap) > 1:
+        if len(ap) > 1:
             return messagebox.showinfo("ZyroTech Free", "La edición Free aplica un tweak por vez. Dejé todos seleccionados; aplicá uno y después seguí con el próximo.")
         if any(t["risk"] == "extreme" for t in ap) and not self.risk_ok.get():
             return messagebox.showwarning("ZyroTech", "Marcá 'Entiendo los riesgos' para aplicar los cambios en rojo.")
@@ -626,214 +657,72 @@ class App(ctk.CTk):
         threading.Thread(target=w, daemon=True).start()
 
     # ---------- Perfiles ----------
-    def page_profiles(self):
-        self.heading("Perfiles inteligentes", "Tres niveles de optimización. ZyroTech detecta el hardware, omite lo que ya está activo y filtra lo que no corresponde.")
-
-        hw = self.hw
-        summary = self.card(self.content, fg="#101E2A")
-        summary.pack(fill="x", padx=30, pady=(0, 15))
-        ctk.CTkLabel(summary, text="EQUIPO ANALIZADO", font=ctk.CTkFont(family="Segoe UI", size=9, weight="bold"),
-                     text_color=ACC, anchor="w").pack(fill="x", padx=18, pady=(12, 3))
-        ctk.CTkLabel(summary, text=f'{hw["cpu_name"]}   ·   {hw["gpu_name"]}   ·   {hw["ram"]} GB RAM   ·   {"Notebook" if hw["laptop"] else "Escritorio"}   ·   {hw["os"]}',
-                     font=self.f_n, text_color=TEXT, anchor="w", wraplength=900).pack(fill="x", padx=18, pady=(0, 12))
-
-        if not PRO:
-            c = self.card(self.content, border_width=1, border_color=GOLD)
-            c.pack(fill="x", padx=30, pady=10)
-            ctk.CTkLabel(c, text="DESBLOQUEÁ ZYROTECH PRO", font=ctk.CTkFont(family="Segoe UI", size=10, weight="bold"),
-                         text_color=GOLD, anchor="w").pack(fill="x", padx=20, pady=(20, 4))
-            ctk.CTkLabel(c, text="Tres perfiles automáticos para adaptar la optimización a cada computadora.",
-                         font=self.f_h1, text_color=TEXT, anchor="w").pack(fill="x", padx=20, pady=(0, 5))
-            ctk.CTkLabel(c, text="Lite para empezar con cambios conservadores. Medio para una selección equilibrada. Avanzado para todos los ajustes reversibles, compatibles y verificados. Free sigue mostrando los estados detectados y permite aplicar sus ajustes de a uno.",
-                         font=self.f_n, text_color=MUTE, wraplength=820, justify="left", anchor="w").pack(fill="x", padx=20, pady=(0, 12))
-            self.btn(c, "✦   Conocer ZyroTech Pro", self.go_buy, "gold", width=220, height=42).pack(anchor="w", padx=20, pady=(0, 18))
-            return
-
-        profiles = [
-            ("Lite", "Ⅰ", "Conservador", "Ajustes esenciales, reversibles y de bajo riesgo.", GREEN),
-            ("Medio", "Ⅱ", "Equilibrado", "Amplía la selección con optimizaciones verificadas para tu equipo.", CYAN),
-            ("Avanzado", "Ⅲ", "Completo", "La selección más amplia de cambios compatibles y reversibles.", PURPLE),
-        ]
-        grid = ctk.CTkFrame(self.content, fg_color="transparent")
-        grid.pack(fill="both", expand=True, padx=30, pady=(0, 10))
-        for i in range(3): grid.grid_columnconfigure(i, weight=1, uniform="profiles")
-        for idx, (name, numeral, subtitle, desc, tint) in enumerate(profiles):
-            result = pro.profile_preview(name, self.vis, self.hw, self.statuses)
-            c = self.card(grid, fg=CARD, border_color=tint if name == "Avanzado" else LINE)
-            c.grid(row=0, column=idx, sticky="nsew", padx=(0 if idx == 0 else 6, 0 if idx == 2 else 6))
-            ctk.CTkLabel(c, text=numeral, font=ctk.CTkFont(family="Segoe UI", size=25, weight="bold"),
-                         text_color=tint, anchor="w").pack(fill="x", padx=17, pady=(17, 2))
-            ctk.CTkLabel(c, text=name.upper(), font=ctk.CTkFont(family="Segoe UI", size=17, weight="bold"),
-                         text_color=TEXT, anchor="w").pack(fill="x", padx=17)
-            ctk.CTkLabel(c, text=subtitle.upper(), font=ctk.CTkFont(family="Segoe UI", size=9, weight="bold"),
-                         text_color=tint, anchor="w").pack(fill="x", padx=17, pady=(2, 11))
-            ctk.CTkLabel(c, text=desc, font=self.f_s, text_color=MUTE, anchor="w",
-                         justify="left", wraplength=230, height=42).pack(fill="x", padx=17, pady=(0, 10))
-            ctk.CTkLabel(c, text=str(len(result["apply"])), font=ctk.CTkFont(family="Segoe UI", size=34, weight="bold"),
-                         text_color=TEXT, anchor="w").pack(fill="x", padx=17)
-            ctk.CTkLabel(c, text="cambios listos para aplicar", font=self.f_s, text_color=MUTE,
-                         anchor="w").pack(fill="x", padx=17, pady=(0, 12))
-            ctk.CTkFrame(c, fg_color=LINE, height=1).pack(fill="x", padx=16, pady=(0, 10))
-            for label, value, color in [
-                ("Ya activos", len(result["active"]), GREEN),
-                ("Parciales", len(result["partial"]), GOLD),
-                ("No compatibles", len(result["incompatible"]), MUTE),
-                ("Excluidos por seguridad", len(result["unsafe"]), RED),
-            ]:
-                line = ctk.CTkFrame(c, fg_color="transparent")
-                line.pack(fill="x", padx=17, pady=2)
-                ctk.CTkLabel(line, text=label, font=self.f_s, text_color=MUTE, anchor="w").pack(side="left")
-                ctk.CTkLabel(line, text=str(value), font=self.f_b, text_color=color, anchor="e").pack(side="right")
-            self.btn(c, "Revisar perfil", lambda n=name: self.preview_profile(n),
-                     "gold" if name == "Avanzado" else "ghost", height=40).pack(fill="x", padx=15, pady=(15, 16))
-
-        note = self.card(self.content, fg="#101820")
-        note.pack(fill="x", padx=30, pady=(0, 16))
-        ctk.CTkLabel(note, text="APLICACIÓN INTELIGENTE", font=ctk.CTkFont(family="Segoe UI", size=9, weight="bold"),
-                     text_color=ACC, anchor="w").pack(fill="x", padx=17, pady=(11, 2))
-        ctk.CTkLabel(note, text="Aplicar todo omite los cambios ya activos, los incompatibles, los no verificables y los ajustes que necesitan una revisión manual. Siempre se muestra una vista previa y se intenta crear un punto de restauración antes de aplicar.",
-                     font=self.f_s, text_color=MUTE, anchor="w", wraplength=900, justify="left").pack(fill="x", padx=17, pady=(0, 11))
-
-    def preview_profile(self, name):
-        result = pro.profile_preview(name, self.vis, self.hw, self.statuses)
-        w = ctk.CTkToplevel(self); w.wm_title(f"ZyroTech Pro · Perfil {name}")
-        w.geometry("820x680"); w.minsize(680, 520); w.configure(fg_color=BG); w.after(120, w.lift)
-        header = ctk.CTkFrame(w, fg_color=SIDE, corner_radius=0)
-        header.pack(fill="x")
-        ctk.CTkLabel(header, text=f"PERFIL / {name.upper()}", font=ctk.CTkFont(family="Segoe UI", size=10, weight="bold"),
-                     text_color=ACC, anchor="w").pack(fill="x", padx=22, pady=(17, 2))
-        ctk.CTkLabel(header, text=f'{len(result["apply"])} listos · {len(result["active"])} activos · {len(result["partial"])} parciales',
-                     font=self.f_h2, text_color=TEXT, anchor="w").pack(fill="x", padx=22, pady=(0, 15))
-        box = ctk.CTkScrollableFrame(w, fg_color="transparent")
-        box.pack(fill="both", expand=True, padx=16, pady=12)
-        choices = {}
-        for t in result["apply"]:
-            v = ctk.BooleanVar(value=True); choices[t["id"]] = v
-            row = self.card(box, fg=CARD, corner_radius=10)
-            row.pack(fill="x", pady=3)
-            ctk.CTkCheckBox(row, text=t["name"], variable=v, font=self.f_n, text_color=TEXT,
-                            fg_color=ACC, hover_color=ACC, corner_radius=6).pack(fill="x", padx=12, pady=(9, 2))
-            ctk.CTkLabel(row, text=f'{t["module"]}{"  ·  requiere reinicio" if t.get("reboot") else ""}',
-                         font=self.f_s, text_color=MUTE, anchor="w").pack(fill="x", padx=39, pady=(0, 8))
-        for key, title, color in [
-            ("active", "YA ACTIVOS · SE OMITEN", GREEN),
-            ("partial", "PARCIALES · SE COMPLETAN", GOLD),
-            ("incompatible", "NO COMPATIBLES O SIN LECTURA FIABLE", MUTE),
-            ("unsafe", "EXCLUIDOS POR SEGURIDAD", RED),
-            ("locked", "BLOQUEADOS EN FREE", GOLD),
-            ("once", "ACCIONES PUNTUALES · FUERA DE PERFILES", MUTE),
-        ]:
-            items = result[key]
-            if items:
-                ctk.CTkLabel(box, text=f"{title}  ·  {len(items)}", font=self.f_b,
-                             text_color=color, anchor="w").pack(fill="x", pady=(13, 4))
-                for t in items:
-                    ctk.CTkLabel(box, text=f'—  {t["name"]}', font=self.f_s, text_color=MUTE,
-                                 anchor="w", wraplength=730, justify="left").pack(fill="x", padx=8, pady=2)
-        if not result["apply"]:
-            ctk.CTkLabel(box, text="Este perfil no tiene cambios pendientes para tu PC.",
-                         font=self.f_n, text_color=MUTE).pack(pady=22)
-        bar = ctk.CTkFrame(w, fg_color=SIDE, corner_radius=0)
-        bar.pack(fill="x")
-        self.btn(bar, "Marcar todos", lambda: [v.set(True) for v in choices.values()], "ghost", width=125).pack(side="left", padx=16, pady=13)
-        self.btn(bar, "Desmarcar", lambda: [v.set(False) for v in choices.values()], "ghost", width=125).pack(side="left", padx=4, pady=13)
-        self.btn(bar, "Aplicar seleccionados", lambda: self.execute_profile(w, result["apply"], choices, name),
-                 "ghost", width=185).pack(side="right", padx=(4, 16), pady=13)
-        self.btn(bar, "Aplicar todo", lambda: self.apply_all_profile(w, result["apply"], choices, name),
-                 "gold", width=135).pack(side="right", padx=4, pady=13)
-
-    def apply_all_profile(self, window, candidates, choices, name):
-        """Selecciona todos los cambios elegibles del perfil y abre la confirmación final."""
-        for variable in choices.values():
-            variable.set(True)
-        self.execute_profile(window, candidates, choices, name)
-
-    def execute_profile(self, window, candidates, choices, name):
-        selected = [t for t in candidates if choices[t["id"]].get()]
-        if not selected: return messagebox.showinfo("ZyroTech", "No seleccionaste cambios para aplicar.", parent=window)
-        if not self.need_admin(): return
-        if not messagebox.askyesno("Confirmar perfil", f"Se aplicarán {len(selected)} cambios elegibles del perfil {name}. Los tweaks ya activos e incompatibles se omiten. ZyroTech intentará crear un punto de restauración y un backup antes de continuar. ¿Seguimos?", parent=window): return
-        window.destroy(); self.say(f"Aplicando perfil {name}...", 0.05)
-        threading.Thread(target=lambda: self.run_apply(selected, [], lambda: self.show("profiles")), daemon=True).start()
-
-    # ---------- Gaming ----------
-    def locked_note(self, c, text):
-        r = ctk.CTkFrame(c, fg_color="transparent"); r.pack(fill="x", padx=18, pady=(0, 14)); self.badge(r, "PRO").pack(side="left")
-        ctk.CTkLabel(r, text=text, font=self.f_s, text_color=MUTE).pack(side="left", padx=8); self.btn(r, "Desbloquear", self.go_buy, "gold", width=110, height=28).pack(side="right")
-    def feature(self, title, desc, var=None, cmd=None):
-        c = self.card(self.content); c.pack(fill="x", padx=28, pady=5)
-        h = ctk.CTkFrame(c, fg_color="transparent"); h.pack(fill="x", padx=18, pady=(14, 2))
-        ctk.CTkLabel(h, text=title, font=self.f_b, text_color=TEXT).pack(side="left")
-        if PRO and cmd: ctk.CTkSwitch(h, text="", variable=var, command=cmd, progress_color=GOLD, width=46).pack(side="right")
-        ctk.CTkLabel(c, text=desc, font=self.f_n, text_color=MUTE, anchor="w", wraplength=860, justify="left").pack(fill="x", padx=18, pady=(0, 12 if PRO else 6))
-        if not PRO: self.locked_note(c, "Incluido en ZyroTech Pro")
-    def page_game(self):
-        self.heading("Gaming", "Funciones que actúan mientras jugás.")
-        self.v_boost, self.v_timer, self.v_ram = (ctk.BooleanVar(value=bool(self.booster)), ctk.BooleanVar(), ctk.BooleanVar(value=bool(self.ram)))
-        self.feature("Game Booster automático", "Detecta los juegos compatibles, solicita temporalmente el timer de 0,5 ms y usa prioridad Above Normal solo si el proceso estaba en Normal o inferior. Restaura la prioridad al terminar el juego; no vacía automáticamente la memoria en espera.", self.v_boost, self.toggle_boost)
-        self.feature("Timer de 0.5 ms", "Solicita una resolución de temporizador de 0,5 ms mientras esta opción está encendida. Puede aumentar el consumo y no garantiza mejores FPS ni menor latencia.", self.v_timer, lambda: core.set_timer(self.v_timer.get(), "manual"))
-        self.feature("Mantenimiento de memoria", "Opcional y desactivado por defecto. Solo purga la lista Standby cuando supera 40% de la RAM y queda menos de 15% libre. Windows suele gestionar esta memoria; purgarla puede forzar nuevas lecturas de disco y empeorar tirones.", self.v_ram, self.toggle_ram)
-        c = self.card(self.content); c.pack(fill="x", padx=28, pady=5)
-        ctk.CTkLabel(c, text="Perfiles Lite, Medio y Avanzado", font=self.f_b, text_color=TEXT, anchor="w").pack(fill="x", padx=18, pady=(14, 2))
-        ctk.CTkLabel(c, text="Detectan compatibilidad y cambios ya activos, muestran una vista previa y te dejan elegir qué aplicar.", font=self.f_n, text_color=MUTE, anchor="w").pack(fill="x", padx=18)
-        self.btn(c, "Ver perfiles", lambda: self.show("profiles"), "gold" if PRO else "ghost", width=150).pack(anchor="w", padx=18, pady=(8, 14))
-        if PRO:
-            g = self.card(self.content); g.pack(fill="x", padx=28, pady=5)
-            ctk.CTkLabel(g, text="Agregar un juego al Game Booster (nombre del .exe)", font=self.f_b, text_color=TEXT, anchor="w").pack(fill="x", padx=18, pady=(14, 4))
-            r = ctk.CTkFrame(g, fg_color="transparent"); r.pack(fill="x", padx=18, pady=(0, 14)); self.game_e = ctk.CTkEntry(r, placeholder_text="ej: eldenring.exe", fg_color=CARD2, border_color=LINE, width=300); self.game_e.pack(side="left")
-            self.btn(r, "Agregar", self.add_game, "ghost", width=110).pack(side="left", padx=8)
-            ctk.CTkLabel(r, text=f'{len(pro.GAMES) + len(self.settings["games"])} juegos detectados', font=self.f_s, text_color=MUTE).pack(side="left", padx=8)
-    def toggle_boost(self):
-        if self.booster: self.booster.stop(); self.booster = None
-        if self.v_boost.get(): self.booster = pro.GameBooster(self.settings["games"], lambda m: self.say(m)); self.booster.start()
-    def toggle_ram(self):
-        if self.ram: self.ram.stop(); self.ram = None
-        if self.v_ram.get(): self.ram = pro.RamCleaner(lambda m: self.say(m)); self.ram.start()
-    def add_game(self):
-        n = self.game_e.get().strip().lower()
-        if n.endswith(".exe") and n not in self.settings["games"]:
-            self.settings["games"].append(n); core.save_json(core.data_path("settings.json"), self.settings); self.show("game")
-    def apply_profile(self, name):
-        self.preview_profile(name)
-
-    # ---------- Red ----------
     def page_net(self):
-        self.heading("Red", "Probá qué servidor DNS responde más rápido desde tu conexión.")
-        c = self.card(self.content); c.pack(fill="x", padx=28, pady=4)
-        r = ctk.CTkFrame(c, fg_color="transparent"); r.pack(fill="x", padx=18, pady=14)
-        self.btn(r, "Probar DNS", self.dns_test, width=150).pack(side="left")
-        self.best_btn = self.btn(r, "Usar el más rápido", self.dns_apply, "gold", width=180, state="disabled" if PRO else "disabled"); self.best_btn.pack(side="left", padx=10)
-        if PRO: self.btn(r, "Restaurar DNS automático", self.dns_reset, "ghost", width=210).pack(side="left")
-        else: self.badge(r, "PRO").pack(side="left", padx=4); ctk.CTkLabel(r, text="Aplicar el mejor DNS es de Pro", font=self.f_s, text_color=MUTE).pack(side="left")
-        self.dns_f = ctk.CTkFrame(self.content, fg_color="transparent"); self.dns_f.pack(fill="x", padx=28, pady=8); self.dns_best = None
-    def dns_test(self):
-        for w in self.dns_f.winfo_children(): w.destroy()
-        def work():
-            res = []
-            for i, (name, ip) in enumerate(core.DNS_SERVERS, 1):
-                self.say(f"Probando {name}...", i / len(core.DNS_SERVERS)); res.append((name, ip, core.dns_rtt(ip)))
-            res.sort(key=lambda x: (x[2] is None, x[2] or 0)); self.after(0, lambda: self.dns_show(res)); self.say("Prueba de DNS terminada.", 0)
-        threading.Thread(target=work, daemon=True).start()
-    def dns_show(self, res):
-        if self.page != "net": return
-        mx = max([x[2] for x in res if x[2]] or [1])
-        for i, (name, ip, ms) in enumerate(res):
-            c = self.card(self.dns_f); c.pack(fill="x", pady=3)
-            ctk.CTkLabel(c, text=f"{name}  ·  {ip}", font=self.f_n, text_color=GREEN if i == 0 and ms else TEXT, width=250, anchor="w").pack(side="left", padx=16, pady=10)
-            pb = ctk.CTkProgressBar(c, height=8, progress_color=GREEN if i == 0 and ms else ACC, fg_color=CARD2); pb.set(0 if ms is None else max(0.04, 1 - ms / (mx * 1.15))); pb.pack(side="left", fill="x", expand=True, padx=10)
-            ctk.CTkLabel(c, text="sin respuesta" if ms is None else f"{ms:.0f} ms", font=self.f_b, text_color=TEXT, width=100).pack(side="right", padx=16)
-        self.dns_best = next(((n, ip) for n, ip, ms in res if ms), None)
-        if PRO and self.dns_best: self.best_btn.configure(state="normal")
-    def dns_apply(self):
-        if not self.dns_best or not self.need_admin(): return
-        ip = self.dns_best[1]; alt = {"1.1.1.1": "1.0.0.1", "8.8.8.8": "8.8.4.4", "9.9.9.9": "149.112.112.112", "208.67.222.222": "208.67.220.220"}.get(ip)
-        try: self.st["applied"]["DNS"] = pro.apply_dns(ip, alt); core.save_json(core.data_path("state.json"), self.st); self.log("Aplicado", f"DNS {self.dns_best[0]}", True); self.say(f"DNS {self.dns_best[0]} aplicado.", 0)
-        except Exception as e: self.say(f"No se pudo cambiar el DNS: {e}", 0)
-    def dns_reset(self):
-        if not self.need_admin(): return
-        core.run_undo(self.st["applied"].pop("DNS", [{"type": "ps", "cmd": "Get-NetAdapter -Physical | Set-DnsClientServerAddress -ResetServerAddresses"}])); core.save_json(core.data_path("state.json"), self.st); self.say("DNS restaurado.", 0)
+        self.heading(
+            "Diagnóstico de red",
+            "Compará la respuesta de servidores DNS desde tu conexión. No equivale al ping de un servidor de juego."
+        )
+        body = ctk.CTkScrollableFrame(self.content, fg_color="transparent")
+        body.pack(fill="both", expand=True, padx=28, pady=(0, 14))
+        card = self.card(body, corner_radius=16)
+        card.pack(fill="x", pady=4)
+        row = ctk.CTkFrame(card, fg_color="transparent")
+        row.pack(fill="x", padx=18, pady=15)
+        self.btn(row, "Iniciar prueba DNS", self.dns_test, width=180).pack(side="left")
+        ctk.CTkLabel(
+            row, text="Mide consultas DNS reales; no cambia la configuración de Windows.",
+            font=self.f_s, text_color=MUTE
+        ).pack(side="left", padx=12)
+        self.dns_f = ctk.CTkFrame(body, fg_color="transparent")
+        self.dns_f.pack(fill="x", pady=8)
+        self.dns_best = None
 
-    # ---------- Historial ----------
+    def dns_test(self):
+        for widget in self.dns_f.winfo_children():
+            widget.destroy()
+        ctk.CTkLabel(
+            self.dns_f, text="Consultando servidores DNS...",
+            font=self.f_n, text_color=MUTE
+        ).pack(anchor="w", pady=10)
+        def work():
+            results = []
+            for index, (name, address) in enumerate(core.DNS_SERVERS, 1):
+                self.say(f"Probando {name}...", index / len(core.DNS_SERVERS))
+                results.append((name, address, core.dns_rtt(address)))
+            results.sort(key=lambda item: (item[2] is None, item[2] or 0))
+            self.after(0, lambda: self.dns_show(results))
+            self.say("Prueba de DNS terminada.", 0)
+        threading.Thread(target=work, daemon=True).start()
+
+    def dns_show(self, results):
+        if self.page != "net":
+            return
+        for widget in self.dns_f.winfo_children():
+            widget.destroy()
+        card = self.card(self.dns_f, corner_radius=15)
+        card.pack(fill="x", pady=4)
+        ctk.CTkLabel(
+            card, text="RESULTADOS DNS",
+            font=ctk.CTkFont(family="Segoe UI", size=9, weight="bold"),
+            text_color=ACC, anchor="w"
+        ).pack(fill="x", padx=16, pady=(13, 5))
+        for index, (name, address, latency) in enumerate(results):
+            row = ctk.CTkFrame(card, fg_color=CARD2, corner_radius=10)
+            row.pack(fill="x", padx=12, pady=3)
+            ctk.CTkLabel(
+                row, text=f"{name} · {address}", font=self.f_n,
+                text_color=GREEN if index == 0 and latency is not None else TEXT,
+                width=260, anchor="w"
+            ).pack(side="left", padx=12, pady=10)
+            ctk.CTkLabel(
+                row, text="sin respuesta" if latency is None else f"{latency:.1f} ms",
+                font=self.f_b, text_color=TEXT, width=110, anchor="e"
+            ).pack(side="right", padx=12)
+        ctk.CTkLabel(
+            card, text="El DNS más rápido en estas consultas no garantiza una mejora en juegos.",
+            font=self.f_s, text_color=MUTE
+        ).pack(anchor="w", padx=15, pady=(6, 12))
+
     def page_hist(self):
         self.heading("Historial", "Lo que está aplicado ahora y el registro de cambios. Cada uno se revierte por separado.")
         box = ctk.CTkScrollableFrame(self.content, fg_color="transparent"); box.pack(fill="both", expand=True, padx=28, pady=(0, 12))
@@ -857,42 +746,44 @@ class App(ctk.CTk):
         self.show("hist")
 
     # ---------- Acerca de / versión ----------
-    def page_pro(self):
-        self.heading("Acerca de ZyroTech", "Herramientas locales para entender y ajustar Windows con más control.")
+    def page_about(self):
+        self.heading(
+            "Acerca de ZyroTech Free",
+            "Herramientas locales para entender y ajustar Windows con control."
+        )
         body = ctk.CTkScrollableFrame(self.content, fg_color="transparent")
         body.pack(fill="both", expand=True, padx=28, pady=(0, 16))
-        c = self.card(body, fg="#1B1B2A", corner_radius=18, border_color="#39354F")
-        c.pack(fill="x", pady=(0, 12))
-        ctk.CTkLabel(c, text="ZYROTECH " + ("PRO" if PRO else "FREE"),
-                     font=ctk.CTkFont(family="Segoe UI", size=24, weight="bold"),
-                     text_color=ACC, anchor="w").pack(fill="x", padx=22, pady=(20, 4))
-        ctk.CTkLabel(c, text="Dos aplicaciones independientes. Sin cuentas, claves ni activaciones dentro de la app.",
-                     font=self.f_n, text_color=TEXT, anchor="w").pack(fill="x", padx=22, pady=(0, 16))
+        hero = self.card(body, fg="#1B1B2A", corner_radius=18, border_color="#39354F")
+        hero.pack(fill="x", pady=(0, 12))
+        ctk.CTkLabel(
+            hero, text="ZYROTECH FREE",
+            font=ctk.CTkFont(family="Segoe UI", size=24, weight="bold"),
+            text_color=ACC, anchor="w"
+        ).pack(fill="x", padx=22, pady=(20, 4))
+        ctk.CTkLabel(
+            hero, text="Diagnóstico y ajustes para Windows. Sin cuentas, servidores ni activaciones.",
+            font=self.f_n, text_color=TEXT, anchor="w"
+        ).pack(fill="x", padx=22, pady=(0, 16))
         cards = ctk.CTkFrame(body, fg_color="transparent")
         cards.pack(fill="x")
         cards.grid_columnconfigure((0, 1), weight=1, uniform="about")
         items = [
-            ("PRIVACIDAD", "El análisis se ejecuta localmente. ZyroTech no necesita una cuenta ni un servidor para funcionar."),
-            ("CONTROL", "Cada ajuste muestra su estado. Podés revisar, aplicar y revertir cambios cuando exista una reversión definida."),
-            ("COMPATIBILIDAD", "La detección filtra ajustes según hardware y versión de Windows; lo desconocido no se presenta como seguro."),
-            ("TRANSPARENCIA", "La cobertura representa ajustes comprobados, no una promesa de FPS ni una puntuación de rendimiento."),
+            ("PRIVACIDAD", "El análisis se ejecuta localmente."),
+            ("CONTROL", "Cada ajuste muestra su estado y puede revertirse cuando existe una acción inversa."),
+            ("COMPATIBILIDAD", "La detección filtra ajustes según hardware y versión de Windows."),
+            ("TRANSPARENCIA", "La cobertura representa ajustes comprobados, no una promesa de FPS."),
         ]
-        for i, (title, desc) in enumerate(items):
-            cc = ctk.CTkFrame(cards, fg_color=CARD, corner_radius=14, border_width=1, border_color=LINE)
-            cc.grid(row=i//2, column=i%2, sticky="nsew", padx=4, pady=4)
-            ctk.CTkLabel(cc, text=title, font=ctk.CTkFont(family="Segoe UI", size=9, weight="bold"),
-                         text_color=ACC, anchor="w").pack(fill="x", padx=16, pady=(14, 5))
-            ctk.CTkLabel(cc, text=desc, font=self.f_s, text_color=MUTE, anchor="w",
-                         wraplength=410, justify="left").pack(fill="x", padx=16, pady=(0, 15))
-        if not PRO:
-            note = self.card(body, fg=CARD2)
-            note.pack(fill="x", pady=(12, 0))
-            ctk.CTkLabel(note, text="EDICIÓN FREE", font=self.f_b, text_color=ACC,
-                         anchor="w").pack(fill="x", padx=18, pady=(13, 3))
-            ctk.CTkLabel(note, text="Esta aplicación funciona por separado. La edición Pro se distribuye como otro ejecutable y no se desbloquea con una clave dentro de Free.",
-                         font=self.f_s, text_color=MUTE, anchor="w",
-                         wraplength=880, justify="left").pack(fill="x", padx=18, pady=(0, 13))
-
+        for index, (title, description) in enumerate(items):
+            tile = ctk.CTkFrame(cards, fg_color=CARD, corner_radius=14, border_width=1, border_color=LINE)
+            tile.grid(row=index // 2, column=index % 2, sticky="nsew", padx=4, pady=4)
+            ctk.CTkLabel(
+                tile, text=title, font=ctk.CTkFont(family="Segoe UI", size=9, weight="bold"),
+                text_color=ACC, anchor="w"
+            ).pack(fill="x", padx=16, pady=(14, 5))
+            ctk.CTkLabel(
+                tile, text=description, font=self.f_s, text_color=MUTE, anchor="w",
+                wraplength=410, justify="left"
+            ).pack(fill="x", padx=16, pady=(0, 15))
 
 if __name__ == "__main__":
     if "--revert-all" in sys.argv: headless_revert(); sys.exit(0)
