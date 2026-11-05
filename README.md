@@ -22,7 +22,7 @@
 
 ## Interfaz
 
-ZyroTech Free utiliza una interfaz oscura de alto contraste con acentos cian, violeta y lima, navegación lateral persistente, dashboard de diagnóstico, categorías con contadores y tarjetas de ajustes con estados visibles. Cambiar de sección o categoría no reinicia la selección de ajustes; la búsqueda y las confirmaciones se conservan al navegar. El análisis del equipo y de los ajustes corre en un hilo separado para evitar bloquear la interfaz.
+ZyroTech Free utiliza una interfaz oscura de alto contraste con identidad visual propia, acentos cian y lima, panel lateral persistente, dashboard de estado del sistema y tarjetas de ajustes con estados destacados. Las categorías actualizan el panel de resultados en el momento, sin reconstruir la pantalla ni perder switches, búsqueda o confirmaciones. El análisis del equipo y de los ajustes corre en un hilo separado para evitar bloquear la interfaz.
 
 ## Releases y compilación automática
 
