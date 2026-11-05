@@ -40,7 +40,7 @@ Ver `replica/feedback.md` (con fuentes). Resumen: compatibilidad por hardware, e
 Modo seguro → ejecutá `ZyroTech-Free.exe --revert-all` como administrador, o usá Restaurar sistema (queda un punto "ZyroTech - antes de optimizar").
 
 ## Límites que tenés que saber
-- **La compilación y los cambios de registro/PowerShell deben verificarse en Windows.** Este ZIP contiene el código fuente; la compilación requiere Python 3.12 y sus dependencias, y Pro requiere inicializar la clave de firma del vendedor.
+- **La compilación y los cambios de registro/PowerShell deben verificarse en Windows.** GitHub Actions compila Free; Pro requiere que `app/public_key.py` contenga la clave pública del vendedor que corresponda a su clave privada.
 - La "cobertura" del Panel mide cuántos cambios compatibles aplicaste; no promete FPS. Varios tweaks son marginales y dependen del equipo.
 - No vi la interfaz de EXM Tweaks ni de voltX. Usé el patrón común de estas apps (menú lateral, categorías, interruptores, avisos) con diseño, nombre, colores y textos propios; no copié su código, logos ni textos.
 - El .exe sin firmar muestra SmartScreen y puede dar falso positivo en antivirus (PyInstaller + cambios de registro).
