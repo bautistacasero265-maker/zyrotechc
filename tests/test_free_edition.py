@@ -56,6 +56,17 @@ class FreeReleaseTests(unittest.TestCase):
         self.assertIn("if len(ap) > 1:", self.ui)
         self.assertIn("Aplicar uno", self.ui)
 
+    def test_navigation_preserves_selection_and_search(self):
+        self.assertIn("self.search_query = self.search.get()", self.ui)
+        self.assertIn("self.risk_ack = bool(self.risk_ok.get())", self.ui)
+        self.assertIn("def set_cat(self, m):", self.ui)
+        category_method = self.ui.split("def set_cat(self, m):", 1)[1].split("def fill_list", 1)[0]
+        self.assertNotIn('self.search_query = ""', category_method)
+
+    def test_new_workspace_sidebar_layout(self):
+        self.assertIn('self.navbar.grid(row=1, column=0, sticky="nsew")', self.ui)
+        self.assertIn("WORKSPACE", self.ui)
+
     def test_private_timer_and_ram_actions_are_not_in_free_core(self):
         self.assertNotIn("NtSetTimerResolution", self.core)
         self.assertNotIn("purge_standby", self.core)
