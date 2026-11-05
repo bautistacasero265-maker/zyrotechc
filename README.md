@@ -9,11 +9,15 @@
 - Pro ofrece vista previa, selección individual y aplicación por lote. Lite es conservador; Medio amplía la selección; Avanzado propone los cambios reversibles compatibles del catálogo. Los cambios ya activos, incompatibles, no verificables, irreversibles o marcados como riesgosos se omiten.
 - Ningún perfil garantiza una mejora de FPS. Los resultados dependen del equipo, Windows y las aplicaciones instaladas.
 
-## Pasos para armar las dos apps (en Windows)
-1. Instalá Python 3.12 desde python.org (marcá "Add to PATH").
-2. Descomprimí esta carpeta. Abrí `app/config.py` y poné tu link de compra (`BUY_URL`), tu contacto (`CONTACT`) y el precio (`PRICE_TEXT`).
-3. Doble clic en `build.bat`. La primera vez crea tu clave privada (`tools/zyrotech_private.pem`) y compila. Los .exe quedan en `dist/`.
-4. **Guardá una copia de `tools/zyrotech_private.pem`** (pendrive o nube privada). Si la perdés no podés emitir más licencias; si la filtrás, cualquiera puede fabricarlas. No la subas a GitHub (ya está en `.gitignore`).
+## Compilación automática (sin instalar herramientas en tu PC)
+1. El workflow `.github/workflows/build.yml` compila en una máquina Windows de GitHub Actions cuando se actualiza la rama `zyrotech-profiles-auto-detection`.
+2. Abre la pestaña **Actions**, entra en el último workflow **Build ZyroTech** y descarga el artefacto `ZyroTech-Windows-x64`.
+3. El ZIP del artefacto contiene `ZyroTech-Free.exe`. Pro se agrega automáticamente solo cuando `app/public_key.py` tiene la clave pública correspondiente a la clave privada del vendedor.
+4. Para compilar localmente como alternativa, usá `build.bat` en Windows con Python 3.12 y las dependencias de `requirements-build.txt`.
+
+**La compilación Free ya funciona en Actions.** El archivo público `app/public_key.py` está vacío en la fuente inspeccionada, por eso el workflow no fabrica una clave nueva ni compila Pro todavía. No corras `keygen.py init` si ya existe una clave privada usada para licencias: eso cambiaría el par de claves y puede invalidar las licencias anteriores.
+
+La clave privada `tools/zyrotech_private.pem` debe quedarse solamente en tu equipo o en un almacén privado seguro; nunca subirla al repo, a un Release ni al ejecutable. La clave pública sí puede estar en GitHub.
 
 ## Cómo vendés una licencia Pro
 1. El cliente abre `ZyroTech-Pro.exe`: ve su **código de equipo** y lo copia. Se genera solo.
