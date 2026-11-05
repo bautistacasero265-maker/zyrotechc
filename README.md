@@ -19,6 +19,8 @@
 
 La clave privada `tools/zyrotech_private.pem` debe quedarse solamente en tu equipo o en un almacén privado seguro; nunca subirla al repo, a un Release ni al ejecutable. La clave pública sí puede estar en GitHub.
 
+Para habilitar Pro sin cambiar las licencias anteriores, copiá tu archivo privado existente a `tools/zyrotech_private.pem` en tu copia local de esta rama y ejecutá `python tools/keygen.py export-public`. Esto solo deriva `app/public_key.py` desde la clave privada existente. Subí únicamente `app/public_key.py`; no subas el archivo PEM. El siguiente push hará que Actions compile Free y Pro. No ejecutes `init` si ya emitiste licencias.
+
 ## Cómo vendés una licencia Pro
 1. El cliente abre `ZyroTech-Pro.exe`: ve su **código de equipo** y lo copia. Se genera solo.
 2. Te lo manda. Vos corrés: `python tools\keygen.py sign CODIGO-DEL-CLIENTE`. Te imprime la licencia (y anota el código en `tools/licencias_emitidas.csv`).
