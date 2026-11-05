@@ -222,9 +222,20 @@ def dns_rtt(server, port=53, rounds=6, timeout=1.5):
 
 
 # ---------- Timer / RAM (se usan desde Pro) ----------
-def set_timer(on):
-    cur = ctypes.c_ulong()
-    ctypes.windll.ntdll.NtSetTimerResolution(5000, bool(on), ctypes.byref(cur))
+_TIMER_LOCK = __import__("threading").RLock()
+_TIMER_REQUESTS = set()
+
+def set_timer(on, source="default"):
+    """Administra solicitudes de resolución del timer sin que una función pise a otra."""
+    if not IS_WIN:
+        return
+    with _TIMER_LOCK:
+        if on:
+            _TIMER_REQUESTS.add(str(source))
+        else:
+            _TIMER_REQUESTS.discard(str(source))
+        cur = ctypes.c_ulong()
+        ctypes.windll.ntdll.NtSetTimerResolution(5000, bool(_TIMER_REQUESTS), ctypes.byref(cur))
 
 def _priv(name):
     adv, k = ctypes.windll.advapi32, ctypes.windll.kernel32
