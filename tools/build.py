@@ -32,7 +32,14 @@ def compile_(edition):
            "--specpath", BUILD] + (["--hidden-import", "cryptography.hazmat.primitives.asymmetric.ed25519"] if edition == "pro" else []) + ["zyrotech.py"]
     subprocess.run(cmd, cwd=d, check=True); print("OK ->", os.path.join(ROOT, "dist", name + ".exe"))
 
+def generate_catalog():
+    """Regenera tweaks.json, incluidos los metadatos read-only, antes de compilar."""
+    script = os.path.join(ROOT, "tools", "generate_tweaks.py")
+    subprocess.run([sys.executable, script], cwd=ROOT, check=True)
+
+
 if __name__ == "__main__":
+    generate_catalog()
     a = sys.argv[1:]
     if "--stage-only" in a: [stage(e) for e in ("free", "pro")]; sys.exit(0)
     for e in (a if a else ["free", "pro"]): compile_(e)
