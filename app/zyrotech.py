@@ -6,12 +6,12 @@ import core
 
 
 # ---------- Identidad visual ZyroTech / nueva interfaz ----------
-BG, SIDE, CARD, CARD2, LINE = "#0D0E14", "#14151E", "#191A25", "#222432", "#303245"
-TEXT, MUTE, RED, GOLD, GREEN = "#F3F2FA", "#9899AF", "#FF718B", "#FFC66D", "#C5FF55"
-CYAN, BLUE, PURPLE = "#A78BFA", "#72B7FF", "#B38BFF"
-ACC = GREEN
-ACC_TXT = "#111019"
-HOVER = "#303146"
+BG, SIDE, CARD, CARD2, LINE = "#090B13", "#101522", "#151C2B", "#1D2940", "#293750"
+TEXT, MUTE, RED, GOLD, GREEN = "#F4F7FF", "#94A3B8", "#FF6685", "#FFC857", "#B8FF5C"
+CYAN, BLUE, PURPLE = "#43D9FF", "#6EA8FF", "#A78BFA"
+ACC = CYAN
+ACC_TXT = "#07121B"
+HOVER = "#293A56"
 BADGE = {"Breaking": RED, "Seguridad": RED, "Irreversible": RED, "Beta": PURPLE, "Energía": GOLD, "Info": BLUE, "Reinicio": BLUE, "Una vez": "#77798E"}
 WARN_BANNER = ("Algunos cambios marcados bajan la seguridad del equipo. Revisá cada acción antes de aplicarla.")
 BAD_FOR_AUTO = {"Breaking", "Irreversible", "Beta", "Seguridad"}
@@ -37,8 +37,8 @@ class App(ctk.CTk):
         super().__init__()
         ctk.set_appearance_mode("dark")
         self.wm_title("ZyroTech Free")
-        self.geometry("1200x800")
-        self.minsize(920, 640)
+        self.geometry("1360x860")
+        self.minsize(1040, 700)
         self.configure(fg_color=BG)
 
         self.f_logo = ctk.CTkFont(family="Segoe UI", size=19, weight="bold")
@@ -60,10 +60,11 @@ class App(ctk.CTk):
         self.pending_lbl = self.banner = None
 
         # Layout principal: cabecera + navegación horizontal + espacio de trabajo + estado.
-        self.grid_columnconfigure(0, weight=1)
-        self.grid_rowconfigure(2, weight=1)
+        self.grid_columnconfigure(0, weight=0, minsize=194)
+        self.grid_columnconfigure(1, weight=1)
+        self.grid_rowconfigure(1, weight=1)
         self.topbar = ctk.CTkFrame(self, fg_color=SIDE, corner_radius=0, height=70)
-        self.topbar.grid(row=0, column=0, sticky="ew")
+        self.topbar.grid(row=0, column=0, columnspan=2, sticky="ew")
         self.topbar.grid_propagate(False)
 
         brand = ctk.CTkFrame(self.topbar, fg_color="transparent")
@@ -88,17 +89,18 @@ class App(ctk.CTk):
         self.edition_tag.pack(side="left")
         self.btn(top_right, "↻  ESCANEAR", self.refresh_scan, "ghost", height=34, width=125).pack(side="left", padx=(13, 0))
 
-        self.navbar = ctk.CTkFrame(self, fg_color="#11121A", corner_radius=0, height=54,
-                                   border_width=1, border_color=LINE)
-        self.navbar.grid(row=1, column=0, sticky="ew")
+        self.navbar = ctk.CTkFrame(self, fg_color=SIDE, corner_radius=0,
+                                   border_width=0, width=194)
+        self.navbar.grid(row=1, column=0, sticky="nsew")
         self.navbar.grid_propagate(False)
 
         self.content = ctk.CTkFrame(self, fg_color=BG, corner_radius=0)
-        self.content.grid(row=2, column=0, sticky="nsew")
+        self.content.grid(row=1, column=1, sticky="nsew")
 
         footer = ctk.CTkFrame(self, fg_color=SIDE, corner_radius=0, height=34)
-        footer.grid(row=3, column=0, sticky="ew")
+        footer.grid(row=2, column=0, columnspan=2, sticky="ew")
         footer.grid_propagate(False)
+        ctk.CTkFrame(footer, fg_color=ACC, width=3, height=14, corner_radius=2).pack(side="left", padx=(14, 0), pady=9)
         self.status = ctk.CTkLabel(footer, text="Preparando diagnóstico local...",
                                    font=self.f_s, text_color=MUTE, anchor="w")
         self.status.pack(side="left", padx=20)
@@ -262,15 +264,22 @@ class App(ctk.CTk):
             ("hist", "◷", "Actividad"),
             ("about", "⋯", "Acerca de"),
         ]
+        ctk.CTkLabel(self.navbar, text="WORKSPACE", font=ctk.CTkFont(family="Segoe UI", size=9, weight="bold"),
+                     text_color="#64748B", anchor="w").pack(fill="x", padx=20, pady=(24, 10))
         for key, glyph, label in nav_items:
             button = ctk.CTkButton(
-                self.navbar, text=f"{glyph}   {label}", anchor="center",
+                self.navbar, text=f"  {glyph}     {label}", anchor="w",
                 fg_color="transparent", text_color=MUTE, hover_color=CARD2,
-                corner_radius=9, height=38, font=self.f_b,
+                corner_radius=10, height=45, font=self.f_b,
                 command=lambda selected=key: self.show(selected)
             )
-            button.pack(side="left", padx=(14 if key == "home" else 3, 3), pady=7)
+            button.pack(fill="x", padx=12, pady=4)
             self.nav[key] = button
+        ctk.CTkFrame(self.navbar, fg_color=LINE, height=1).pack(fill="x", padx=18, pady=(22, 14))
+        ctk.CTkLabel(self.navbar, text="ZYROTECH FREE", font=ctk.CTkFont(family="Segoe UI", size=9, weight="bold"),
+                     text_color=ACC, anchor="w").pack(fill="x", padx=20)
+        ctk.CTkLabel(self.navbar, text="Local performance tools\nControl · Diagnose · Optimize",
+                     font=self.f_s, text_color=MUTE, anchor="w", justify="left").pack(fill="x", padx=20, pady=(5, 0))
         self.show("home")
 
     def show(self, key):
@@ -446,18 +455,25 @@ class App(ctk.CTk):
 
     def cats(self): return [m for m in ORDER if any(t["module"] == m and core.applicable(t, self.hw) for t in self.vis)]
     def page_opt(self):
-        self.heading("Optimizar", "Activá lo que querés, revisá la lista de cambios pendientes y aplicá. Todo se puede revertir.")
+        self.heading("Biblioteca de ajustes", "Explorá los ajustes Free por categoría. ZyroTech detecta cuáles ya están activos y conserva tus selecciones mientras navegás.")
         cats = self.cats(); self.cat = self.cat if self.cat in cats else (cats[0] if cats else None)
         body = ctk.CTkFrame(self.content, fg_color="transparent"); body.pack(fill="both", expand=True, padx=28)
-        left = ctk.CTkScrollableFrame(body, width=236, fg_color=CARD, corner_radius=15, border_width=1, border_color=LINE); left.pack(side="left", fill="y", padx=(0, 12))
+        left = ctk.CTkScrollableFrame(body, width=218, fg_color=SIDE, corner_radius=16, border_width=1, border_color=LINE); left.pack(side="left", fill="y", padx=(0, 14))
         for m in cats:
             n = sum(1 for t in self.vis if t["module"] == m and core.applicable(t, self.hw))
-            txt = f"{m}  ({n})"
-            ctk.CTkButton(left, text=txt, anchor="w", fg_color=CARD2 if m == self.cat else "transparent", text_color=TEXT if m == self.cat else MUTE, hover_color=CARD2,
-                          corner_radius=9, height=37, font=self.f_n, command=lambda m=m: self.set_cat(m)).pack(fill="x", pady=2)
+            icon = {"Privacidad":"◈","Debloat":"✦","Gaming":"▣","Kernel":"⌘","Energía":"ϟ","Red":"⌁","Periféricos":"⌖","Interfaz":"▤","Servicios":"⚙","Tareas":"◷","Inicio":"➜","Mantenimiento":"⌁","Seguridad básica":"◇","Seguridad":"⬡"}.get(m, "•")
+            selected = m == self.cat
+            tile = ctk.CTkFrame(left, fg_color="#1D2940" if selected else "transparent", corner_radius=10)
+            tile.pack(fill="x", pady=2)
+            ctk.CTkButton(tile, text=f"  {icon}   {m}", anchor="w", fg_color="transparent",
+                          text_color=ACC if selected else MUTE, hover_color=CARD2,
+                          corner_radius=9, height=39, font=self.f_b if selected else self.f_n,
+                          command=lambda m=m: self.set_cat(m)).pack(side="left", fill="x", expand=True)
+            ctk.CTkLabel(tile, text=str(n), fg_color=CARD2, text_color=TEXT, corner_radius=7,
+                         font=self.f_s, width=28, height=22).pack(side="right", padx=7)
         right = ctk.CTkFrame(body, fg_color="transparent"); right.pack(side="left", fill="both", expand=True)
         top = ctk.CTkFrame(right, fg_color="transparent"); top.pack(fill="x", pady=(0, 8))
-        self.search = ctk.CTkEntry(top, placeholder_text="Buscar tweaks por nombre o categoría...", fg_color=CARD, border_color=LINE, height=40, corner_radius=10); self.search.pack(side="left", fill="x", expand=True)
+        self.search = ctk.CTkEntry(top, placeholder_text="Buscar un ajuste por nombre o categoría...", fg_color=CARD, border_color=LINE, height=44, corner_radius=12, border_width=1); self.search.pack(side="left", fill="x", expand=True)
         if self.search_query: self.search.insert(0, self.search_query)
         self.search.bind("<KeyRelease>", lambda e: self.fill_list())
         self.btn(top, "✦  Recomendarme", self.recommended, "ghost", width=170, height=40).pack(side="left", padx=(8, 0))
@@ -472,9 +488,8 @@ class App(ctk.CTk):
         self.fill_list(); self.update_pending()
 
     def set_cat(self, m):
-        # Cambiar categoría no borra la búsqueda ni los switches seleccionados.
+        # Cambiar categoría solo cambia el filtro; no toca búsqueda ni selecciones.
         self.cat = m
-        self.search_query = ""
         self.show("opt")
     def fill_list(self):
         for w in self.listf.winfo_children(): w.destroy()
@@ -486,8 +501,8 @@ class App(ctk.CTk):
     def tweak_row(self, tweak):
         compatible = core.applicable(tweak, self.hw)
         status = self.statuses.get(tweak["id"], "unknown")
-        card = self.card(self.listf, fg=CARD, corner_radius=12, border_color=LINE)
-        card.pack(fill="x", pady=4)
+        card = self.card(self.listf, fg=CARD, corner_radius=13, border_color=LINE)
+        card.pack(fill="x", pady=5)
         managed = tweak["id"] in self.st["applied"]
         disabled = (
             not compatible
@@ -501,10 +516,15 @@ class App(ctk.CTk):
         )
         switch.pack(side="left", padx=(13, 5), pady=11)
         title_color = RED if tweak["risk"] == "extreme" else TEXT
+        titlebox = ctk.CTkFrame(card, fg_color="transparent")
+        titlebox.pack(side="left", fill="x", expand=True, padx=6, pady=8)
         ctk.CTkLabel(
-            card, text=tweak["name"], font=self.f_n, text_color=title_color,
-            anchor="w", wraplength=390, justify="left"
-        ).pack(side="left", fill="x", expand=True, padx=5)
+            titlebox, text=tweak["name"], font=self.f_b, text_color=title_color,
+            anchor="w", wraplength=430, justify="left"
+        ).pack(fill="x", anchor="w")
+        hint = tweak.get("warn") or ("Requiere reinicio para completar el cambio" if tweak.get("reboot") else "Ajuste reversible" if tweak.get("mode") == "track" else "Tarea puntual de mantenimiento")
+        ctk.CTkLabel(titlebox, text=hint, font=self.f_s, text_color=MUTE,
+                     anchor="w", wraplength=430, justify="left").pack(fill="x", anchor="w", pady=(2, 0))
         tags = ([tweak["badge"]] if tweak.get("badge") else [])
         if tweak.get("reboot"):
             tags.append("Reinicio")
@@ -518,7 +538,7 @@ class App(ctk.CTk):
             "Parcialmente activo" if status == "partial" else
             "Estado no disponible" if status == "unknown" else "Disponible"
         )
-        status_color = MUTE if not compatible or status == "unknown" else GREEN if status == "active" else GOLD if status == "partial" else TEXT
+        status_color = MUTE if not compatible or status == "unknown" else GREEN if status == "active" else GOLD if status == "partial" else CYAN
         ctk.CTkLabel(card, text=status_label, font=self.f_s, text_color=status_color).pack(side="right", padx=7)
         for tag in tags:
             self.badge(card, tag).pack(side="right", padx=3)
