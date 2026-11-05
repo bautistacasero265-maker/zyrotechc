@@ -56,7 +56,6 @@ class App(ctk.CTk):
         self.settings = core.load_json(core.data_path("settings.json"), {"games": [], "last_latency": None})
         self.tweaks, self.vis, self.vars, self.hw, self.statuses = [], [], {}, None, {}
         self.restore_ok, self.cat, self.page = False, None, None
-        self.licensed, self.comps = True, []
         self.pending_lbl = self.banner = None
 
         # Layout principal: cabecera + navegación horizontal + espacio de trabajo + estado.
@@ -156,7 +155,7 @@ class App(ctk.CTk):
     def badge(self, parent, text):
         color = BADGE.get(text, CARD2)
         return ctk.CTkLabel(parent, text=f"  {text}  ", fg_color=color,
-                            text_color="#0A0B0E" if text in ("PRO", "Energía") else "#FFFFFF",
+                            text_color="#0A0B0E" if text == "Energía" else "#FFFFFF",
                             corner_radius=7, font=self.f_s, height=22)
 
     def heading(self, text, sub=""):
@@ -190,7 +189,7 @@ class App(ctk.CTk):
             else:
                 try: self.statuses[t["id"]] = core.tweak_status(t)
                 except Exception: self.statuses[t["id"]] = "unknown"
-        # Esta edición no contiene activación ni módulos Pro.
+        # Esta edición funciona de forma independiente y local.
 
         self.after(0, self.ready)
 
@@ -293,7 +292,7 @@ class App(ctk.CTk):
         eligible = [t for t in self.vis if t.get("mode") == "track" and core.applicable(t, self.hw)]
         active = sum(1 for t in eligible if self.statuses.get(t["id"]) == "active")
         partial = sum(1 for t in eligible if self.statuses.get(t["id"]) == "partial")
-        pending = sum(1 for t in eligible if self.statuses.get(t["id"]) == "inactive" and not t.get("locked"))
+        pending = sum(1 for t in eligible if self.statuses.get(t["id"]) == "inactive")
         unknown = sum(1 for t in eligible if self.statuses.get(t["id"]) == "unknown")
         incompatible = sum(1 for t in self.vis if self.statuses.get(t["id"]) == "incompatible")
         coverage = self.coverage()
@@ -440,8 +439,8 @@ class App(ctk.CTk):
         body = ctk.CTkFrame(self.content, fg_color="transparent"); body.pack(fill="both", expand=True, padx=28)
         left = ctk.CTkScrollableFrame(body, width=236, fg_color=CARD, corner_radius=15, border_width=1, border_color=LINE); left.pack(side="left", fill="y", padx=(0, 12))
         for m in cats:
-            n = sum(1 for t in self.vis if t["module"] == m and core.applicable(t, self.hw)); locked = sum(1 for t in self.vis if t["module"] == m and t.get("locked") and core.applicable(t, self.hw))
-            txt = f"{m}  ({n})" + (f"  ·  {locked} PRO" if locked else "")
+            n = sum(1 for t in self.vis if t["module"] == m and core.applicable(t, self.hw))
+            txt = f"{m}  ({n})"
             ctk.CTkButton(left, text=txt, anchor="w", fg_color=CARD2 if m == self.cat else "transparent", text_color=TEXT if m == self.cat else MUTE, hover_color=CARD2,
                           corner_radius=9, height=37, font=self.f_n, command=lambda m=m: self.set_cat(m)).pack(fill="x", pady=2)
         right = ctk.CTkFrame(body, fg_color="transparent"); right.pack(side="left", fill="both", expand=True)
