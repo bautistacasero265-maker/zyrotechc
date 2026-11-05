@@ -105,8 +105,6 @@ class PublicKeyExportTests(unittest.TestCase):
                 serialization.NoEncryption(),
             )
             private_path.write_bytes(private_bytes)
-            with patch.object(build_module, "__name__", "not_main"):
-                pass
             keygen_spec = importlib.util.spec_from_file_location(
                 "zyrotech_keygen", ROOT / "tools" / "keygen.py"
             )
