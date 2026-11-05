@@ -56,6 +56,7 @@ class App(ctk.CTk):
         self.settings = core.load_json(core.data_path("settings.json"), {"games": [], "last_latency": None})
         self.tweaks, self.vis, self.vars, self.hw, self.statuses = [], [], {}, None, {}
         self.restore_ok, self.cat, self.page = False, None, None
+        self.search_query, self.risk_ack = "", False
         self.pending_lbl = self.banner = None
 
         # Layout principal: cabecera + navegación horizontal + espacio de trabajo + estado.
@@ -273,6 +274,16 @@ class App(ctk.CTk):
         self.show("home")
 
     def show(self, key):
+        # Conservar el estado de Ajustes al navegar: búsqueda, categoría y confirmación.
+        if self.page == "opt":
+            try:
+                if self.search.winfo_exists(): self.search_query = self.search.get()
+            except Exception:
+                pass
+            try:
+                self.risk_ack = bool(self.risk_ok.get())
+            except Exception:
+                pass
         self.page = key
         self.clear()
         for k, b in self.nav.items():
@@ -430,6 +441,7 @@ class App(ctk.CTk):
             )
             self.vars[tweak["id"]].set(self.vars[tweak["id"]].get() or suitable)
         self.cat = ORDER[0]
+        self.search_query = ""
         self.show("opt")
 
     def cats(self): return [m for m in ORDER if any(t["module"] == m and core.applicable(t, self.hw) for t in self.vis)]
@@ -446,19 +458,24 @@ class App(ctk.CTk):
         right = ctk.CTkFrame(body, fg_color="transparent"); right.pack(side="left", fill="both", expand=True)
         top = ctk.CTkFrame(right, fg_color="transparent"); top.pack(fill="x", pady=(0, 8))
         self.search = ctk.CTkEntry(top, placeholder_text="Buscar tweaks por nombre o categoría...", fg_color=CARD, border_color=LINE, height=40, corner_radius=10); self.search.pack(side="left", fill="x", expand=True)
+        if self.search_query: self.search.insert(0, self.search_query)
         self.search.bind("<KeyRelease>", lambda e: self.fill_list())
         self.btn(top, "✦  Recomendarme", self.recommended, "ghost", width=170, height=40).pack(side="left", padx=(8, 0))
         self.listf = ctk.CTkScrollableFrame(right, fg_color="transparent"); self.listf.pack(fill="both", expand=True)
         self.banner = ctk.CTkLabel(self.content, text="", fg_color=RED, text_color="white", font=self.f_s, wraplength=900, justify="left", corner_radius=8)
         bar = self.card(self.content); bar.pack(fill="x", padx=28, pady=(8, 10))
         self.pending_lbl = ctk.CTkLabel(bar, text="", font=self.f_b, text_color=TEXT); self.pending_lbl.pack(side="left", padx=18, pady=12)
-        self.risk_ok = ctk.BooleanVar(value=False)
+        self.risk_ok = ctk.BooleanVar(value=self.risk_ack)
         ctk.CTkCheckBox(bar, text="Entiendo los riesgos", variable=self.risk_ok, font=self.f_s, fg_color=ACC, hover_color=ACC, text_color=MUTE).pack(side="left", padx=10)
         self.btn(bar, "Aplicar uno", self.on_apply, width=145, height=40).pack(side="right", padx=14)
         self.btn(bar, "Ver pendientes", self.show_pending, "ghost", width=140).pack(side="right")
         self.fill_list(); self.update_pending()
 
-    def set_cat(self, m): self.cat = m; self.search_clear = True; self.show("opt")
+    def set_cat(self, m):
+        # Cambiar categoría no borra la búsqueda ni los switches seleccionados.
+        self.cat = m
+        self.search_query = ""
+        self.show("opt")
     def fill_list(self):
         for w in self.listf.winfo_children(): w.destroy()
         q = self.search.get().strip().lower() if getattr(self, "search", None) and self.search.winfo_exists() else ""
