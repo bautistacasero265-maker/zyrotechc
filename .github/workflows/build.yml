@@ -8,6 +8,7 @@ on:
     paths:
       - "app/**"
       - "tools/**"
+      - "tests/**"
       - "tweaks.json"
       - "build.bat"
       - ".github/workflows/build.yml"
