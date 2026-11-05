@@ -86,7 +86,12 @@ class App(ctk.CTk):
     def log(self, action, name, ok):
         self.hist.append({"t": time.strftime("%d/%m %H:%M"), "a": action, "n": name, "ok": ok}); self.hist = self.hist[-200:]
         core.save_json(core.data_path("history.json"), self.hist)
-    def go_buy(self): webbrowser.open(config.BUY_URL)
+    def go_buy(self):
+        url = (config.BUY_URL or "").strip()
+        if not url or "XXXXXXXX" in url.upper() or "XXX" in url.upper():
+            messagebox.showinfo("ZyroTech Pro", "El canal de compra todavía no está configurado.\n" + config.CONTACT)
+            return
+        webbrowser.open(url)
     def on_close(self):
         for x in (self.booster, self.ram):
             if x: x.stop()
