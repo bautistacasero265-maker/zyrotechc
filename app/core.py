@@ -145,6 +145,34 @@ def applicable(t, hw):
     if q.get("wifi") and not hw["wifi"]: return False
     return True
 
+_TASK_STATE_CACHE = None
+
+
+def clear_tweak_detection_cache():
+    """Invalida las lecturas compartidas después de aplicar o revertir cambios."""
+    global _TASK_STATE_CACHE
+    _TASK_STATE_CACHE = None
+
+
+def _scheduled_task_state(path, name):
+    """Lee todas las tareas en una única llamada a PowerShell por análisis."""
+    global _TASK_STATE_CACHE
+    if _TASK_STATE_CACHE is None:
+        try:
+            raw = ps("Get-ScheduledTask | Select-Object TaskPath,TaskName,State | ConvertTo-Json -Compress")
+            data = json.loads(raw) if raw.strip() else []
+            if isinstance(data, dict):
+                data = [data]
+            cache = {}
+            for item in data:
+                key = (str(item.get("TaskPath", "")).lower(), str(item.get("TaskName", "")).lower())
+                cache[key] = str(item.get("State", "")).lower()
+            _TASK_STATE_CACHE = cache
+        except Exception:
+            _TASK_STATE_CACHE = {}
+    return _TASK_STATE_CACHE.get((str(path).lower(), str(name).lower()))
+
+
 def tweak_status(t):
     """Lee el estado actual: active, inactive, partial o unknown."""
     if not IS_WIN: return "unknown"
@@ -164,12 +192,9 @@ def tweak_status(t):
                     states.append(type(value) is type(want) and value == want)
                 continue
             if kind == "scheduled_task":
-                path, name = a["path"], a["name"]
-                query = ("$t=Get-ScheduledTask -TaskPath '" + path + "' -TaskName '" + name +
-                         "' -ErrorAction SilentlyContinue; if($null -eq $t){'missing'} else{$t.State.ToString()}")
-                result = ps(query).strip().lower()
-                if result == "missing": states.append(None)
-                else: states.append(result == str(a.get("state", "Disabled")).lower())
+                state = _scheduled_task_state(a["path"], a["name"])
+                if state is None: states.append(None)
+                else: states.append(state == str(a.get("state", "Disabled")).lower())
                 continue
             # Sin una lectura fiable no inferimos el estado por el historial.
             states.append(None)
