@@ -760,7 +760,7 @@ class App(ctk.CTk):
             text_color=ACC, anchor="w"
         ).pack(fill="x", padx=22, pady=(20, 4))
         ctk.CTkLabel(
-            hero, text="Diagnóstico y ajustes para Windows. Sin cuentas, servidores ni activaciones.",
+            hero, text="Diagnóstico y ajustes locales para Windows. Sin cuentas ni servidores externos.",
             font=self.f_n, text_color=TEXT, anchor="w"
         ).pack(fill="x", padx=22, pady=(0, 16))
         cards = ctk.CTkFrame(body, fg_color="transparent")
