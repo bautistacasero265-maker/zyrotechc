@@ -365,7 +365,7 @@ for t in T:
             checks.append({"type": "reg", "path": a["path"], "name": a["name"],
                            "value": a["value"], "vtype": a["vtype"]})
             continue
-        match = re.search(r"Disable-ScheduledTask\\s+-TaskPath\\s+'([^']+)'\\s+-TaskName\\s+'([^']+)'", a.get("cmd", ""), re.I)
+        match = re.search(r"Disable-ScheduledTask\s+-TaskPath\s+'([^']+)'\s+-TaskName\s+'([^']+)'", a.get("cmd", ""), re.I)
         if match:
             checks.append({"type": "scheduled_task", "path": match.group(1),
                            "name": match.group(2), "state": "Disabled"})
