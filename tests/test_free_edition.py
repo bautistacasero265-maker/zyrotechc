@@ -71,7 +71,7 @@ class FreeReleaseTests(unittest.TestCase):
         method = self.ui.split("def set_cat(self, m):", 1)[1].split("def fill_list", 1)[0]
         self.assertIn("self.fill_list()", method)
         self.assertNotIn('self.show("opt")', method)
-        self.assertIn("self.cat_buttons", method)
+        self.assertIn('getattr(self, "cat_buttons"', method)
         self.assertIn("self.category_title.configure(text=m)", method)
 
     def test_free_ui_has_refined_dashboard_and_tweak_cards(self):
