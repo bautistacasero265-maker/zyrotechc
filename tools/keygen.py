@@ -40,7 +40,7 @@ def export_public():
     if os.path.exists(PUBPY):
         with open(PUBPY, encoding="utf-8") as f:
             current = f.read()
-        match = re.search(r'PUBLIC_KEY_B32\\s*=\\s*"([^"]*)"', current)
+        match = re.search(r'PUBLIC_KEY_B32\s*=\s*"([^"]*)"', current)
         if match and match.group(1) and match.group(1) != encoded:
             sys.exit("La clave pública actual no coincide con la privada. No se modificó ningún archivo.")
         if match and match.group(1) == encoded:
