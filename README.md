@@ -9,6 +9,9 @@
 - Pro ofrece vista previa, selección individual y aplicación por lote. Lite es conservador; Medio amplía la selección; Avanzado propone los cambios reversibles compatibles del catálogo. Los cambios ya activos, incompatibles, no verificables, irreversibles o marcados como riesgosos se omiten.
 - Ningún perfil garantiza una mejora de FPS. Los resultados dependen del equipo, Windows y las aplicaciones instaladas.
 
+## Antes de distribuir
+Editá `app/config.py` y completá `BUY_URL`, `CONTACT` y `PRICE_TEXT`. Hasta que lo hagas, el botón de compra informa que el canal comercial no está configurado y no abre enlaces de ejemplo.
+
 ## Compilación automática (sin instalar herramientas en tu PC)
 1. El workflow `.github/workflows/build.yml` compila en una máquina Windows de GitHub Actions cuando se actualiza la rama `zyrotech-profiles-auto-detection`.
 2. Abre la pestaña **Actions**, entra en el último workflow **Build ZyroTech** y descarga el artefacto `ZyroTech-Windows-x64`.
