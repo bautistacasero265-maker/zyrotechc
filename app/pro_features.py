@@ -165,8 +165,8 @@ class GameBooster:
 
     def _restore_priorities(self, running=None):
         for pid, priority in list(self.original_priorities.items()):
-            if running is not None and pid not in running:
-                self.original_priorities.pop(pid, None)
+            # Si sigue siendo un juego activo, conservar la prioridad temporal.
+            if running is not None and pid in running:
                 continue
             try:
                 self._priority(pid, restore=priority)
