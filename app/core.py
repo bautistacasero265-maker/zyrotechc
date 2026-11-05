@@ -1,4 +1,4 @@
-"""Núcleo compartido Free/Pro: registro, PowerShell, tweaks, hardware, medición. Solo stdlib."""
+"""Núcleo de ZyroTech Free: registro, PowerShell, detección de hardware y mediciones de diagnóstico."""
 import base64, ctypes, json, os, re, socket, statistics, subprocess, sys, time
 
 IS_WIN = sys.platform == "win32"
