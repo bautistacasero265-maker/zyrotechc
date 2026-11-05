@@ -105,7 +105,7 @@ class App(ctk.CTk):
         for t in self.vis:
             if t.get("mode") == "once": self.statuses[t["id"]] = "once"
             elif not core.applicable(t, self.hw): self.statuses[t["id"]] = "incompatible"
-            elif not t.get("locked"):
+            else:
                 try: self.statuses[t["id"]] = core.tweak_status(t)
                 except Exception: self.statuses[t["id"]] = "unknown"
         if PRO:
@@ -130,8 +130,6 @@ class App(ctk.CTk):
                         statuses[t["id"]] = "once"
                     elif not core.applicable(t, hw):
                         statuses[t["id"]] = "incompatible"
-                    elif t.get("locked"):
-                        statuses[t["id"]] = "locked"
                     else:
                         try:
                             statuses[t["id"]] = core.tweak_status(t)
