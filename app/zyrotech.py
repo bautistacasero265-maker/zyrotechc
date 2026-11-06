@@ -1,7 +1,7 @@
 """ZyroTech Free · diagnóstico y ajustes locales de Windows."""
 import os, sys, threading, time
 import customtkinter as ctk
-from tkinter import messagebox
+from tkinter import messagebox, filedialog
 import core
 
 
@@ -342,12 +342,13 @@ class App(ctk.CTk):
 
         hero = self.card(body, fg="#111B2B", border_color="#29445B", corner_radius=22)
         hero.pack(fill="x", pady=(0, 16))
-        hero.grid_columnconfigure(0, weight=1)
-        hero.grid_columnconfigure(1, weight=0)
+        hero.grid_columnconfigure(0, weight=0, minsize=4)
+        hero.grid_columnconfigure(1, weight=1)
+        hero.grid_columnconfigure(2, weight=0, minsize=205)
         accent_rail = ctk.CTkFrame(hero, fg_color=ACC, width=4, corner_radius=2)
-        accent_rail.grid(row=0, column=0, sticky="nsw", padx=(0, 18), pady=20)
+        accent_rail.grid(row=0, column=0, sticky="ns", padx=(0, 0), pady=20)
         left = ctk.CTkFrame(hero, fg_color="transparent")
-        left.grid(row=0, column=0, sticky="nsew", padx=(25, 12), pady=25)
+        left.grid(row=0, column=1, sticky="nsew", padx=(20, 12), pady=25)
         ctk.CTkLabel(left, text="ZYROTECH  /  SYSTEM OVERVIEW",
                      font=ctk.CTkFont(family="Segoe UI", size=10, weight="bold"),
                      text_color=ACC, anchor="w").pack(fill="x")
@@ -357,12 +358,15 @@ class App(ctk.CTk):
         ctk.CTkLabel(left, text="Un centro de control para revisar Windows, detectar ajustes compatibles y decidir qué querés cambiar. Sin promesas falsas de FPS.",
                      font=self.f_n, text_color="#B4C1D4", anchor="w", wraplength=610,
                      justify="left").pack(fill="x")
+        ctk.CTkLabel(left, text="93 AJUSTES FREE   ·   DETECCIÓN LOCAL   ·   CONTROL Y REVERSIÓN",
+                     font=ctk.CTkFont(family="Segoe UI", size=9, weight="bold"),
+                     text_color=GREEN, anchor="w").pack(fill="x", pady=(12, 0))
         hero_actions = ctk.CTkFrame(left, fg_color="transparent")
         hero_actions.pack(fill="x", pady=(17, 0))
         self.btn(hero_actions, "Explorar ajustes  →", lambda: self.show("opt"), "acc", width=175, height=39).pack(side="left")
         self.btn(hero_actions, "Volver a analizar", self.refresh_scan, "ghost", width=150, height=39).pack(side="left", padx=9)
         right = ctk.CTkFrame(hero, fg_color="#17283A", corner_radius=18, width=205)
-        right.grid(row=0, column=1, sticky="nsew", padx=(8, 18), pady=18)
+        right.grid(row=0, column=2, sticky="nsew", padx=(8, 18), pady=18)
         right.grid_propagate(False)
         ctk.CTkLabel(right, text="ESTADO DEL SISTEMA", font=ctk.CTkFont(family="Segoe UI", size=9, weight="bold"),
                      text_color="#9FB2C9").pack(anchor="w", padx=16, pady=(17, 4))
@@ -457,10 +461,73 @@ class App(ctk.CTk):
         self.btn(row, "Ver ajustes recomendados", self.recommended, "acc", width=200).pack(side="left")
         self.btn(row, "Crear punto de restauración", self.make_restore, "ghost", width=215).pack(side="left", padx=8)
         self.btn(row, "Revertir todos los cambios", self.revert_all, "ghost", width=195).pack(side="left")
+        self.btn(row, "Exportar informe", self.export_report, "ghost", width=150).pack(side="left", padx=8)
 
     def lat_text(self):
         l = self.settings.get("last_latency")
         return "Sin medir todavía." if not l else f'Timer: {l["res"]:.1f} ms\nSleep(1): {l["avg"]:.1f} ms (p95 {l["p95"]:.1f} ms)'
+
+    def export_report(self):
+        """Exporta un resumen legible del diagnóstico sin incluir datos personales."""
+        if not self.hw:
+            return messagebox.showinfo("ZyroTech", "El análisis del equipo todavía no está disponible.")
+        path = filedialog.asksaveasfilename(
+            parent=self, title="Guardar informe de ZyroTech",
+            defaultextension=".txt", initialfile="ZyroTech-informe.txt",
+            filetypes=[("Informe de texto", "*.txt")]
+        )
+        if not path:
+            return
+        eligible = [t for t in self.vis if core.applicable(t, self.hw)]
+        counts = {
+            "Activos": sum(self.statuses.get(t["id"]) == "active" for t in eligible),
+            "Parciales": sum(self.statuses.get(t["id"]) == "partial" for t in eligible),
+            "Pendientes": sum(self.statuses.get(t["id"]) == "inactive" for t in eligible),
+            "No verificables": sum(self.statuses.get(t["id"]) == "unknown" for t in eligible),
+            "No compatibles": sum(self.statuses.get(t["id"]) == "incompatible" for t in self.vis),
+        }
+        hw = self.hw
+        lines = [
+            "ZYROTECH FREE — INFORME DE DIAGNÓSTICO",
+            "=" * 46,
+            f"Fecha: {time.strftime('%d/%m/%Y %H:%M:%S')}",
+            "",
+            "EQUIPO",
+            f"Procesador: {hw.get('cpu_name', 'No detectado')}",
+            f"Gráficos: {hw.get('gpu_name', 'No detectada')}",
+            f"Memoria: {hw.get('ram', 0)} GB RAM",
+            f"Almacenamiento: {'SSD / NVMe' if hw.get('ssd') else 'HDD / no identificado como SSD'}",
+            f"Windows: {hw.get('os', 'Windows')}",
+            f"Formato: {'Notebook' if hw.get('laptop') else 'Escritorio'}",
+            "",
+            "ESTADO DE AJUSTES",
+            f"Catálogo incluido: {len(self.vis)}",
+            f"Compatibles con este equipo: {len(eligible)}",
+        ]
+        lines.extend(f"{label}: {value}" for label, value in counts.items())
+        lines.extend(["", "DETALLE"])
+        for tweak in self.vis:
+            state = self.statuses.get(tweak["id"], "unknown")
+            label = {
+                "active": "Activo", "partial": "Parcial", "inactive": "Pendiente",
+                "unknown": "No verificable", "incompatible": "No compatible",
+                "once": "Acción puntual"
+            }.get(state, "Desconocido")
+            lines.append(f"[{label}] {tweak['module']} — {tweak['name']}")
+        lines.extend([
+            "", "NOTA",
+            "Este informe describe el estado detectado en el momento del análisis.",
+            "No representa una puntuación de rendimiento ni garantiza mejoras de FPS.",
+            "El informe no incluye nombres de usuario, rutas personales ni el contenido del registro."
+        ])
+        try:
+            with open(path, "w", encoding="utf-8") as report:
+                report.write("\n".join(lines))
+            self.say("Informe exportado correctamente.", 0)
+            messagebox.showinfo("ZyroTech", "El informe se guardó correctamente.")
+        except OSError as error:
+            messagebox.showerror("ZyroTech", f"No se pudo guardar el informe: {error}")
+
     def measure(self):
         self.lat_lbl.configure(text="Midiendo..."); self.say("Midiendo latencia...", 0.3)
         def work():
