@@ -90,7 +90,7 @@ class FreeReleaseTests(unittest.TestCase):
         self.assertIn('self.state("zoomed")', self.ui)
         self.assertIn("def export_report(self):", self.ui)
         self.assertIn("Exportar informe", self.ui)
-        self.assertIn("no garantiza menor latencia en juegos", self.ui)
+        self.assertIn("no garantiza una mejora en juegos", self.ui)
         self.assertIn("TIPS PARA EMPEZAR", self.ui)
         self.assertIn("ZYROTECH PRO", self.ui)
 
