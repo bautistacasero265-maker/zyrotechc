@@ -82,6 +82,13 @@ class FreeReleaseTests(unittest.TestCase):
         self.assertIn("LOCAL MODE", self.ui)
         self.assertIn("Controlá cada cambio", self.ui)
 
+    def test_dashboard_layout_and_diagnostic_export(self):
+        self.assertIn("hero.grid_columnconfigure(2, weight=0, minsize=205)", self.ui)
+        self.assertIn("right.grid(row=0, column=2", self.ui)
+        self.assertIn("def export_report(self):", self.ui)
+        self.assertIn("Exportar informe", self.ui)
+        self.assertIn("No representa una puntuación de rendimiento", self.ui)
+
     def test_private_timer_and_ram_actions_are_not_in_free_core(self):
         self.assertNotIn("NtSetTimerResolution", self.core)
         self.assertNotIn("purge_standby", self.core)
