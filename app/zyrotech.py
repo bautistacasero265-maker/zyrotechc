@@ -504,6 +504,53 @@ class App(ctk.CTk):
         self.btn(row, "Revertir todos los cambios", self.revert_all, "ghost", width=205, height=40).pack(side="left")
         self.btn(row, "Exportar informe", self.export_report, "ghost", width=155, height=40).pack(side="left", padx=9)
 
+        # Consejos útiles y una presentación honesta de la futura edición Pro.
+        tips = [
+            ("Empezá por lo reversible", "Probá un ajuste por vez y comprobá si cambia algo en tu uso diario antes de continuar."),
+            ("No confundas cobertura con rendimiento", "El porcentaje indica ajustes detectados como activos; no mide FPS, fluidez ni latencia."),
+            ("Reiniciá cuando el ajuste lo indique", "Algunos cambios de Windows no se reflejan por completo hasta reiniciar el equipo."),
+            ("Conservá lo que necesitás", "No desactives búsqueda, servicios o funciones de Windows si realmente las usás."),
+            ("Compará antes y después", "Usá el mismo juego, mapa y límite de FPS para comparar resultados en condiciones parecidas."),
+        ]
+        tip_title, tip_body = tips[time.localtime().tm_yday % len(tips)]
+        tip_card = ctk.CTkFrame(body, fg_color="#171321", corner_radius=17,
+                                border_width=1, border_color="#4A3153")
+        tip_card.pack(fill="x", pady=(14, 0))
+        ctk.CTkLabel(tip_card, text="TIPS PARA EMPEZAR  /  CONSEJO DEL DÍA",
+                     font=ctk.CTkFont(family="Segoe UI", size=10, weight="bold"),
+                     text_color="#FF83BA", anchor="w").pack(fill="x", padx=18, pady=(14, 5))
+        ctk.CTkLabel(tip_card, text=tip_title,
+                     font=ctk.CTkFont(family="Segoe UI", size=15, weight="bold"),
+                     text_color=TEXT, anchor="w").pack(fill="x", padx=18, pady=(0, 3))
+        ctk.CTkLabel(tip_card, text=tip_body,
+                     font=ctk.CTkFont(family="Segoe UI", size=12),
+                     text_color="#C8BED2", anchor="w", wraplength=920,
+                     justify="left").pack(fill="x", padx=18, pady=(0, 14))
+
+        pro_card = ctk.CTkFrame(body, fg_color="#21152D", corner_radius=17,
+                                border_width=1, border_color="#6C315E")
+        pro_card.pack(fill="x", pady=(12, 0))
+        pro_row = ctk.CTkFrame(pro_card, fg_color="transparent")
+        pro_row.pack(fill="x", padx=18, pady=15)
+        pro_copy = ctk.CTkFrame(pro_row, fg_color="transparent")
+        pro_copy.pack(side="left", fill="x", expand=True)
+        ctk.CTkLabel(pro_copy, text="ZYROTECH PRO  /  EN DESARROLLO",
+                     font=ctk.CTkFont(family="Segoe UI", size=10, weight="bold"),
+                     text_color="#FF83BA", anchor="w").pack(fill="x")
+        ctk.CTkLabel(pro_copy,
+                     text="Más herramientas. Más control. Una suite avanzada.",
+                     font=ctk.CTkFont(family="Segoe UI", size=15, weight="bold"),
+                     text_color=TEXT, anchor="w").pack(fill="x", pady=(4, 2))
+        ctk.CTkLabel(pro_copy,
+                     text="La edición gratuita seguirá siendo útil por sí sola. Pro sumará funciones avanzadas cuando esté lista.",
+                     font=ctk.CTkFont(family="Segoe UI", size=11),
+                     text_color="#C8BED2", anchor="w", wraplength=680,
+                     justify="left").pack(fill="x")
+        ctk.CTkLabel(pro_row, text="PRÓXIMAMENTE",
+                     fg_color="#3A2344", text_color="#FF9AC7",
+                     corner_radius=9, font=ctk.CTkFont(family="Segoe UI", size=10, weight="bold"),
+                     padx=13, pady=9).pack(side="right", padx=(12, 0))
+
     def lat_text(self):
         l = self.settings.get("last_latency")
         return "Sin medir todavía." if not l else f'Timer: {l["res"]:.1f} ms\nSleep(1): {l["avg"]:.1f} ms (p95 {l["p95"]:.1f} ms)'
