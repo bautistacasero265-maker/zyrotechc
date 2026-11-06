@@ -522,7 +522,7 @@ class App(ctk.CTk):
         ])
         try:
             with open(path, "w", encoding="utf-8") as report:
-                report.write("\\n".join(lines))
+                report.write("\n".join(lines))
             self.say("Informe exportado correctamente.", 0)
             messagebox.showinfo("ZyroTech", "El informe se guardó correctamente.")
         except OSError as error:
