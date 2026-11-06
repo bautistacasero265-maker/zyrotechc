@@ -17,12 +17,13 @@
 - Lectura del estado actual para distinguir ajustes activos, pendientes, parciales, incompatibles y no verificables.
 - Recomendaciones conservadoras: evita proponer cambios ya activos, irreversibles, marcados como riesgosos o que no correspondan al equipo.
 - Aplicación de un ajuste por vez.
+- Exportación de un informe de diagnóstico en texto con hardware detectado, compatibilidad y estado de cada ajuste; no incluye rutas personales ni datos del registro.
 - Punto de restauración, respaldo del registro, historial y reversión cuando el cambio tiene una acción inversa.
 - Diagnóstico de respuesta DNS y medición de temporización, sin prometer mejoras de FPS ni cambiar automáticamente la red.
 
 ## Interfaz
 
-ZyroTech Free utiliza una interfaz oscura de alto contraste con identidad visual propia, acentos cian y lima, panel lateral persistente, dashboard de estado del sistema y tarjetas de ajustes con estados destacados. Las categorías actualizan el panel de resultados en el momento, sin reconstruir la pantalla ni perder switches, búsqueda o confirmaciones. El análisis del equipo y de los ajustes corre en un hilo separado para evitar bloquear la interfaz.
+ZyroTech Free utiliza una interfaz oscura de alto contraste con identidad visual propia, acentos cian y lima, panel lateral persistente, dashboard de estado del sistema y tarjetas de ajustes con estados destacados. Las categorías actualizan el panel de resultados en el momento, sin reconstruir la pantalla ni perder switches, búsqueda o confirmaciones. El dashboard separa visualmente el estado del equipo, las métricas y las acciones principales. También permite exportar un informe legible para compartir un diagnóstico sin exponer rutas personales ni el contenido del registro. El análisis del equipo y de los ajustes corre en un hilo separado para evitar bloquear la interfaz.
 
 ## Releases y compilación automática
 
