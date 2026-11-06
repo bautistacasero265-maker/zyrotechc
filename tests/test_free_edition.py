@@ -75,8 +75,9 @@ class FreeReleaseTests(unittest.TestCase):
         self.assertIn("self.category_title.configure(text=m)", method)
 
     def test_free_ui_has_refined_dashboard_and_tweak_cards(self):
-        self.assertIn("Tu PC. Tu rendimiento.", self.ui)
-        self.assertIn("ESTADO DEL SISTEMA", self.ui)
+        self.assertIn("Hacé que Windows", self.ui)
+        self.assertIn("ESTADO DE TU EQUIPO", self.ui)
+        self.assertIn("93 AJUSTES GRATUITOS", self.ui)
         self.assertIn("Resultados de búsqueda", self.ui)
         self.assertIn("status_bg =", self.ui)
         self.assertIn("LOCAL MODE", self.ui)
@@ -90,6 +91,8 @@ class FreeReleaseTests(unittest.TestCase):
         self.assertIn("def export_report(self):", self.ui)
         self.assertIn("Exportar informe", self.ui)
         self.assertIn("no garantiza menor latencia en juegos", self.ui)
+        self.assertIn("TIPS PARA EMPEZAR", self.ui)
+        self.assertIn("ZYROTECH PRO", self.ui)
 
     def test_private_timer_and_ram_actions_are_not_in_free_core(self):
         self.assertNotIn("NtSetTimerResolution", self.core)
