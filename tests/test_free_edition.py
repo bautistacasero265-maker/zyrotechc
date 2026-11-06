@@ -83,11 +83,13 @@ class FreeReleaseTests(unittest.TestCase):
         self.assertIn("Controlá cada cambio", self.ui)
 
     def test_dashboard_layout_and_diagnostic_export(self):
-        self.assertIn("hero.grid_columnconfigure(2, weight=0, minsize=205)", self.ui)
-        self.assertIn("right.grid(row=0, column=2", self.ui)
+        self.assertIn("Hacé que Windows", self.ui)
+        self.assertIn("RESUMEN DE OPTIMIZACIÓN", self.ui)
+        self.assertIn("#FF5B9D", self.ui)
+        self.assertIn('self.state("zoomed")', self.ui)
         self.assertIn("def export_report(self):", self.ui)
         self.assertIn("Exportar informe", self.ui)
-        self.assertIn("No representa una puntuación de rendimiento", self.ui)
+        self.assertIn("no garantiza menor latencia en juegos", self.ui)
 
     def test_private_timer_and_ram_actions_are_not_in_free_core(self):
         self.assertNotIn("NtSetTimerResolution", self.core)
