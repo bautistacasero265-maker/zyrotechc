@@ -340,7 +340,7 @@ class App(ctk.CTk):
     def coverage(self):
         applied = {tid for tid, state in self.statuses.items() if state == "active"}
         applicable = [t for t in self.vis if core.applicable(t, self.hw)]
-        return core.coverage(applicable, applied)
+        return core.coverage(applicable, applied, include_locked=False)
 
     def page_home(self):
         eligible = [t for t in self.vis if t.get("mode") == "track" and core.applicable(t, self.hw)]
@@ -910,6 +910,7 @@ class App(ctk.CTk):
         managed = tweak["id"] in self.st["applied"]
         disabled = (
             not compatible
+            or (bool(tweak.get("locked")) and not managed)
             or (tweak["mode"] == "track" and status == "unknown")
             or (status == "active" and not managed)
         )
@@ -948,6 +949,7 @@ class App(ctk.CTk):
         meta.grid(row=3, column=2, sticky="ew", padx=(4, 12), pady=(2, 10))
         status_label = (
             "No compatible" if not compatible else
+            "Protegido por seguridad" if tweak.get("locked") and not managed else
             "Acción puntual" if status == "once" else
             "Activo y gestionado" if status == "active" and managed else
             "Activo detectado" if status == "active" else
@@ -1077,6 +1079,7 @@ class App(ctk.CTk):
         apply_items = [
             t for t in self.vis
             if t["id"] in selected_ids
+            and not t.get("locked")
             and core.applicable(t, self.hw)
             and self.statuses.get(t["id"]) not in ("unknown", "active")
             and (t["id"] not in applied_ids or t["mode"] == "once" or self.statuses.get(t["id"]) == "partial")
