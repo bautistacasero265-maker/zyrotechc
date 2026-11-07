@@ -343,7 +343,7 @@ class App(ctk.CTk):
         return core.coverage(applicable, applied, include_locked=False)
 
     def page_home(self):
-        eligible = [t for t in self.vis if t.get("mode") == "track" and core.applicable(t, self.hw)]
+        eligible = [t for t in self.vis if t.get("mode") == "track" and not t.get("locked") and core.applicable(t, self.hw)]
         active = sum(1 for t in eligible if self.statuses.get(t["id"]) == "active")
         partial = sum(1 for t in eligible if self.statuses.get(t["id"]) == "partial")
         pending = sum(1 for t in eligible if self.statuses.get(t["id"]) == "inactive")
@@ -375,7 +375,7 @@ class App(ctk.CTk):
                      font=ctk.CTkFont(family="Segoe UI", size=13),
                      text_color="#D1C6DC", anchor="w", wraplength=680,
                      justify="left").pack(fill="x")
-        ctk.CTkLabel(hero_left, text="93 AJUSTES GRATUITOS   •   DETECCIÓN LOCAL   •   CONTROL DE CAMBIOS",
+        ctk.CTkLabel(hero_left, text="91 AJUSTES DISPONIBLES   •   2 PROTEGIDOS   •   DETECCIÓN LOCAL",
                      font=ctk.CTkFont(family="Segoe UI", size=11, weight="bold"),
                      text_color="#80F0D0", anchor="w").pack(fill="x", pady=(13, 0))
         hero_actions = ctk.CTkFrame(hero_left, fg_color="transparent")
