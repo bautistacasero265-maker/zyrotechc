@@ -691,6 +691,7 @@ class App(ctk.CTk):
             border_width=1, border_color=LINE
         )
         left.pack(side="left", fill="y", padx=(0, 10 if compact else 14))
+        left.pack_propagate(False)
         self.cat_buttons = {}
         ctk.CTkLabel(
             left, text="CATEGORÍAS",
@@ -996,8 +997,14 @@ class App(ctk.CTk):
         if not self.pending_lbl or not self.pending_lbl.winfo_exists(): return
         ap, rv = self.pending(); self.pending_lbl.configure(text=f"{len(ap)} por aplicar · {len(rv)} por revertir")
         ext = any(t["risk"] == "extreme" for t in ap)
-        if ext: self.banner.configure(text="  " + WARN_BANNER + "  "); self.banner.pack(fill="x", padx=28, before=self.pending_lbl.master)
-        else: self.banner.pack_forget()
+        if ext:
+            self.banner.configure(text="  " + WARN_BANNER + "  ")
+            anchor = self.pending_lbl.master
+            while getattr(anchor, "master", None) is not self.content:
+                anchor = anchor.master
+            self.banner.pack(fill="x", padx=28, pady=(0, 6), before=anchor)
+        else:
+            self.banner.pack_forget()
     def show_pending(self):
         ap, rv = self.pending(); w = ctk.CTkToplevel(self); w.wm_title("Cambios pendientes"); w.geometry("560x460"); w.configure(fg_color=BG); w.after(120, w.lift)
         tb = ctk.CTkTextbox(w, fg_color=CARD, font=self.f_n); tb.pack(fill="both", expand=True, padx=18, pady=18)
