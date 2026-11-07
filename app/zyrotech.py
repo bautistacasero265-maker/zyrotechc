@@ -361,7 +361,7 @@ class App(ctk.CTk):
         hero.pack(fill="x", pady=(0, 17))
         compact = getattr(self, "_compact", False)
         hero.grid_columnconfigure(0, weight=1)
-        hero.grid_columnconfigure(1, weight=0 if not compact else 1, minsize=238 if not compact else 0)
+        hero.grid_columnconfigure(1, weight=0, minsize=238 if not compact else 0)
         hero_left = ctk.CTkFrame(hero, fg_color="transparent")
         hero_left.grid(row=0, column=0, sticky="nsew", padx=(25, 15), pady=24)
         ctk.CTkLabel(hero_left, text="ZYROTECH  /  TU CENTRO DE CONTROL",
