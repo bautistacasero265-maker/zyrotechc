@@ -13,7 +13,7 @@
 ## Qué incluye
 
 - Detección de CPU, GPU, RAM, unidad de almacenamiento, formato del equipo y versión de Windows.
-- Catálogo Free con 93 ajustes, agrupados por módulos y con una explicación clara de qué hace cada uno.
+- Catálogo Free con 93 entradas: 91 ajustes disponibles y 2 protegidos para no desactivar funciones de seguridad familiar. Todos están agrupados por módulos y tienen una explicación clara.
 - Lectura del estado actual para distinguir ajustes activos, pendientes, parciales, incompatibles y no verificables; incluye detección de tareas programadas, configuración de Teredo, plan de energía y telemetría de PowerShell.
 - Clasificación de riesgo normal, precaución y riesgo alto, con advertencias antes de aplicar cambios delicados o acciones puntuales.
 - Recomendaciones prudentes: selecciona solo ajustes compatibles, reversibles, verificables y de impacto acotado; nunca aplica cambios automáticamente.
