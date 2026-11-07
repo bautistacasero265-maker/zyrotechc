@@ -99,11 +99,37 @@ def create_restore_point():
        "Checkpoint-Computer -Description 'ZyroTech - antes de optimizar' -RestorePointType MODIFY_SETTINGS")
 
 def backup_registry():
-    d = os.path.join(DATA, "backups"); os.makedirs(d, exist_ok=True)
+    """Exporta claves existentes; omite rutas opcionales que aún no fueron creadas."""
+    d = os.path.join(DATA, "backups")
+    os.makedirs(d, exist_ok=True)
     stamp = time.strftime("%Y%m%d-%H%M%S")
-    for i, key in enumerate([r"HKLM\SOFTWARE\Policies", r"HKLM\SYSTEM\CurrentControlSet\Control", r"HKCU\Control Panel",
-                             r"HKCU\Software\Microsoft\Windows\CurrentVersion", r"HKCU\System\GameConfigStore"]):
-        subprocess.run(["reg", "export", key, os.path.join(d, f"{stamp}-{i}.reg"), "/y"], check=True, capture_output=True, creationflags=NOWIN)
+    keys = [
+        r"HKLM\SOFTWARE\Policies",
+        r"HKLM\SYSTEM\CurrentControlSet\Control",
+        r"HKCU\Control Panel",
+        r"HKCU\Software\Microsoft\Windows\CurrentVersion",
+        r"HKCU\System\GameConfigStore",
+    ]
+    exported = 0
+    for index, key in enumerate(keys):
+        query = subprocess.run(
+            ["reg", "query", key],
+            capture_output=True, text=True, encoding="utf-8", errors="replace",
+            creationflags=NOWIN
+        )
+        if query.returncode != 0:
+            continue
+        result = subprocess.run(
+            ["reg", "export", key, os.path.join(d, f"{stamp}-{index}.reg"), "/y"],
+            capture_output=True, text=True, encoding="utf-8", errors="replace",
+            creationflags=NOWIN
+        )
+        if result.returncode != 0:
+            detail = (result.stderr or result.stdout).strip()
+            raise RuntimeError(detail or f"No se pudo respaldar {key}")
+        exported += 1
+    if exported == 0:
+        raise RuntimeError("No se pudo exportar ninguna clave del registro.")
     return stamp
 
 
