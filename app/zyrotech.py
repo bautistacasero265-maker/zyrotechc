@@ -678,8 +678,9 @@ class App(ctk.CTk):
                 and core.applicable(tweak, self.hw)
                 and self.statuses.get(tweak["id"]) == "inactive"
             )
-            if suitable and not self.vars[tweak["id"]].get():
-                self.vars[tweak["id"]].set(True)
+            if suitable:
+                if not self.vars[tweak["id"]].get():
+                    self.vars[tweak["id"]].set(True)
                 selected += 1
         self.cat = "Gaming" if "Gaming" in self.cats() else ORDER[0]
         self.search_query = ""
@@ -1088,7 +1089,17 @@ class App(ctk.CTk):
 
     def update_pending(self):
         if not self.pending_lbl or not self.pending_lbl.winfo_exists(): return
-        ap, rv = self.pending(); self.pending_lbl.configure(text=f"{len(ap)} por aplicar · {len(rv)} por revertir")
+        ap, rv = self.pending()
+        self.pending_lbl.configure(text=f"{len(ap)} por aplicar · {len(rv)} por revertir")
+        required_ack = tuple(sorted(
+            t["id"] for t in ap if t.get("risk") in ("caution", "extreme")
+        ))
+        previous_ack = getattr(self, "_risk_ack_items", ())
+        if required_ack != previous_ack:
+            self._risk_ack_items = required_ack
+            self.risk_ack = False
+            if getattr(self, "risk_ok", None) is not None:
+                self.risk_ok.set(False)
         ext = any(t.get("risk") == "extreme" for t in ap)
         caution = any(t.get("risk") == "caution" for t in ap)
         if ext or caution:
