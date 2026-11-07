@@ -13,9 +13,10 @@
 ## Qué incluye
 
 - Detección de CPU, GPU, RAM, unidad de almacenamiento, formato del equipo y versión de Windows.
-- Catálogo Free con 93 ajustes, agrupados por módulos.
-- Lectura del estado actual para distinguir ajustes activos, pendientes, parciales, incompatibles y no verificables.
-- Recomendaciones conservadoras: evita proponer cambios ya activos, irreversibles, marcados como riesgosos o que no correspondan al equipo.
+- Catálogo Free con 93 ajustes, agrupados por módulos y con una explicación clara de qué hace cada uno.
+- Lectura del estado actual para distinguir ajustes activos, pendientes, parciales, incompatibles y no verificables; incluye detección de tareas programadas, configuración de Teredo, plan de energía y telemetría de PowerShell.
+- Clasificación de riesgo normal, precaución y riesgo alto, con advertencias antes de aplicar cambios delicados o acciones puntuales.
+- Recomendaciones prudentes: selecciona solo ajustes compatibles, reversibles, verificables y de impacto acotado; nunca aplica cambios automáticamente.
 - Aplicación de un ajuste por vez.
 - Exportación de un informe de diagnóstico en texto con hardware detectado, compatibilidad y estado de cada ajuste; no incluye rutas personales ni datos del registro.
 - Punto de restauración, respaldo del registro, historial y reversión cuando el cambio tiene una acción inversa.

@@ -660,24 +660,40 @@ class App(ctk.CTk):
         threading.Thread(target=work, daemon=True).start()
 
     def recommended(self):
+        # Recomendaciones prudentes: evita acciones puntuales, preferencias personales,
+        # servicios críticos, cambios de energía/red y cualquier elemento con precaución.
+        safe_modules = {"Privacidad", "Debloat", "Gaming", "Tareas", "Seguridad básica"}
+        selected = 0
         for tweak in self.vis:
+            actions_reversible = all(
+                action.get("type") in ("reg", "scheduled_task") or bool(action.get("undo"))
+                for action in tweak.get("actions", [])
+            )
             suitable = (
-                tweak["risk"] != "extreme"
+                tweak.get("risk") == "normal"
                 and tweak["mode"] == "track"
                 and tweak.get("badge") not in BAD_FOR_AUTO
+                and tweak.get("module") in safe_modules
+                and actions_reversible
                 and core.applicable(tweak, self.hw)
                 and self.statuses.get(tweak["id"]) == "inactive"
             )
-            self.vars[tweak["id"]].set(self.vars[tweak["id"]].get() or suitable)
-        self.cat = ORDER[0]
+            if suitable and not self.vars[tweak["id"]].get():
+                self.vars[tweak["id"]].set(True)
+                selected += 1
+        self.cat = "Gaming" if "Gaming" in self.cats() else ORDER[0]
         self.search_query = ""
         self.show("opt")
+        self.say(
+            f"{selected} sugerencias prudentes seleccionadas. No se aplicó ningún cambio.",
+            0
+        )
 
     def cats(self): return [m for m in ORDER if any(t["module"] == m and core.applicable(t, self.hw) for t in self.vis)]
     def page_opt(self):
         self.heading(
             "Biblioteca de ajustes",
-            "Explorá los ajustes Free por categoría. Revisá compatibilidad y estado antes de aplicar cualquier cambio."
+            "93 ajustes Free con explicación, compatibilidad y estado detectado. Las recomendaciones evitan cambios delicados y preferencias personales."
         )
         compact = getattr(self, "_compact", False)
         cats = self.cats()
@@ -860,7 +876,13 @@ class App(ctk.CTk):
         q = self.search.get().strip().lower() if getattr(self, "search", None) and self.search.winfo_exists() else ""
         rows = [t for t in self.vis if t["module"] == self.cat]
         if q:
-            rows = [t for t in self.vis if q in t["name"].lower() or q in t["module"].lower()]
+            rows = [
+                t for t in self.vis
+                if q in t["name"].lower()
+                or q in t["module"].lower()
+                or q in t.get("summary", "").lower()
+                or q in t.get("warn", "").lower()
+            ]
         if getattr(self, "category_title", None) and self.category_title.winfo_exists():
             self.category_title.configure(text="Resultados de búsqueda" if q else (self.cat or "Ajustes"))
         if getattr(self, "result_count", None) and self.result_count.winfo_exists():
@@ -882,7 +904,7 @@ class App(ctk.CTk):
 
         accent = GREEN if status == "active" else GOLD if status == "partial" else RED if tweak.get("risk") == "extreme" else ACC
         ctk.CTkFrame(card, fg_color=accent, width=4, corner_radius=3).grid(
-            row=0, column=0, rowspan=2, sticky="ns", padx=(0, 12), pady=10)
+            row=0, column=0, rowspan=4, sticky="ns", padx=(0, 12), pady=10)
 
         managed = tweak["id"] in self.st["applied"]
         disabled = (
@@ -895,29 +917,34 @@ class App(ctk.CTk):
             command=self.update_pending, progress_color=ACC, width=42,
             state="disabled" if disabled else "normal"
         )
-        switch.grid(row=0, column=1, rowspan=2, sticky="w", padx=(12, 9), pady=12)
+        switch.grid(row=0, column=1, rowspan=4, sticky="w", padx=(12, 9), pady=12)
 
+        wrap = max(260, min(620, self.content.winfo_width() - (420 if self._compact else 430)))
         titlebox = ctk.CTkFrame(card, fg_color="transparent")
         titlebox.grid(row=0, column=2, sticky="ew", padx=(4, 13), pady=(11, 2))
         title_color = RED if tweak["risk"] == "extreme" else TEXT
         ctk.CTkLabel(
             titlebox, text=tweak["name"],
             font=ctk.CTkFont(family="Segoe UI", size=14, weight="bold"),
-            text_color=title_color, anchor="w", wraplength=max(260, min(620, self.content.winfo_width() - (420 if self._compact else 430))), justify="left"
+            text_color=title_color, anchor="w", wraplength=wrap, justify="left"
         ).pack(fill="x", anchor="w")
 
-        hint = tweak.get("warn") or (
-            "Requiere reinicio para completar el cambio" if tweak.get("reboot")
-            else "Reversible desde Actividad" if tweak.get("mode") == "track"
-            else "Herramienta puntual de mantenimiento"
-        )
         ctk.CTkLabel(
-            titlebox, text=hint, font=self.f_s, text_color="#C3B9D1",
-            anchor="w", wraplength=620, justify="left"
-        ).pack(fill="x", anchor="w", pady=(4, 0))
+            card, text=tweak.get("summary", "Ajuste local de Windows."),
+            font=self.f_s, text_color="#D0C7DD", anchor="w",
+            wraplength=wrap, justify="left"
+        ).grid(row=1, column=2, sticky="ew", padx=(4, 13), pady=(2, 5))
+
+        if tweak.get("warn"):
+            warning_color = RED if tweak.get("risk") == "extreme" else GOLD
+            ctk.CTkLabel(
+                card, text="⚠  " + tweak["warn"],
+                font=self.f_s, text_color=warning_color, anchor="w",
+                wraplength=wrap, justify="left"
+            ).grid(row=2, column=2, sticky="ew", padx=(4, 13), pady=(0, 5))
 
         meta = ctk.CTkFrame(card, fg_color="transparent")
-        meta.grid(row=1, column=2, sticky="ew", padx=(4, 12), pady=(2, 10))
+        meta.grid(row=3, column=2, sticky="ew", padx=(4, 12), pady=(2, 10))
         status_label = (
             "No compatible" if not compatible else
             "Acción puntual" if status == "once" else
@@ -932,6 +959,15 @@ class App(ctk.CTk):
             meta, text=f"  {status_label}  ", fg_color=status_bg,
             corner_radius=8, font=self.f_s, text_color=status_color, height=25
         ).pack(side="left", padx=(0, 6))
+
+        if tweak.get("risk") in ("caution", "extreme"):
+            risk_text = "Precaución" if tweak["risk"] == "caution" else "Riesgo alto"
+            risk_color = GOLD if tweak["risk"] == "caution" else RED
+            ctk.CTkLabel(
+                meta, text=f"  {risk_text}  ",
+                fg_color="#382E20" if tweak["risk"] == "caution" else "#48232B",
+                text_color=risk_color, corner_radius=7, font=self.f_s, height=23
+            ).pack(side="left", padx=3)
 
         tags = ([tweak["badge"]] if tweak.get("badge") else [])
         if tweak.get("reboot"):
@@ -951,30 +987,87 @@ class App(ctk.CTk):
     def info(self, tweak):
         window = ctk.CTkToplevel(self)
         window.wm_title(tweak["name"])
-        window.geometry("700x500")
-        window.minsize(560, 400)
+        window.geometry("740x600")
+        window.minsize(600, 480)
         window.configure(fg_color=BG)
         window.after(120, window.lift)
+
+        body = ctk.CTkScrollableFrame(window, fg_color="transparent")
+        body.pack(fill="both", expand=True, padx=18, pady=16)
+
         ctk.CTkLabel(
-            window, text=tweak["name"], font=self.f_b, text_color=TEXT,
-            wraplength=590, justify="left"
-        ).pack(anchor="w", padx=20, pady=(18, 4))
+            body, text=f'ZYROTECH  /  {tweak["module"].upper()}',
+            font=self.f_s, text_color=ACC, anchor="w"
+        ).pack(fill="x", padx=4, pady=(0, 7))
+        ctk.CTkLabel(
+            body, text=tweak["name"],
+            font=ctk.CTkFont(family="Segoe UI", size=21, weight="bold"),
+            text_color=TEXT, anchor="w", wraplength=650, justify="left"
+        ).pack(fill="x", padx=4, pady=(0, 10))
+
+        summary = self.card(body, fg="#21182F", border_color="#554078", corner_radius=16)
+        summary.pack(fill="x", pady=(0, 10))
+        ctk.CTkLabel(
+            summary, text="QUÉ HACE",
+            font=self.f_s, text_color="#C6AFFF", anchor="w"
+        ).pack(fill="x", padx=15, pady=(14, 5))
+        ctk.CTkLabel(
+            summary, text=tweak.get("summary", "Ajuste local de Windows."),
+            font=self.f_n, text_color=TEXT, anchor="w",
+            wraplength=640, justify="left"
+        ).pack(fill="x", padx=15, pady=(0, 14))
+
         if tweak.get("warn"):
+            warning = self.card(
+                body, fg="#382E20" if tweak.get("risk") != "extreme" else "#48232B",
+                border_color="#6B5430" if tweak.get("risk") != "extreme" else "#75404B",
+                corner_radius=14
+            )
+            warning.pack(fill="x", pady=(0, 10))
             ctk.CTkLabel(
-                window, text=f'{tweak.get("badge", "Aviso")}: {tweak["warn"]}',
-                font=self.f_n, text_color=GOLD, wraplength=590, justify="left"
-            ).pack(anchor="w", padx=20)
-        textbox = ctk.CTkTextbox(window, fg_color=CARD, font=ctk.CTkFont(family="Consolas", size=12))
-        textbox.pack(fill="both", expand=True, padx=20, pady=12)
+                warning, text="ANTES DE APLICAR",
+                font=self.f_s,
+                text_color=GOLD if tweak.get("risk") != "extreme" else RED,
+                anchor="w"
+            ).pack(fill="x", padx=14, pady=(12, 4))
+            ctk.CTkLabel(
+                warning, text=tweak["warn"], font=self.f_n, text_color=TEXT,
+                anchor="w", wraplength=640, justify="left"
+            ).pack(fill="x", padx=14, pady=(0, 12))
+
+        risk_text = {
+            "normal": "Riesgo normal · ajuste reversible o de impacto acotado.",
+            "caution": "Precaución · puede cambiar funciones o preferencias.",
+            "extreme": "Riesgo alto · puede ser difícil recuperar la función eliminada."
+        }.get(tweak.get("risk"), "Revisá el efecto antes de aplicar.")
+        ctk.CTkLabel(
+            body, text=risk_text, font=self.f_s,
+            text_color=RED if tweak.get("risk") == "extreme" else GOLD if tweak.get("risk") == "caution" else GREEN,
+            anchor="w", wraplength=650, justify="left"
+        ).pack(fill="x", padx=4, pady=(0, 10))
+
+        ctk.CTkLabel(
+            body, text="DETALLE TÉCNICO",
+            font=self.f_s, text_color=MUTE, anchor="w"
+        ).pack(fill="x", padx=4, pady=(4, 5))
+        textbox = ctk.CTkTextbox(
+            body, fg_color=CARD, font=ctk.CTkFont(family="Cascadia Code", size=11),
+            height=150, wrap="word"
+        )
+        textbox.pack(fill="x", expand=False, padx=2, pady=(0, 10))
         for action in tweak["actions"]:
             if action["type"] == "reg":
-                textbox.insert("end", f'{action["path"]}\\{action["name"]} = {action["value"]} ({action.get("vtype", "REG_DWORD")})\n')
+                textbox.insert("end", f'{action["path"]}\\{action["name"]} = {action["value"]} ({action.get("vtype", "REG_DWORD")})\\n')
             elif action["type"] == "ps":
-                textbox.insert("end", f'PowerShell: {action["cmd"]}\n')
+                textbox.insert("end", f'PowerShell: {action["cmd"]}\\n')
             elif action["type"] == "scheduled_task":
-                textbox.insert("end", f'Tarea: {action["path"]}\\{action["name"]}\n')
-        ending = "Se puede revertir al valor anterior." if tweak["mode"] == "track" else "Acción puntual: no tiene reversión automática."
-        textbox.insert("end", "\n" + ending)
+                textbox.insert("end", f'Tarea: {action["path"]}\\{action["name"]}\\n')
+        ending = (
+            "Se guarda el valor anterior para revertir este cambio desde Actividad."
+            if tweak["mode"] == "track" else
+            "Acción puntual: no tiene reversión automática."
+        )
+        textbox.insert("end", "\\n" + ending)
         textbox.configure(state="disabled")
 
     def pending(self):
@@ -996,9 +1089,18 @@ class App(ctk.CTk):
     def update_pending(self):
         if not self.pending_lbl or not self.pending_lbl.winfo_exists(): return
         ap, rv = self.pending(); self.pending_lbl.configure(text=f"{len(ap)} por aplicar · {len(rv)} por revertir")
-        ext = any(t["risk"] == "extreme" for t in ap)
-        if ext:
-            self.banner.configure(text="  " + WARN_BANNER + "  ")
+        ext = any(t.get("risk") == "extreme" for t in ap)
+        caution = any(t.get("risk") == "caution" for t in ap)
+        if ext or caution:
+            warning_text = (
+                "Hay cambios de riesgo alto seleccionados. Revisá sus efectos y la posibilidad de recuperación."
+                if ext else
+                "Hay ajustes con precauciones seleccionados. Verificá qué funciones o preferencias pueden cambiar."
+            )
+            self.banner.configure(
+                text="  " + warning_text + "  ",
+                fg_color=RED if ext else "#6B5430"
+            )
             anchor = self.pending_lbl.master
             while getattr(anchor, "master", None) is not self.content:
                 anchor = anchor.master
@@ -1008,7 +1110,19 @@ class App(ctk.CTk):
     def show_pending(self):
         ap, rv = self.pending(); w = ctk.CTkToplevel(self); w.wm_title("Cambios pendientes"); w.geometry("560x460"); w.configure(fg_color=BG); w.after(120, w.lift)
         tb = ctk.CTkTextbox(w, fg_color=CARD, font=self.f_n); tb.pack(fill="both", expand=True, padx=18, pady=18)
-        tb.insert("1.0", "POR APLICAR\n" + ("\n".join("  + " + t["name"] for t in ap) or "  (nada)") + "\n\nPOR REVERTIR\n" + ("\n".join("  - " + t["name"] for t in rv) or "  (nada)")); tb.configure(state="disabled")
+        lines = ["POR APLICAR"]
+        for item in ap:
+            lines.append("  + " + item["name"])
+            if item.get("warn"):
+                lines.append("      Precaución: " + item["warn"])
+        if not ap:
+            lines.append("  (nada)")
+        lines.extend(["", "POR REVERTIR"])
+        lines.extend("  - " + item["name"] for item in rv)
+        if not rv:
+            lines.append("  (nada)")
+        tb.insert("1.0", "\\n".join(lines))
+        tb.configure(state="disabled")
 
     def need_admin(self):
         if core.is_admin(): return True
@@ -1025,8 +1139,11 @@ class App(ctk.CTk):
         if not ap and not rv: return
         if len(ap) > 1:
             return messagebox.showinfo("ZyroTech Free", "La edición Free aplica un tweak por vez. Dejé todos seleccionados; aplicá uno y después seguí con el próximo.")
-        if any(t["risk"] == "extreme" for t in ap) and not self.risk_ok.get():
-            return messagebox.showwarning("ZyroTech", "Marcá 'Entiendo los riesgos' para aplicar los cambios en rojo.")
+        if any(t.get("risk") in ("caution", "extreme") for t in ap) and not self.risk_ok.get():
+            return messagebox.showwarning(
+                "ZyroTech",
+                "Revisá las advertencias y marcá 'Entiendo los riesgos' para aplicar ajustes con precaución o riesgo alto."
+            )
         if not self.need_admin(): return
         if ap and not self.restore_ok and not messagebox.askyesno("ZyroTech", "Antes de aplicar hay que crear un punto de restauración de Windows.\n¿Crearlo ahora?"): return
         threading.Thread(target=lambda: self.run_apply(ap, rv), daemon=True).start()
