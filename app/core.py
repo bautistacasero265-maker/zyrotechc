@@ -193,8 +193,17 @@ def tweak_status(t):
                 continue
             if kind == "scheduled_task":
                 state = _scheduled_task_state(a["path"], a["name"])
-                if state is None: states.append(None)
-                else: states.append(state == str(a.get("state", "Disabled")).lower())
+                if state is None:
+                    states.append(None)
+                else:
+                    states.append(state == str(a.get("state", "Disabled")).lower())
+                continue
+            if kind == "ps":
+                # Las detecciones PowerShell deben devolver un token estable.
+                # No se deduce el estado a partir del historial de aplicación.
+                output = ps(a["cmd"]).strip()
+                expected = str(a.get("expected", "1")).strip()
+                states.append(output.casefold() == expected.casefold())
                 continue
             # Sin una lectura fiable no inferimos el estado por el historial.
             states.append(None)
