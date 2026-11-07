@@ -77,7 +77,7 @@ class FreeReleaseTests(unittest.TestCase):
     def test_free_ui_has_refined_dashboard_and_tweak_cards(self):
         self.assertIn("Hacé que Windows", self.ui)
         self.assertIn("ESTADO DE TU EQUIPO", self.ui)
-        self.assertIn("93 AJUSTES GRATUITOS", self.ui)
+        self.assertIn("91 AJUSTES DISPONIBLES", self.ui)
         self.assertIn("Resultados de búsqueda", self.ui)
         self.assertIn("status_bg =", self.ui)
         self.assertIn("LOCAL MODE", self.ui)
