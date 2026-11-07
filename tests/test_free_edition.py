@@ -135,6 +135,21 @@ class FreeReleaseTests(unittest.TestCase):
         self.assertIn("ANTES DE APLICAR", self.ui)
         self.assertIn("Riesgo alto", self.ui)
 
+    def test_registry_backup_skips_missing_optional_keys_but_checks_export_errors(self):
+        self.assertIn('["reg", "query", key]', self.core)
+        self.assertIn('if query.returncode != 0:', self.core)
+        self.assertIn('if result.returncode != 0:', self.core)
+        self.assertIn('if exported == 0:', self.core)
+
+    def test_reverting_energy_plan_does_not_delete_user_profile(self):
+        energy = next(item for item in self.catalog if item["id"] == "ZT-0185")
+        undo = energy["actions"][0]["undo"]
+        self.assertEqual(undo, "powercfg -setactive {captured}")
+
+    def test_risk_acknowledgement_resets_when_selection_changes(self):
+        self.assertIn('required_ack = tuple(sorted(', self.ui)
+        self.assertIn('self.risk_ok.set(False)', self.ui)
+
     def test_private_timer_and_ram_actions_are_not_in_free_core(self):
         self.assertNotIn("NtSetTimerResolution", self.core)
         self.assertNotIn("purge_standby", self.core)
