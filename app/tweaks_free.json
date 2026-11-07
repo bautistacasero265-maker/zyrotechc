@@ -1616,7 +1616,7 @@
       {
         "type": "ps",
         "cmd": "$l=(powercfg -list | Out-String); $m=[regex]::Match(($l -split '\\r?\\n' | ? {$_ -match 'ZyroTech'} | Select -First 1),'[0-9a-f-]{36}'); if($m.Success){$g=$m.Value}else{$o=(powercfg -duplicatescheme e9a42b02-d5df-448d-aa00-03f14749eb61 | Out-String); if($o -notmatch '[0-9a-f-]{36}'){$o=(powercfg -duplicatescheme 8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c | Out-String)}; $g=[regex]::Match($o,'[0-9a-f-]{36}').Value; powercfg -changename $g 'ZyroTech Ultimate Performance' | Out-Null}; powercfg -setactive $g",
-        "undo": "powercfg -setactive {captured}; $l=(powercfg -list | Out-String); $m=[regex]::Match(($l -split '\\r?\\n' | ? {$_ -match 'ZyroTech'} | Select -First 1),'[0-9a-f-]{36}'); if($m.Success){powercfg -delete $m.Value}",
+        "undo": "powercfg -setactive {captured}",
         "capture": "[regex]::Match((powercfg /getactivescheme | Out-String),'[0-9a-f-]{36}').Value"
       }
     ],
