@@ -675,49 +675,166 @@ class App(ctk.CTk):
 
     def cats(self): return [m for m in ORDER if any(t["module"] == m and core.applicable(t, self.hw) for t in self.vis)]
     def page_opt(self):
-        self.heading("Biblioteca de ajustes", "Explorá los ajustes Free por categoría. ZyroTech detecta cuáles ya están activos y conserva tus selecciones mientras navegás.")
-        cats = self.cats(); self.cat = self.cat if self.cat in cats else (cats[0] if cats else None)
-        body = ctk.CTkFrame(self.content, fg_color="transparent"); body.pack(fill="both", expand=True, padx=28)
-        left = ctk.CTkScrollableFrame(body, width=218, fg_color=SIDE, corner_radius=16, border_width=1, border_color=LINE); left.pack(side="left", fill="y", padx=(0, 14))
+        self.heading(
+            "Biblioteca de ajustes",
+            "Explorá los ajustes Free por categoría. Revisá compatibilidad y estado antes de aplicar cualquier cambio."
+        )
+        compact = getattr(self, "_compact", False)
+        cats = self.cats()
+        self.cat = self.cat if self.cat in cats else (cats[0] if cats else None)
+
+        body = ctk.CTkFrame(self.content, fg_color="transparent")
+        body.pack(fill="both", expand=True, padx=18 if compact else 28)
+        left_width = 176 if compact else 218
+        left = ctk.CTkScrollableFrame(
+            body, width=left_width, fg_color=SIDE, corner_radius=16,
+            border_width=1, border_color=LINE
+        )
+        left.pack(side="left", fill="y", padx=(0, 10 if compact else 14))
         self.cat_buttons = {}
-        ctk.CTkLabel(left, text="CATEGORÍAS", font=ctk.CTkFont(family="Segoe UI", size=9, weight="bold"),
-                     text_color="#A99DB8", anchor="w").pack(fill="x", padx=13, pady=(13, 8))
-        for m in cats:
-            n = sum(1 for t in self.vis if t["module"] == m and core.applicable(t, self.hw))
-            icon = {"Privacidad":"◈","Debloat":"✦","Gaming":"▣","Kernel":"⌘","Energía":"ϟ","Red":"⌁","Periféricos":"⌖","Interfaz":"▤","Servicios":"⚙","Tareas":"◷","Inicio":"➜","Mantenimiento":"⌁","Seguridad básica":"◇","Seguridad":"⬡"}.get(m, "•")
-            selected = m == self.cat
-            tile = ctk.CTkFrame(left, fg_color="#2C2340" if selected else "transparent", corner_radius=11)
+        ctk.CTkLabel(
+            left, text="CATEGORÍAS",
+            font=ctk.CTkFont(family="Segoe UI", size=10, weight="bold"),
+            text_color="#A99DB8", anchor="w"
+        ).pack(fill="x", padx=12, pady=(13, 8))
+
+        icons = {
+            "Privacidad": "◈", "Debloat": "✦", "Gaming": "▣", "Kernel": "⌘",
+            "Energía": "ϟ", "Red": "⌁", "Periféricos": "⌖", "Interfaz": "▤",
+            "Servicios": "⚙", "Tareas": "◷", "Inicio": "➜",
+            "Mantenimiento": "⌁", "Seguridad básica": "◇", "Seguridad": "⬡"
+        }
+        for module in cats:
+            count = sum(
+                1 for item in self.vis
+                if item["module"] == module and core.applicable(item, self.hw)
+            )
+            selected = module == self.cat
+            tile = ctk.CTkFrame(
+                left, fg_color="#2C2340" if selected else "transparent",
+                corner_radius=11
+            )
             tile.pack(fill="x", pady=3)
-            rail = ctk.CTkFrame(tile, fg_color=ACC if selected else "transparent", width=3, corner_radius=2)
-            rail.pack(side="left", fill="y", padx=(0, 5), pady=7)
-            button = ctk.CTkButton(tile, text=f"{icon}   {m}", anchor="w", fg_color="transparent",
-                          text_color=TEXT if selected else MUTE, hover_color=CARD2,
-                          corner_radius=9, height=42, font=self.f_b if selected else self.f_n,
-                          command=lambda m=m: self.set_cat(m))
+            rail = ctk.CTkFrame(
+                tile, fg_color=ACC if selected else "transparent",
+                width=3, corner_radius=2
+            )
+            rail.pack(side="left", fill="y", padx=(0, 4), pady=7)
+            label = "Seg. básica" if compact and module == "Seguridad básica" else module
+            button = ctk.CTkButton(
+                tile, text=f'{icons.get(module, "•")}  {label}', anchor="w",
+                fg_color="transparent", text_color=TEXT if selected else MUTE,
+                hover_color=CARD2, corner_radius=9,
+                height=39 if compact else 42,
+                font=self.f_b if selected else self.f_n,
+                command=lambda selected_module=module: self.set_cat(selected_module)
+            )
             button.pack(side="left", fill="x", expand=True)
-            self.cat_buttons[m] = (tile, rail, button)
-            ctk.CTkLabel(tile, text=str(n), fg_color="#3A2D50" if selected else CARD2, text_color=ACC if selected else MUTE, corner_radius=7,
-                         font=self.f_s, width=28, height=22).pack(side="right", padx=8)
-        right = ctk.CTkFrame(body, fg_color="transparent"); right.pack(side="left", fill="both", expand=True)
-        top = ctk.CTkFrame(right, fg_color="transparent"); top.pack(fill="x", pady=(0, 10))
-        self.category_title = ctk.CTkLabel(top, text=self.cat or "Ajustes", font=self.f_h2, text_color=TEXT, anchor="w")
-        self.category_title.pack(side="left", padx=(2, 12))
-        self.result_count = ctk.CTkLabel(top, text="", font=self.f_s, text_color=MUTE)
-        self.result_count.pack(side="left")
-        self.search = ctk.CTkEntry(top, placeholder_text="Buscar ajustes...", fg_color=CARD, border_color=LINE, height=43, corner_radius=12, border_width=1)
-        self.search.pack(side="right", fill="x", expand=True, padx=(14, 0))
-        if self.search_query: self.search.insert(0, self.search_query)
-        self.search.bind("<KeyRelease>", lambda e: self.fill_list())
-        self.btn(top, "✦  Recomendarme", self.recommended, "ghost", width=170, height=40).pack(side="left", padx=(8, 0))
-        self.listf = ctk.CTkScrollableFrame(right, fg_color="transparent"); self.listf.pack(fill="both", expand=True)
-        self.banner = ctk.CTkLabel(self.content, text="", fg_color=RED, text_color="white", font=self.f_s, wraplength=900, justify="left", corner_radius=8)
-        bar = self.card(self.content); bar.pack(fill="x", padx=28, pady=(8, 10))
-        self.pending_lbl = ctk.CTkLabel(bar, text="", font=self.f_b, text_color=TEXT); self.pending_lbl.pack(side="left", padx=18, pady=12)
+            self.cat_buttons[module] = (tile, rail, button)
+            ctk.CTkLabel(
+                tile, text=str(count),
+                fg_color="#3A2D50" if selected else CARD2,
+                text_color=ACC if selected else MUTE,
+                corner_radius=7, font=self.f_s, width=26, height=21
+            ).pack(side="right", padx=5)
+
+        right = ctk.CTkFrame(body, fg_color="transparent")
+        right.pack(side="left", fill="both", expand=True)
+        top = ctk.CTkFrame(right, fg_color="transparent")
+        top.pack(fill="x", pady=(0, 10))
+
+        self.category_title = ctk.CTkLabel(
+            top, text=self.cat or "Ajustes", font=self.f_h2,
+            text_color=TEXT, anchor="w"
+        )
+        self.result_count = ctk.CTkLabel(
+            top, text="", font=self.f_s, text_color=MUTE
+        )
+
+        if compact:
+            title_row = ctk.CTkFrame(top, fg_color="transparent")
+            title_row.pack(fill="x")
+            self.category_title.pack(in_=title_row, side="left", padx=(2, 10))
+            self.result_count.pack(in_=title_row, side="right")
+            tools_row = ctk.CTkFrame(top, fg_color="transparent")
+            tools_row.pack(fill="x", pady=(8, 0))
+            self.search = ctk.CTkEntry(
+                tools_row, placeholder_text="Buscar ajustes...",
+                fg_color=CARD, border_color=LINE, height=41,
+                corner_radius=12, border_width=1
+            )
+            self.search.pack(side="left", fill="x", expand=True, padx=(0, 8))
+            self.btn(
+                tools_row, "Recomendarme", self.recommended, "ghost",
+                width=132, height=39
+            ).pack(side="right")
+        else:
+            self.category_title.pack(side="left", padx=(2, 12))
+            self.result_count.pack(side="left")
+            self.search = ctk.CTkEntry(
+                top, placeholder_text="Buscar ajustes...",
+                fg_color=CARD, border_color=LINE, height=43,
+                corner_radius=12, border_width=1
+            )
+            self.search.pack(side="right", fill="x", expand=True, padx=(14, 0))
+            self.btn(
+                top, "✦  Recomendarme", self.recommended, "ghost",
+                width=170, height=40
+            ).pack(side="left", padx=(8, 0))
+
+        if self.search_query:
+            self.search.insert(0, self.search_query)
+        self.search.bind("<KeyRelease>", lambda event: self.fill_list())
+
+        self.listf = ctk.CTkScrollableFrame(right, fg_color="transparent")
+        self.listf.pack(fill="both", expand=True)
+
+        self.banner = ctk.CTkLabel(
+            self.content, text="", fg_color=RED, text_color="white",
+            font=self.f_s, wraplength=900, justify="left", corner_radius=8
+        )
+        bar = self.card(self.content, fg=SIDE, corner_radius=14)
+        bar.pack(fill="x", padx=18 if compact else 28, pady=(8, 10))
+
         self.risk_ok = ctk.BooleanVar(value=self.risk_ack)
-        ctk.CTkCheckBox(bar, text="Entiendo los riesgos", variable=self.risk_ok, font=self.f_s, fg_color=ACC, hover_color=ACC, text_color=MUTE).pack(side="left", padx=10)
-        self.btn(bar, "Aplicar uno", self.on_apply, width=145, height=40).pack(side="right", padx=14)
-        self.btn(bar, "Ver pendientes", self.show_pending, "ghost", width=140).pack(side="right")
-        self.fill_list(); self.update_pending()
+        if compact:
+            summary_row = ctk.CTkFrame(bar, fg_color="transparent")
+            summary_row.pack(fill="x", padx=12, pady=(8, 0))
+            self.pending_lbl = ctk.CTkLabel(
+                summary_row, text="", font=self.f_b, text_color=TEXT
+            )
+            self.pending_lbl.pack(side="left")
+            ctk.CTkCheckBox(
+                summary_row, text="Entiendo los riesgos", variable=self.risk_ok,
+                font=self.f_s, fg_color=ACC, hover_color=ACC, text_color=MUTE
+            ).pack(side="right")
+            action_row = ctk.CTkFrame(bar, fg_color="transparent")
+            action_row.pack(fill="x", padx=10, pady=(6, 10))
+            self.btn(
+                action_row, "Aplicar uno", self.on_apply, width=145, height=38
+            ).pack(side="right", padx=(6, 0))
+            self.btn(
+                action_row, "Ver pendientes", self.show_pending, "ghost",
+                width=140, height=38
+            ).pack(side="right")
+        else:
+            self.pending_lbl = ctk.CTkLabel(
+                bar, text="", font=self.f_b, text_color=TEXT
+            )
+            self.pending_lbl.pack(side="left", padx=18, pady=12)
+            ctk.CTkCheckBox(
+                bar, text="Entiendo los riesgos", variable=self.risk_ok,
+                font=self.f_s, fg_color=ACC, hover_color=ACC, text_color=MUTE
+            ).pack(side="left", padx=10)
+            self.btn(
+                bar, "Aplicar uno", self.on_apply, width=145, height=40
+            ).pack(side="right", padx=14)
+            self.btn(
+                bar, "Ver pendientes", self.show_pending, "ghost", width=140
+            ).pack(side="right")
+
+        self.fill_list()
+        self.update_pending()
 
     def set_cat(self, m):
         # Actualiza solo el panel de resultados; no reconstruye la ventana ni los controles.
