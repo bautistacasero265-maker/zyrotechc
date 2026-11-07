@@ -37,7 +37,7 @@ class App(ctk.CTk):
         super().__init__()
         ctk.set_appearance_mode("dark")
         self.wm_title("ZyroTech Free")
-        self.geometry("1360x820")
+        self.geometry("1280x760")
         self.minsize(980, 660)
         try:
             self.state("zoomed")
@@ -52,7 +52,7 @@ class App(ctk.CTk):
         self.f_n = ctk.CTkFont(family="Segoe UI", size=14)
         self.f_s = ctk.CTkFont(family="Segoe UI", size=12)
         self.f_big = ctk.CTkFont(family="Segoe UI", size=43, weight="bold")
-        self.f_mono = ctk.CTkFont(family="Cascadia Code", size=11)
+        self.f_mono = ctk.CTkFont(family="Cascadia Code", size=12)
 
         self.st = core.load_json(core.data_path("state.json"), {"applied": {}})
         self.hist = core.load_json(core.data_path("history.json"), [])
@@ -80,7 +80,7 @@ class App(ctk.CTk):
         namebox = ctk.CTkFrame(brand, fg_color="transparent")
         namebox.pack(side="left", padx=12)
         ctk.CTkLabel(namebox, text="ZYROTECH", font=self.f_logo, text_color=TEXT).pack(anchor="w")
-        ctk.CTkLabel(namebox, text="PERFORMANCE LAB", font=ctk.CTkFont(family="Segoe UI", size=9, weight="bold"),
+        ctk.CTkLabel(namebox, text="PERFORMANCE LAB", font=ctk.CTkFont(family="Segoe UI", size=10, weight="bold"),
                      text_color=MUTE).pack(anchor="w", pady=(0, 1))
 
         top_right = ctk.CTkFrame(self.topbar, fg_color="transparent")
@@ -141,7 +141,7 @@ class App(ctk.CTk):
         mark.pack(pady=(0, 18)); mark.pack_propagate(False)
         ctk.CTkLabel(mark, text="ZT", font=ctk.CTkFont(family="Segoe UI", size=30, weight="bold"), text_color=ACC_TXT).pack(expand=True)
         ctk.CTkLabel(wrap, text="ZYROTECH", font=ctk.CTkFont(family="Segoe UI", size=30, weight="bold"), text_color=TEXT).pack()
-        ctk.CTkLabel(wrap, text="OPTIMIZER SUITE", font=ctk.CTkFont(family="Segoe UI", size=10, weight="bold"), text_color=ACC).pack(pady=(1, 18))
+        ctk.CTkLabel(wrap, text="OPTIMIZER SUITE", font=ctk.CTkFont(family="Segoe UI", size=11, weight="bold"), text_color=ACC).pack(pady=(1, 18))
         self.splash_status = ctk.CTkLabel(wrap, text=text, font=self.f_n, text_color=MUTE)
         self.splash_status.pack()
         loader = ctk.CTkProgressBar(wrap, width=220, height=5, progress_color=ACC, fg_color=CARD2)
@@ -182,9 +182,9 @@ class App(ctk.CTk):
         eyebrow = ctk.CTkFrame(top, fg_color="transparent")
         eyebrow.pack(fill="x")
         ctk.CTkLabel(eyebrow, text="ZT  /  PERFORMANCE LAB",
-                     font=ctk.CTkFont(family="Segoe UI", size=10, weight="bold"),
+                     font=ctk.CTkFont(family="Segoe UI", size=11, weight="bold"),
                      text_color=ACC, anchor="w").pack(side="left")
-        ctk.CTkLabel(eyebrow, text="●  LOCAL MODE", font=ctk.CTkFont(family="Segoe UI", size=9, weight="bold"),
+        ctk.CTkLabel(eyebrow, text="●  LOCAL MODE", font=ctk.CTkFont(family="Segoe UI", size=10, weight="bold"),
                      text_color=GREEN, anchor="e").pack(side="right")
         ctk.CTkLabel(top, text=text, font=self.f_h1, text_color=TEXT, anchor="w").pack(fill="x", pady=(7, 2))
         if sub:
@@ -284,7 +284,7 @@ class App(ctk.CTk):
             ("about", "ⓘ", "Acerca de"),
         ]
         self.nav_rails = {}
-        ctk.CTkLabel(self.navbar, text="MENÚ PRINCIPAL", font=ctk.CTkFont(family="Segoe UI", size=9, weight="bold"),
+        ctk.CTkLabel(self.navbar, text="MENÚ PRINCIPAL", font=ctk.CTkFont(family="Segoe UI", size=10, weight="bold"),
                      text_color="#A99DB8", anchor="w").pack(fill="x", padx=19, pady=(25, 12))
         for key, glyph, label in nav_items:
             tile = ctk.CTkFrame(self.navbar, fg_color="transparent", corner_radius=11)
@@ -304,7 +304,7 @@ class App(ctk.CTk):
         edition = ctk.CTkFrame(self.navbar, fg_color="#181322", corner_radius=13,
                                border_width=1, border_color="#3A2D50")
         edition.pack(side="bottom", fill="x", padx=12, pady=15)
-        ctk.CTkLabel(edition, text="ZYROTECH  /  FREE", font=ctk.CTkFont(family="Segoe UI", size=9, weight="bold"),
+        ctk.CTkLabel(edition, text="ZYROTECH  /  FREE", font=ctk.CTkFont(family="Segoe UI", size=10, weight="bold"),
                      text_color=ACC, anchor="w").pack(fill="x", padx=12, pady=(12, 4))
         ctk.CTkLabel(edition, text="Optimización local para Windows.\nControlá cada cambio. Revertí cuando quieras.",
                      font=self.f_s, text_color="#C3B9D1", anchor="w", justify="left",
@@ -365,7 +365,7 @@ class App(ctk.CTk):
         hero_left = ctk.CTkFrame(hero, fg_color="transparent")
         hero_left.grid(row=0, column=0, sticky="nsew", padx=(25, 15), pady=24)
         ctk.CTkLabel(hero_left, text="ZYROTECH  /  TU CENTRO DE CONTROL",
-                     font=ctk.CTkFont(family="Segoe UI", size=10, weight="bold"),
+                     font=ctk.CTkFont(family="Segoe UI", size=11, weight="bold"),
                      text_color="#CEB9FF", anchor="w").pack(fill="x")
         ctk.CTkLabel(hero_left, text="Hacé que Windows\ntrabaje a tu manera.",
                      font=ctk.CTkFont(family="Segoe UI", size=31, weight="bold"),
@@ -376,7 +376,7 @@ class App(ctk.CTk):
                      text_color="#D1C6DC", anchor="w", wraplength=680,
                      justify="left").pack(fill="x")
         ctk.CTkLabel(hero_left, text="93 AJUSTES GRATUITOS   •   DETECCIÓN LOCAL   •   CONTROL DE CAMBIOS",
-                     font=ctk.CTkFont(family="Segoe UI", size=10, weight="bold"),
+                     font=ctk.CTkFont(family="Segoe UI", size=11, weight="bold"),
                      text_color="#80F0D0", anchor="w").pack(fill="x", pady=(13, 0))
         hero_actions = ctk.CTkFrame(hero_left, fg_color="transparent")
         hero_actions.pack(fill="x", pady=(17, 0))
@@ -393,13 +393,13 @@ class App(ctk.CTk):
         score.configure(width=220 if not compact else 0)
         score.grid_propagate(not not compact)
         ctk.CTkLabel(score, text="ESTADO DE TU EQUIPO",
-                     font=ctk.CTkFont(family="Segoe UI", size=10, weight="bold"),
+                     font=ctk.CTkFont(family="Segoe UI", size=11, weight="bold"),
                      text_color="#D9C5E9").pack(anchor="w", padx=17, pady=(17, 5))
         ctk.CTkLabel(score, text=f"{coverage}%",
                      font=ctk.CTkFont(family="Segoe UI", size=48, weight="bold"),
                      text_color="#C6AFFF").pack(anchor="w", padx=15)
         ctk.CTkLabel(score, text="de los ajustes compatibles\nfiguran activos y verificados",
-                     font=ctk.CTkFont(family="Segoe UI", size=11),
+                     font=ctk.CTkFont(family="Segoe UI", size=12),
                      text_color="#E0D5E9", justify="left").pack(anchor="w", padx=17, pady=(0, 12))
         gauge = ctk.CTkProgressBar(score, height=8, progress_color="#9B72FF",
                                    fg_color="#403050", corner_radius=8)
@@ -409,7 +409,7 @@ class App(ctk.CTk):
         section = ctk.CTkFrame(body, fg_color="transparent")
         section.pack(fill="x", pady=(0, 10))
         ctk.CTkLabel(section, text="RESUMEN DE OPTIMIZACIÓN",
-                     font=ctk.CTkFont(family="Segoe UI", size=11, weight="bold"),
+                     font=ctk.CTkFont(family="Segoe UI", size=12, weight="bold"),
                      text_color="#D7C9E4", anchor="w").pack(fill="x", pady=(0, 9))
         metrics = ctk.CTkFrame(section, fg_color="transparent")
         metrics.pack(fill="x")
@@ -424,13 +424,13 @@ class App(ctk.CTk):
                    pady=(0, 8) if compact else 0)
             ctk.CTkFrame(c, fg_color=accent, height=4, corner_radius=2).pack(fill="x", padx=14, pady=(13, 11))
             ctk.CTkLabel(c, text=title.upper(),
-                         font=ctk.CTkFont(family="Segoe UI", size=10, weight="bold"),
+                         font=ctk.CTkFont(family="Segoe UI", size=11, weight="bold"),
                          text_color="#BEB2CB", anchor="w").pack(fill="x", padx=15, pady=(0, 2))
             ctk.CTkLabel(c, text=str(value),
                          font=ctk.CTkFont(family="Segoe UI", size=35, weight="bold"),
                          text_color=accent, anchor="w").pack(fill="x", padx=15)
             ctk.CTkLabel(c, text=detail,
-                         font=ctk.CTkFont(family="Segoe UI", size=10),
+                         font=ctk.CTkFont(family="Segoe UI", size=11),
                          text_color="#B7AFC6", anchor="w", wraplength=220,
                          justify="left").pack(fill="x", padx=15, pady=(2, 14))
         metric(0, "Activos", active, "Detectados directamente en Windows", "#80F0D0")
@@ -440,7 +440,7 @@ class App(ctk.CTk):
         metric(3, "No compatibles", incompatible, "Se excluyen de las recomendaciones", "#A99CB8")
 
         ctk.CTkLabel(body, text="TU EQUIPO",
-                     font=ctk.CTkFont(family="Segoe UI", size=11, weight="bold"),
+                     font=ctk.CTkFont(family="Segoe UI", size=12, weight="bold"),
                      text_color="#D7C9E4", anchor="w").pack(fill="x", pady=(8, 9))
         lower = ctk.CTkFrame(body, fg_color="transparent")
         lower.pack(fill="x")
@@ -452,7 +452,7 @@ class App(ctk.CTk):
                               border_width=1, border_color="#3A2D4D")
         device.grid(row=0, column=0, sticky="nsew", padx=(0, 0 if compact else 7), pady=(0, 10) if compact else 0)
         ctk.CTkLabel(device, text="INFORMACIÓN DEL HARDWARE",
-                     font=ctk.CTkFont(family="Segoe UI", size=10, weight="bold"),
+                     font=ctk.CTkFont(family="Segoe UI", size=11, weight="bold"),
                      text_color="#C6AFFF", anchor="w").pack(fill="x", padx=18, pady=(16, 10))
         specs = [
             ("PROCESADOR", hw.get("cpu_name", "No detectado")),
@@ -470,10 +470,10 @@ class App(ctk.CTk):
             cell = ctk.CTkFrame(spec_grid, fg_color="#292137", corner_radius=11)
             cell.grid(row=rr, column=cc, sticky="nsew", padx=4, pady=4)
             ctk.CTkLabel(cell, text=label,
-                         font=ctk.CTkFont(family="Segoe UI", size=9, weight="bold"),
+                         font=ctk.CTkFont(family="Segoe UI", size=10, weight="bold"),
                          text_color="#BEB2CB", anchor="w").pack(fill="x", padx=11, pady=(9, 2))
             ctk.CTkLabel(cell, text=value,
-                         font=ctk.CTkFont(family="Segoe UI", size=11, weight="bold"),
+                         font=ctk.CTkFont(family="Segoe UI", size=12, weight="bold"),
                          text_color="#F7F1FF", anchor="w",
                          wraplength=290, justify="left").pack(fill="x", padx=11, pady=(0, 10))
 
@@ -482,13 +482,13 @@ class App(ctk.CTk):
         overview.grid(row=1 if compact else 0, column=0 if compact else 1, sticky="nsew",
                        padx=(0, 0 if compact else 7), pady=(0, 0) if not compact else (2, 0))
         ctk.CTkLabel(overview, text="ESTADO Y HERRAMIENTAS",
-                     font=ctk.CTkFont(family="Segoe UI", size=10, weight="bold"),
+                     font=ctk.CTkFont(family="Segoe UI", size=11, weight="bold"),
                      text_color="#C6AFFF", anchor="w").pack(fill="x", padx=18, pady=(16, 7))
         ctk.CTkLabel(overview, text=f"{active} / {max(1, len(eligible))}",
                      font=ctk.CTkFont(family="Segoe UI", size=34, weight="bold"),
                      text_color=TEXT, anchor="w").pack(fill="x", padx=18)
         ctk.CTkLabel(overview, text="ajustes compatibles activos",
-                     font=ctk.CTkFont(family="Segoe UI", size=11),
+                     font=ctk.CTkFont(family="Segoe UI", size=12),
                      text_color="#B7AFC6", anchor="w").pack(fill="x", padx=18, pady=(0, 10))
         pb = ctk.CTkProgressBar(overview, height=9, progress_color="#9B72FF",
                                 fg_color="#362A46", corner_radius=6)
@@ -496,23 +496,23 @@ class App(ctk.CTk):
         pb.pack(fill="x", padx=18, pady=(0, 14))
         ctk.CTkFrame(overview, fg_color="#3A2D4D", height=1).pack(fill="x", padx=18, pady=(0, 12))
         ctk.CTkLabel(overview, text="MEDICIÓN DE TEMPORIZACIÓN",
-                     font=ctk.CTkFont(family="Segoe UI", size=9, weight="bold"),
+                     font=ctk.CTkFont(family="Segoe UI", size=10, weight="bold"),
                      text_color="#BEB2CB", anchor="w").pack(fill="x", padx=18)
         self.lat_lbl = ctk.CTkLabel(overview, text=self.lat_text(),
-                                    font=ctk.CTkFont(family="Segoe UI", size=11),
+                                    font=ctk.CTkFont(family="Segoe UI", size=12),
                                     text_color=TEXT, anchor="w", justify="left")
         self.lat_lbl.pack(fill="x", padx=18, pady=(5, 10))
         self.btn(overview, "Medir ahora", self.measure, "ghost", width=135, height=35).pack(anchor="w", padx=18)
         ctk.CTkLabel(overview,
                      text="Esta medición no equivale a FPS ni garantiza menor latencia en juegos.",
-                     font=ctk.CTkFont(family="Segoe UI", size=10), text_color="#A99CB8",
+                     font=ctk.CTkFont(family="Segoe UI", size=11), text_color="#A99CB8",
                      wraplength=320, justify="left").pack(fill="x", padx=18, pady=(10, 15))
 
         actions = ctk.CTkFrame(body, fg_color="#21182F", corner_radius=17,
                                border_width=1, border_color="#49365F")
         actions.pack(fill="x", pady=(15, 0))
         ctk.CTkLabel(actions, text="¿QUÉ QUERÉS HACER AHORA?",
-                     font=ctk.CTkFont(family="Segoe UI", size=10, weight="bold"),
+                     font=ctk.CTkFont(family="Segoe UI", size=11, weight="bold"),
                      text_color="#C6AFFF", anchor="w").pack(fill="x", padx=18, pady=(15, 5))
         ctk.CTkLabel(actions,
                      text="Revisá los cambios antes de aplicarlos. Los que ya están activos o no corresponden a tu PC se omiten.",
@@ -550,7 +550,7 @@ class App(ctk.CTk):
                                 border_width=1, border_color="#49365F")
         tip_card.pack(fill="x", pady=(14, 0))
         ctk.CTkLabel(tip_card, text="TIPS PARA EMPEZAR  /  CONSEJO DEL DÍA",
-                     font=ctk.CTkFont(family="Segoe UI", size=10, weight="bold"),
+                     font=ctk.CTkFont(family="Segoe UI", size=11, weight="bold"),
                      text_color="#C6AFFF", anchor="w").pack(fill="x", padx=18, pady=(14, 5))
         ctk.CTkLabel(tip_card, text=tip_title,
                      font=ctk.CTkFont(family="Segoe UI", size=15, weight="bold"),
@@ -568,7 +568,7 @@ class App(ctk.CTk):
         pro_copy = ctk.CTkFrame(pro_row, fg_color="transparent")
         pro_copy.pack(side="left", fill="x", expand=True)
         ctk.CTkLabel(pro_copy, text="ZYROTECH PRO  /  EN DESARROLLO",
-                     font=ctk.CTkFont(family="Segoe UI", size=10, weight="bold"),
+                     font=ctk.CTkFont(family="Segoe UI", size=11, weight="bold"),
                      text_color="#C6AFFF", anchor="w").pack(fill="x")
         ctk.CTkLabel(pro_copy,
                      text="Más herramientas. Más control. Una suite avanzada.",
@@ -576,12 +576,12 @@ class App(ctk.CTk):
                      text_color=TEXT, anchor="w").pack(fill="x", pady=(4, 2))
         ctk.CTkLabel(pro_copy,
                      text="La edición gratuita seguirá siendo útil por sí sola. Pro sumará funciones avanzadas cuando esté lista.",
-                     font=ctk.CTkFont(family="Segoe UI", size=11),
+                     font=ctk.CTkFont(family="Segoe UI", size=12),
                      text_color="#C8BED2", anchor="w", wraplength=680,
                      justify="left").pack(fill="x")
         ctk.CTkLabel(pro_row, text="PRÓXIMAMENTE",
                      fg_color="#3A2344", text_color="#D2BCFF",
-                     corner_radius=9, font=ctk.CTkFont(family="Segoe UI", size=10, weight="bold"),
+                     corner_radius=9, font=ctk.CTkFont(family="Segoe UI", size=11, weight="bold"),
                      padx=13, pady=9).pack(side="right", padx=(12, 0))
 
     def lat_text(self):
@@ -694,7 +694,7 @@ class App(ctk.CTk):
         self.cat_buttons = {}
         ctk.CTkLabel(
             left, text="CATEGORÍAS",
-            font=ctk.CTkFont(family="Segoe UI", size=10, weight="bold"),
+            font=ctk.CTkFont(family="Segoe UI", size=11, weight="bold"),
             text_color="#A99DB8", anchor="w"
         ).pack(fill="x", padx=12, pady=(13, 8))
 
@@ -902,7 +902,7 @@ class App(ctk.CTk):
         ctk.CTkLabel(
             titlebox, text=tweak["name"],
             font=ctk.CTkFont(family="Segoe UI", size=14, weight="bold"),
-            text_color=title_color, anchor="w", wraplength=620, justify="left"
+            text_color=title_color, anchor="w", wraplength=max(260, min(620, self.content.winfo_width() - (420 if self._compact else 430))), justify="left"
         ).pack(fill="x", anchor="w")
 
         hint = tweak.get("warn") or (
@@ -963,7 +963,7 @@ class App(ctk.CTk):
                 window, text=f'{tweak.get("badge", "Aviso")}: {tweak["warn"]}',
                 font=self.f_n, text_color=GOLD, wraplength=590, justify="left"
             ).pack(anchor="w", padx=20)
-        textbox = ctk.CTkTextbox(window, fg_color=CARD, font=ctk.CTkFont(family="Consolas", size=11))
+        textbox = ctk.CTkTextbox(window, fg_color=CARD, font=ctk.CTkFont(family="Consolas", size=12))
         textbox.pack(fill="both", expand=True, padx=20, pady=12)
         for action in tweak["actions"]:
             if action["type"] == "reg":
@@ -1139,7 +1139,7 @@ class App(ctk.CTk):
         card.pack(fill="x", pady=4)
         ctk.CTkLabel(
             card, text="RESULTADOS DNS",
-            font=ctk.CTkFont(family="Segoe UI", size=9, weight="bold"),
+            font=ctk.CTkFont(family="Segoe UI", size=10, weight="bold"),
             text_color=ACC, anchor="w"
         ).pack(fill="x", padx=16, pady=(13, 5))
         for index, (name, address, latency) in enumerate(results):
@@ -1254,7 +1254,7 @@ class App(ctk.CTk):
         hero.pack(fill="x", pady=(0, 14))
         ctk.CTkLabel(
             hero, text="ZT  /  ZYROTECH FREE",
-            font=ctk.CTkFont(family="Segoe UI", size=11, weight="bold"),
+            font=ctk.CTkFont(family="Segoe UI", size=12, weight="bold"),
             text_color="#C6AFFF", anchor="w"
         ).pack(fill="x", padx=22, pady=(20, 7))
         ctk.CTkLabel(
@@ -1288,7 +1288,7 @@ class App(ctk.CTk):
             )
             ctk.CTkLabel(
                 tile, text=title,
-                font=ctk.CTkFont(family="Segoe UI", size=11, weight="bold"),
+                font=ctk.CTkFont(family="Segoe UI", size=12, weight="bold"),
                 text_color=ACC, anchor="w"
             ).pack(fill="x", padx=17, pady=(16, 7))
             ctk.CTkLabel(
