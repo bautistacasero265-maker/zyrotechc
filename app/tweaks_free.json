@@ -19,7 +19,8 @@
     "w": 1,
     "tier": "free",
     "badge": "",
-    "warn": ""
+    "warn": "",
+    "summary": "Ajusta una preferencia de privacidad o telemetría. No implica una mejora de FPS por sí sola."
   },
   {
     "module": "Privacidad",
@@ -41,7 +42,8 @@
     "w": 1,
     "tier": "free",
     "badge": "",
-    "warn": ""
+    "warn": "",
+    "summary": "Ajusta una preferencia de privacidad o telemetría. No implica una mejora de FPS por sí sola."
   },
   {
     "module": "Privacidad",
@@ -63,7 +65,8 @@
     "w": 1,
     "tier": "free",
     "badge": "",
-    "warn": ""
+    "warn": "",
+    "summary": "Ajusta una preferencia de privacidad o telemetría. No implica una mejora de FPS por sí sola."
   },
   {
     "module": "Privacidad",
@@ -85,7 +88,8 @@
     "w": 1,
     "tier": "free",
     "badge": "",
-    "warn": ""
+    "warn": "",
+    "summary": "Ajusta una preferencia de privacidad o telemetría. No implica una mejora de FPS por sí sola."
   },
   {
     "module": "Privacidad",
@@ -107,12 +111,13 @@
     "w": 1,
     "tier": "free",
     "badge": "",
-    "warn": ""
+    "warn": "",
+    "summary": "Ajusta una preferencia de privacidad o telemetría. No implica una mejora de FPS por sí sola."
   },
   {
     "module": "Privacidad",
     "name": "Ubicación desactivada (política)",
-    "risk": "normal",
+    "risk": "caution",
     "req": {},
     "reboot": false,
     "mode": "track",
@@ -136,7 +141,8 @@
     "w": 1,
     "tier": "free",
     "badge": "",
-    "warn": ""
+    "warn": "Puede impedir que algunas aplicaciones obtengan la ubicación del dispositivo.",
+    "summary": "Desactiva los servicios de ubicación administrados por una política de Windows. Algunas apps pueden perder acceso a la ubicación."
   },
   {
     "module": "Privacidad",
@@ -179,12 +185,13 @@
     "w": 1,
     "tier": "free",
     "badge": "",
-    "warn": ""
+    "warn": "",
+    "summary": "Ajusta una preferencia de privacidad o telemetría. No implica una mejora de FPS por sí sola."
   },
   {
     "module": "Privacidad",
     "name": "Sincronización de configuración OFF",
-    "risk": "normal",
+    "risk": "caution",
     "req": {},
     "reboot": false,
     "mode": "track",
@@ -208,7 +215,8 @@
     "w": 1,
     "tier": "free",
     "badge": "",
-    "warn": ""
+    "warn": "La configuración puede dejar de sincronizarse con otros dispositivos.",
+    "summary": "Desactiva la sincronización de configuración de Windows. Tus preferencias podrían dejar de sincronizarse entre dispositivos."
   },
   {
     "module": "Privacidad",
@@ -230,7 +238,8 @@
     "w": 1,
     "tier": "free",
     "badge": "",
-    "warn": ""
+    "warn": "",
+    "summary": "Ajusta una preferencia de privacidad o telemetría. No implica una mejora de FPS por sí sola."
   },
   {
     "module": "Privacidad",
@@ -252,7 +261,8 @@
     "w": 1,
     "tier": "free",
     "badge": "",
-    "warn": ""
+    "warn": "",
+    "summary": "Ajusta una preferencia de privacidad o telemetría. No implica una mejora de FPS por sí sola."
   },
   {
     "module": "Privacidad",
@@ -281,7 +291,8 @@
     "w": 1,
     "tier": "free",
     "badge": "",
-    "warn": ""
+    "warn": "",
+    "summary": "Ajusta una preferencia de privacidad o telemetría. No implica una mejora de FPS por sí sola."
   },
   {
     "module": "Privacidad",
@@ -305,12 +316,13 @@
     "w": 1,
     "tier": "free",
     "badge": "",
-    "warn": ""
+    "warn": "",
+    "summary": "Ajusta una preferencia de privacidad o telemetría. No implica una mejora de FPS por sí sola."
   },
   {
     "module": "Privacidad",
     "name": "Windows Ink Workspace OFF",
-    "risk": "normal",
+    "risk": "caution",
     "req": {},
     "reboot": false,
     "mode": "track",
@@ -327,7 +339,8 @@
     "w": 1,
     "tier": "free",
     "badge": "",
-    "warn": ""
+    "warn": "",
+    "summary": "Ajusta una preferencia de privacidad o telemetría. No implica una mejora de FPS por sí sola."
   },
   {
     "module": "Privacidad",
@@ -356,12 +369,13 @@
     "w": 1,
     "tier": "free",
     "badge": "",
-    "warn": ""
+    "warn": "",
+    "summary": "Ajusta una preferencia de privacidad o telemetría. No implica una mejora de FPS por sí sola."
   },
   {
     "module": "Privacidad",
     "name": "LLMNR desactivado",
-    "risk": "normal",
+    "risk": "caution",
     "req": {},
     "reboot": false,
     "mode": "track",
@@ -378,7 +392,8 @@
     "w": 1,
     "tier": "free",
     "badge": "",
-    "warn": ""
+    "warn": "Probá la conectividad y el acceso a recursos compartidos después del cambio.",
+    "summary": "Desactiva LLMNR, un mecanismo de resolución de nombres en redes locales. Puede afectar descubrimiento de nombres en algunas redes."
   },
   {
     "module": "Privacidad",
@@ -400,7 +415,8 @@
     "w": 1,
     "tier": "free",
     "badge": "",
-    "warn": ""
+    "warn": "",
+    "summary": "Ajusta una preferencia de privacidad o telemetría. No implica una mejora de FPS por sí sola."
   },
   {
     "module": "Debloat",
@@ -429,7 +445,8 @@
     "w": 1,
     "tier": "free",
     "badge": "",
-    "warn": ""
+    "warn": "",
+    "summary": "Reduce sugerencias, contenido opcional o componentes que quizás no uses. Revisá las desinstalaciones antes de continuar."
   },
   {
     "module": "Debloat",
@@ -465,7 +482,8 @@
     "w": 1,
     "tier": "free",
     "badge": "",
-    "warn": ""
+    "warn": "",
+    "summary": "Reduce sugerencias, contenido opcional o componentes que quizás no uses. Revisá las desinstalaciones antes de continuar."
   },
   {
     "module": "Debloat",
@@ -487,7 +505,8 @@
     "w": 1,
     "tier": "free",
     "badge": "",
-    "warn": ""
+    "warn": "",
+    "summary": "Reduce sugerencias, contenido opcional o componentes que quizás no uses. Revisá las desinstalaciones antes de continuar."
   },
   {
     "module": "Debloat",
@@ -509,7 +528,8 @@
     "w": 1,
     "tier": "free",
     "badge": "",
-    "warn": ""
+    "warn": "",
+    "summary": "Reduce sugerencias, contenido opcional o componentes que quizás no uses. Revisá las desinstalaciones antes de continuar."
   },
   {
     "module": "Debloat",
@@ -531,7 +551,8 @@
     "w": 1,
     "tier": "free",
     "badge": "",
-    "warn": ""
+    "warn": "",
+    "summary": "Reduce sugerencias, contenido opcional o componentes que quizás no uses. Revisá las desinstalaciones antes de continuar."
   },
   {
     "module": "Debloat",
@@ -555,7 +576,8 @@
     "w": 1,
     "tier": "free",
     "badge": "",
-    "warn": ""
+    "warn": "",
+    "summary": "Reduce sugerencias, contenido opcional o componentes que quizás no uses. Revisá las desinstalaciones antes de continuar."
   },
   {
     "module": "Debloat",
@@ -577,12 +599,13 @@
     "w": 1,
     "tier": "free",
     "badge": "",
-    "warn": ""
+    "warn": "",
+    "summary": "Reduce sugerencias, contenido opcional o componentes que quizás no uses. Revisá las desinstalaciones antes de continuar."
   },
   {
     "module": "Inicio",
     "name": "Steam no arranca con Windows",
-    "risk": "normal",
+    "risk": "caution",
     "req": {},
     "reboot": false,
     "mode": "track",
@@ -599,12 +622,13 @@
     "w": 2,
     "tier": "free",
     "badge": "",
-    "warn": ""
+    "warn": "Steam ya no se abrirá automáticamente al iniciar sesión.",
+    "summary": "Evita que Steam se inicie junto con Windows. Steam seguirá disponible al abrirlo manualmente."
   },
   {
     "module": "Inicio",
     "name": "Discord no arranca con Windows",
-    "risk": "normal",
+    "risk": "caution",
     "req": {},
     "reboot": false,
     "mode": "track",
@@ -621,12 +645,13 @@
     "w": 2,
     "tier": "free",
     "badge": "",
-    "warn": ""
+    "warn": "Discord ya no se abrirá automáticamente al iniciar sesión.",
+    "summary": "Evita que Discord se inicie junto con Windows. Discord seguirá disponible al abrirlo manualmente."
   },
   {
     "module": "Inicio",
     "name": "Spotify no arranca con Windows",
-    "risk": "normal",
+    "risk": "caution",
     "req": {},
     "reboot": false,
     "mode": "track",
@@ -643,7 +668,8 @@
     "w": 2,
     "tier": "free",
     "badge": "",
-    "warn": ""
+    "warn": "Spotify ya no se abrirá automáticamente al iniciar sesión.",
+    "summary": "Evita que Spotify se inicie junto con Windows. Spotify seguirá disponible al abrirlo manualmente."
   },
   {
     "module": "Debloat",
@@ -665,7 +691,8 @@
     "w": 1,
     "tier": "free",
     "badge": "",
-    "warn": ""
+    "warn": "",
+    "summary": "Reduce sugerencias, contenido opcional o componentes que quizás no uses. Revisá las desinstalaciones antes de continuar."
   },
   {
     "module": "Debloat",
@@ -687,7 +714,8 @@
     "w": 1,
     "tier": "free",
     "badge": "",
-    "warn": ""
+    "warn": "",
+    "summary": "Reduce sugerencias, contenido opcional o componentes que quizás no uses. Revisá las desinstalaciones antes de continuar."
   },
   {
     "module": "Debloat",
@@ -709,7 +737,8 @@
     "w": 1,
     "tier": "free",
     "badge": "",
-    "warn": ""
+    "warn": "",
+    "summary": "Reduce sugerencias, contenido opcional o componentes que quizás no uses. Revisá las desinstalaciones antes de continuar."
   },
   {
     "module": "Debloat",
@@ -731,7 +760,8 @@
     "w": 1,
     "tier": "free",
     "badge": "",
-    "warn": ""
+    "warn": "",
+    "summary": "Reduce sugerencias, contenido opcional o componentes que quizás no uses. Revisá las desinstalaciones antes de continuar."
   },
   {
     "module": "Debloat",
@@ -753,12 +783,13 @@
     "w": 1,
     "tier": "free",
     "badge": "",
-    "warn": ""
+    "warn": "",
+    "summary": "Reduce sugerencias, contenido opcional o componentes que quizás no uses. Revisá las desinstalaciones antes de continuar."
   },
   {
     "module": "Debloat",
     "name": "Quitar app: Noticias (irreversible)",
-    "risk": "normal",
+    "risk": "extreme",
     "req": {},
     "reboot": false,
     "mode": "once",
@@ -772,12 +803,13 @@
     "w": 1,
     "tier": "free",
     "badge": "Irreversible",
-    "warn": "Para recuperarla hay que reinstalarla desde Microsoft Store"
+    "warn": "Desinstala el componente para todos los usuarios y la imagen aprovisionada. Para recuperarlo puede ser necesario reinstalarlo; no se incluye una reversión automática.",
+    "summary": "Reduce sugerencias, contenido opcional o componentes que quizás no uses. Revisá las desinstalaciones antes de continuar."
   },
   {
     "module": "Debloat",
     "name": "Quitar app: Consejos (irreversible)",
-    "risk": "normal",
+    "risk": "extreme",
     "req": {},
     "reboot": false,
     "mode": "once",
@@ -791,12 +823,13 @@
     "w": 1,
     "tier": "free",
     "badge": "Irreversible",
-    "warn": "Para recuperarla hay que reinstalarla desde Microsoft Store"
+    "warn": "Desinstala el componente para todos los usuarios y la imagen aprovisionada. Para recuperarlo puede ser necesario reinstalarlo; no se incluye una reversión automática.",
+    "summary": "Reduce sugerencias, contenido opcional o componentes que quizás no uses. Revisá las desinstalaciones antes de continuar."
   },
   {
     "module": "Debloat",
     "name": "Quitar app: Solitario (irreversible)",
-    "risk": "normal",
+    "risk": "extreme",
     "req": {},
     "reboot": false,
     "mode": "once",
@@ -810,12 +843,13 @@
     "w": 1,
     "tier": "free",
     "badge": "Irreversible",
-    "warn": "Para recuperarla hay que reinstalarla desde Microsoft Store"
+    "warn": "Desinstala el componente para todos los usuarios y la imagen aprovisionada. Para recuperarlo puede ser necesario reinstalarlo; no se incluye una reversión automática.",
+    "summary": "Reduce sugerencias, contenido opcional o componentes que quizás no uses. Revisá las desinstalaciones antes de continuar."
   },
   {
     "module": "Debloat",
     "name": "Quitar app: Contactos (irreversible)",
-    "risk": "normal",
+    "risk": "extreme",
     "req": {},
     "reboot": false,
     "mode": "once",
@@ -829,12 +863,13 @@
     "w": 1,
     "tier": "free",
     "badge": "Irreversible",
-    "warn": "Para recuperarla hay que reinstalarla desde Microsoft Store"
+    "warn": "Desinstala el componente para todos los usuarios y la imagen aprovisionada. Para recuperarlo puede ser necesario reinstalarlo; no se incluye una reversión automática.",
+    "summary": "Reduce sugerencias, contenido opcional o componentes que quizás no uses. Revisá las desinstalaciones antes de continuar."
   },
   {
     "module": "Debloat",
     "name": "Quitar app: Vínculo con el móvil (irreversible)",
-    "risk": "normal",
+    "risk": "extreme",
     "req": {},
     "reboot": false,
     "mode": "once",
@@ -848,12 +883,13 @@
     "w": 1,
     "tier": "free",
     "badge": "Irreversible",
-    "warn": "Para recuperarla hay que reinstalarla desde Microsoft Store"
+    "warn": "Desinstala el componente para todos los usuarios y la imagen aprovisionada. Para recuperarlo puede ser necesario reinstalarlo; no se incluye una reversión automática.",
+    "summary": "Reduce sugerencias, contenido opcional o componentes que quizás no uses. Revisá las desinstalaciones antes de continuar."
   },
   {
     "module": "Debloat",
     "name": "Quitar app: Clipchamp (irreversible)",
-    "risk": "normal",
+    "risk": "extreme",
     "req": {},
     "reboot": false,
     "mode": "once",
@@ -867,12 +903,13 @@
     "w": 1,
     "tier": "free",
     "badge": "Irreversible",
-    "warn": "Para recuperarla hay que reinstalarla desde Microsoft Store"
+    "warn": "Desinstala el componente para todos los usuarios y la imagen aprovisionada. Para recuperarlo puede ser necesario reinstalarlo; no se incluye una reversión automática.",
+    "summary": "Reduce sugerencias, contenido opcional o componentes que quizás no uses. Revisá las desinstalaciones antes de continuar."
   },
   {
     "module": "Debloat",
     "name": "Quitar app: Teams (personal) (irreversible)",
-    "risk": "normal",
+    "risk": "extreme",
     "req": {},
     "reboot": false,
     "mode": "once",
@@ -886,12 +923,13 @@
     "w": 1,
     "tier": "free",
     "badge": "Irreversible",
-    "warn": "Para recuperarla hay que reinstalarla desde Microsoft Store"
+    "warn": "Desinstala el componente para todos los usuarios y la imagen aprovisionada. Para recuperarlo puede ser necesario reinstalarlo; no se incluye una reversión automática.",
+    "summary": "Reduce sugerencias, contenido opcional o componentes que quizás no uses. Revisá las desinstalaciones antes de continuar."
   },
   {
     "module": "Debloat",
     "name": "Quitar app: Bing Search (irreversible)",
-    "risk": "normal",
+    "risk": "extreme",
     "req": {},
     "reboot": false,
     "mode": "once",
@@ -905,12 +943,13 @@
     "w": 1,
     "tier": "free",
     "badge": "Irreversible",
-    "warn": "Para recuperarla hay que reinstalarla desde Microsoft Store"
+    "warn": "Desinstala el componente para todos los usuarios y la imagen aprovisionada. Para recuperarlo puede ser necesario reinstalarlo; no se incluye una reversión automática.",
+    "summary": "Reduce sugerencias, contenido opcional o componentes que quizás no uses. Revisá las desinstalaciones antes de continuar."
   },
   {
     "module": "Servicios",
     "name": "Servicio Telemetría (DiagTrack) desactivado",
-    "risk": "normal",
+    "risk": "caution",
     "req": {},
     "reboot": false,
     "mode": "track",
@@ -927,12 +966,13 @@
     "w": 2,
     "tier": "free",
     "badge": "",
-    "warn": ""
+    "warn": "Puede reducir funciones de diagnóstico de Windows; no se espera una mejora de FPS medible.",
+    "summary": "Cambia el inicio de un servicio de Windows. Puede desactivar la función que depende de él."
   },
   {
     "module": "Servicios",
     "name": "Servicio Mapas descargados desactivado",
-    "risk": "normal",
+    "risk": "caution",
     "req": {},
     "reboot": false,
     "mode": "track",
@@ -949,7 +989,8 @@
     "w": 2,
     "tier": "free",
     "badge": "",
-    "warn": ""
+    "warn": "Desactiva funciones relacionadas con mapas sin conexión.",
+    "summary": "Cambia el inicio de un servicio de Windows. Puede desactivar la función que depende de él."
   },
   {
     "module": "Servicios",
@@ -971,12 +1012,13 @@
     "w": 2,
     "tier": "free",
     "badge": "",
-    "warn": ""
+    "warn": "",
+    "summary": "Cambia el inicio de un servicio de Windows. Puede desactivar la función que depende de él."
   },
   {
     "module": "Servicios",
     "name": "Servicio Control parental desactivado",
-    "risk": "normal",
+    "risk": "caution",
     "req": {},
     "reboot": false,
     "mode": "track",
@@ -993,12 +1035,13 @@
     "w": 2,
     "tier": "free",
     "badge": "",
-    "warn": ""
+    "warn": "Desactiva funciones de Control parental de Windows. No lo apliques si se utilizan.",
+    "summary": "Cambia el inicio de un servicio de Windows. Puede desactivar la función que depende de él."
   },
   {
     "module": "Servicios",
     "name": "Servicio Zona móvil desactivado",
-    "risk": "normal",
+    "risk": "caution",
     "req": {},
     "reboot": false,
     "mode": "track",
@@ -1015,12 +1058,13 @@
     "w": 2,
     "tier": "free",
     "badge": "",
-    "warn": ""
+    "warn": "Desactiva el punto de acceso móvil de Windows.",
+    "summary": "Cambia el inicio de un servicio de Windows. Puede desactivar la función que depende de él."
   },
   {
     "module": "Servicios",
     "name": "Servicio Recolector de diagnóstico desactivado",
-    "risk": "normal",
+    "risk": "caution",
     "req": {},
     "reboot": false,
     "mode": "track",
@@ -1037,12 +1081,13 @@
     "w": 2,
     "tier": "free",
     "badge": "",
-    "warn": ""
+    "warn": "Puede afectar la recopilación de diagnósticos para solucionar problemas.",
+    "summary": "Cambia el inicio de un servicio de Windows. Puede desactivar la función que depende de él."
   },
   {
     "module": "Servicios",
     "name": "Servicio Xbox Networking desactivado",
-    "risk": "normal",
+    "risk": "extreme",
     "req": {},
     "reboot": false,
     "mode": "track",
@@ -1059,7 +1104,8 @@
     "w": 2,
     "tier": "free",
     "badge": "Breaking",
-    "warn": "Xbox, Game Pass y juegos de Microsoft Store pueden dejar de funcionar"
+    "warn": "Xbox, Game Pass y algunos juegos de Microsoft Store pueden perder funciones de red.",
+    "summary": "Desactiva el servicio Xbox Networking. Puede afectar Xbox, Game Pass y juegos que dependan de la red Xbox."
   },
   {
     "module": "Servicios",
@@ -1081,7 +1127,8 @@
     "w": 2,
     "tier": "free",
     "badge": "",
-    "warn": ""
+    "warn": "",
+    "summary": "Cambia el inicio de un servicio de Windows. Puede desactivar la función que depende de él."
   },
   {
     "module": "Servicios",
@@ -1103,12 +1150,13 @@
     "w": 2,
     "tier": "free",
     "badge": "",
-    "warn": ""
+    "warn": "",
+    "summary": "Cambia el inicio de un servicio de Windows. Puede desactivar la función que depende de él."
   },
   {
     "module": "Servicios",
     "name": "Servicio Asistente de compatibilidad desactivado",
-    "risk": "normal",
+    "risk": "caution",
     "req": {},
     "reboot": false,
     "mode": "track",
@@ -1125,12 +1173,13 @@
     "w": 2,
     "tier": "free",
     "badge": "",
-    "warn": ""
+    "warn": "Puede afectar la detección y resolución de problemas de compatibilidad.",
+    "summary": "Cambia el inicio de un servicio de Windows. Puede desactivar la función que depende de él."
   },
   {
     "module": "Servicios",
     "name": "Servicio Windows Search (pierde la búsqueda indexada) desactivado",
-    "risk": "normal",
+    "risk": "extreme",
     "req": {},
     "reboot": false,
     "mode": "track",
@@ -1147,7 +1196,8 @@
     "w": 2,
     "tier": "free",
     "badge": "Breaking",
-    "warn": "Se pierde la búsqueda indexada de Windows"
+    "warn": "La búsqueda indexada de Windows se desactiva. La búsqueda de archivos y contenido puede dejar de funcionar como esperás.",
+    "summary": "Desactiva Windows Search. La búsqueda indexada de Windows dejará de funcionar correctamente."
   },
   {
     "module": "Tareas",
@@ -1167,7 +1217,16 @@
     "w": 1,
     "tier": "free",
     "badge": "",
-    "warn": ""
+    "warn": "",
+    "summary": "Deshabilita una tarea programada específica. No equivale a una mejora garantizada de rendimiento.",
+    "detect": [
+      {
+        "type": "scheduled_task",
+        "path": "\\Microsoft\\Windows\\Application Experience\\",
+        "name": "ProgramDataUpdater",
+        "state": "Disabled"
+      }
+    ]
   },
   {
     "module": "Tareas",
@@ -1187,7 +1246,16 @@
     "w": 1,
     "tier": "free",
     "badge": "",
-    "warn": ""
+    "warn": "",
+    "summary": "Deshabilita una tarea programada específica. No equivale a una mejora garantizada de rendimiento.",
+    "detect": [
+      {
+        "type": "scheduled_task",
+        "path": "\\Microsoft\\Windows\\Feedback\\Siuf\\",
+        "name": "DmClient",
+        "state": "Disabled"
+      }
+    ]
   },
   {
     "module": "Tareas",
@@ -1207,7 +1275,16 @@
     "w": 1,
     "tier": "free",
     "badge": "",
-    "warn": ""
+    "warn": "",
+    "summary": "Deshabilita una tarea programada específica. No equivale a una mejora garantizada de rendimiento.",
+    "detect": [
+      {
+        "type": "scheduled_task",
+        "path": "\\Microsoft\\Windows\\DiskDiagnostic\\",
+        "name": "Microsoft-Windows-DiskDiagnosticDataCollector",
+        "state": "Disabled"
+      }
+    ]
   },
   {
     "module": "Tareas",
@@ -1227,7 +1304,16 @@
     "w": 1,
     "tier": "free",
     "badge": "",
-    "warn": ""
+    "warn": "",
+    "summary": "Deshabilita una tarea programada específica. No equivale a una mejora garantizada de rendimiento.",
+    "detect": [
+      {
+        "type": "scheduled_task",
+        "path": "\\Microsoft\\Windows\\Maps\\",
+        "name": "MapsToastTask",
+        "state": "Disabled"
+      }
+    ]
   },
   {
     "module": "Tareas",
@@ -1247,7 +1333,16 @@
     "w": 1,
     "tier": "free",
     "badge": "",
-    "warn": ""
+    "warn": "",
+    "summary": "Deshabilita una tarea programada específica. No equivale a una mejora garantizada de rendimiento.",
+    "detect": [
+      {
+        "type": "scheduled_task",
+        "path": "\\Microsoft\\Windows\\PI\\",
+        "name": "Sqm-Tasks",
+        "state": "Disabled"
+      }
+    ]
   },
   {
     "module": "Tareas",
@@ -1267,12 +1362,21 @@
     "w": 1,
     "tier": "free",
     "badge": "",
-    "warn": ""
+    "warn": "",
+    "summary": "Deshabilita una tarea programada específica. No equivale a una mejora garantizada de rendimiento.",
+    "detect": [
+      {
+        "type": "scheduled_task",
+        "path": "\\Microsoft\\Windows\\Shell\\",
+        "name": "FamilySafetyRefreshTask",
+        "state": "Disabled"
+      }
+    ]
   },
   {
     "module": "Gaming",
     "name": "Game DVR desactivado",
-    "risk": "normal",
+    "risk": "caution",
     "req": {},
     "reboot": false,
     "mode": "track",
@@ -1289,12 +1393,13 @@
     "w": 3,
     "tier": "free",
     "badge": "",
-    "warn": ""
+    "warn": "Podés perder funciones de captura o grabación de Xbox Game Bar.",
+    "summary": "Desactiva Game DVR para el usuario actual. Podés perder funciones de captura de Xbox Game Bar."
   },
   {
     "module": "Gaming",
     "name": "Captura en segundo plano OFF",
-    "risk": "normal",
+    "risk": "caution",
     "req": {},
     "reboot": false,
     "mode": "track",
@@ -1311,12 +1416,13 @@
     "w": 3,
     "tier": "free",
     "badge": "",
-    "warn": ""
+    "warn": "No lo apliques si usás grabación en segundo plano.",
+    "summary": "Desactiva la captura de juegos en segundo plano. No uses este ajuste si grabás clips automáticamente."
   },
   {
     "module": "Gaming",
     "name": "Game DVR desactivado (política)",
-    "risk": "normal",
+    "risk": "caution",
     "req": {},
     "reboot": false,
     "mode": "track",
@@ -1333,12 +1439,13 @@
     "w": 3,
     "tier": "free",
     "badge": "",
-    "warn": ""
+    "warn": "Puede bloquear las funciones de captura para todos los usuarios del equipo.",
+    "summary": "Desactiva Game DVR mediante una política del equipo. Puede bloquear funciones de captura para todos los usuarios."
   },
   {
     "module": "Gaming",
     "name": "Optimizaciones de pantalla completa OFF",
-    "risk": "normal",
+    "risk": "caution",
     "req": {},
     "reboot": false,
     "mode": "track",
@@ -1376,7 +1483,8 @@
     "w": 3,
     "tier": "free",
     "badge": "",
-    "warn": ""
+    "warn": "El comportamiento depende del juego y del driver. Revertí el cambio si aparecen problemas.",
+    "summary": "Cambia el comportamiento de optimizaciones de pantalla completa. Es una prueba de compatibilidad por juego, no una mejora universal."
   },
   {
     "module": "Gaming",
@@ -1405,12 +1513,13 @@
     "w": 3,
     "tier": "free",
     "badge": "",
-    "warn": ""
+    "warn": "",
+    "summary": "Activa el Modo Juego de Windows. El sistema administra recursos para priorizar la experiencia de juego cuando corresponde."
   },
   {
     "module": "Kernel",
     "name": "Reloj de plataforma por defecto (quita useplatformclock)",
-    "risk": "normal",
+    "risk": "extreme",
     "req": {},
     "reboot": true,
     "mode": "once",
@@ -1424,12 +1533,13 @@
     "w": 3,
     "tier": "free",
     "badge": "",
-    "warn": ""
+    "warn": "Modifica la configuración de arranque. Requiere reiniciar; si usabas una configuración personalizada, no hay reversión automática.",
+    "summary": "Elimina la opción useplatformclock del arranque para que Windows vuelva a usar su configuración predeterminada. Reinicia el equipo para completar el cambio."
   },
   {
     "module": "Kernel",
     "name": "Inicio rápido desactivado",
-    "risk": "normal",
+    "risk": "caution",
     "req": {},
     "reboot": false,
     "mode": "track",
@@ -1446,12 +1556,13 @@
     "w": 3,
     "tier": "free",
     "badge": "",
-    "warn": ""
+    "warn": "El inicio en frío de Windows podría tardar más.",
+    "summary": "Desactiva Inicio rápido. Puede hacer que el arranque en frío tarde más; no es una optimización universal."
   },
   {
     "module": "Kernel",
     "name": "Cierre rápido de apps",
-    "risk": "normal",
+    "risk": "caution",
     "req": {},
     "reboot": false,
     "mode": "track",
@@ -1468,7 +1579,8 @@
     "w": 3,
     "tier": "free",
     "badge": "",
-    "warn": ""
+    "warn": "Guardá el trabajo antes de apagar; no todas las aplicaciones responden igual.",
+    "summary": "Reduce el tiempo de espera al cerrar aplicaciones. Guardá el trabajo antes de apagar y comprobá que las apps cierren correctamente."
   },
   {
     "module": "Kernel",
@@ -1490,12 +1602,13 @@
     "w": 3,
     "tier": "free",
     "badge": "",
-    "warn": ""
+    "warn": "",
+    "summary": "Cambia una opción de arranque o de cierre de Windows. Es una configuración avanzada y requiere especial cuidado."
   },
   {
     "module": "Energía",
     "name": "Plan de energía ZyroTech Ultimate Performance",
-    "risk": "normal",
+    "risk": "caution",
     "req": {},
     "reboot": false,
     "mode": "track",
@@ -1511,12 +1624,20 @@
     "w": 3,
     "tier": "free",
     "badge": "Energía",
-    "warn": "Más consumo; en notebooks reduce la autonomía"
+    "warn": "Aumenta el consumo potencial. En notebooks puede reducir la autonomía.",
+    "summary": "Activa un plan de energía ZyroTech basado en un plan de Windows. Puede elevar el consumo y no garantiza más FPS.",
+    "detect": [
+      {
+        "type": "ps",
+        "cmd": "if ((powercfg /getactivescheme | Out-String) -match 'ZyroTech Ultimate Performance') { '1' } else { '0' }",
+        "expected": "1"
+      }
+    ]
   },
   {
     "module": "Red",
     "name": "Teredo desactivado",
-    "risk": "normal",
+    "risk": "extreme",
     "req": {},
     "reboot": false,
     "mode": "track",
@@ -1531,7 +1652,15 @@
     "w": 2,
     "tier": "free",
     "badge": "",
-    "warn": ""
+    "warn": "Puede afectar servicios o juegos multijugador que dependan de Teredo/Xbox Networking.",
+    "summary": "Desactiva Teredo. Algunos servicios y juegos multijugador de Xbox pueden depender de esta función.",
+    "detect": [
+      {
+        "type": "ps",
+        "cmd": "try { if ((Get-NetTeredoConfiguration -ErrorAction Stop).State -eq 'Disabled') { '1' } else { '0' } } catch { '0' }",
+        "expected": "1"
+      }
+    ]
   },
   {
     "module": "Red",
@@ -1553,12 +1682,13 @@
     "w": 2,
     "tier": "free",
     "badge": "",
-    "warn": ""
+    "warn": "",
+    "summary": "Modifica una función de red de Windows. No reduce automáticamente el ping de un servidor de juego."
   },
   {
     "module": "Periféricos",
     "name": "Mouse: sin aceleración",
-    "risk": "normal",
+    "risk": "caution",
     "req": {},
     "reboot": false,
     "mode": "track",
@@ -1589,12 +1719,13 @@
     "w": 2,
     "tier": "free",
     "badge": "",
-    "warn": ""
+    "warn": "Cambia la sensación del puntero y puede requerir adaptación.",
+    "summary": "Desactiva la aceleración del mouse de Windows. Cambia cómo responde el puntero; probalo antes de adoptarlo."
   },
   {
     "module": "Periféricos",
     "name": "Mouse: sensibilidad 6/11 (1:1)",
-    "risk": "normal",
+    "risk": "caution",
     "req": {},
     "reboot": false,
     "mode": "track",
@@ -1611,12 +1742,13 @@
     "w": 2,
     "tier": "free",
     "badge": "",
-    "warn": ""
+    "warn": "Reemplaza tu preferencia actual de sensibilidad.",
+    "summary": "Configura la sensibilidad de Windows en 6/11. Reemplaza tu preferencia actual de velocidad del puntero."
   },
   {
     "module": "Periféricos",
     "name": "Sin aviso de Toggle Keys",
-    "risk": "normal",
+    "risk": "caution",
     "req": {},
     "reboot": false,
     "mode": "track",
@@ -1633,12 +1765,13 @@
     "w": 2,
     "tier": "free",
     "badge": "",
-    "warn": ""
+    "warn": "Cambia una opción de accesibilidad del teclado.",
+    "summary": "Cambia preferencias del mouse o dispositivos. Elegí estos ajustes según tu comodidad."
   },
   {
     "module": "Periféricos",
     "name": "Sin sonido de inicio",
-    "risk": "normal",
+    "risk": "caution",
     "req": {},
     "reboot": false,
     "mode": "track",
@@ -1655,12 +1788,13 @@
     "w": 2,
     "tier": "free",
     "badge": "",
-    "warn": ""
+    "warn": "Quita el sonido de inicio de Windows.",
+    "summary": "Cambia preferencias del mouse o dispositivos. Elegí estos ajustes según tu comodidad."
   },
   {
     "module": "Periféricos",
     "name": "Aero Shake desactivado",
-    "risk": "normal",
+    "risk": "caution",
     "req": {},
     "reboot": false,
     "mode": "track",
@@ -1677,7 +1811,8 @@
     "w": 2,
     "tier": "free",
     "badge": "",
-    "warn": ""
+    "warn": "Cambia el comportamiento de las ventanas al arrastrarlas.",
+    "summary": "Cambia preferencias del mouse o dispositivos. Elegí estos ajustes según tu comodidad."
   },
   {
     "module": "Interfaz",
@@ -1699,12 +1834,13 @@
     "w": 1,
     "tier": "free",
     "badge": "",
-    "warn": ""
+    "warn": "",
+    "summary": "Modifica la apariencia y el comportamiento visual de Windows; no son ajustes de FPS."
   },
   {
     "module": "Interfaz",
     "name": "Efectos visuales: mejor rendimiento",
-    "risk": "normal",
+    "risk": "caution",
     "req": {},
     "reboot": false,
     "mode": "track",
@@ -1721,12 +1857,13 @@
     "w": 1,
     "tier": "free",
     "badge": "",
-    "warn": ""
+    "warn": "Puede reducir animaciones y elementos visuales.",
+    "summary": "Selecciona el perfil de efectos visuales orientado a rendimiento. Puede reducir animaciones y adornos de Windows."
   },
   {
     "module": "Interfaz",
     "name": "Máscara de efectos visuales mínima",
-    "risk": "normal",
+    "risk": "caution",
     "req": {},
     "reboot": false,
     "mode": "track",
@@ -1743,12 +1880,13 @@
     "w": 1,
     "tier": "free",
     "badge": "",
-    "warn": ""
+    "warn": "Puede modificar varias preferencias de animación y suavizado.",
+    "summary": "Reemplaza la máscara de preferencias visuales de Windows. Puede cambiar animaciones, suavizado y apariencia de la interfaz."
   },
   {
     "module": "Interfaz",
     "name": "Transparencia desactivada",
-    "risk": "normal",
+    "risk": "caution",
     "req": {},
     "reboot": false,
     "mode": "track",
@@ -1765,12 +1903,13 @@
     "w": 1,
     "tier": "free",
     "badge": "",
-    "warn": ""
+    "warn": "Desactiva transparencias en la interfaz.",
+    "summary": "Modifica la apariencia y el comportamiento visual de Windows; no son ajustes de FPS."
   },
   {
     "module": "Interfaz",
     "name": "Sin sombras en listas",
-    "risk": "normal",
+    "risk": "caution",
     "req": {},
     "reboot": false,
     "mode": "track",
@@ -1787,12 +1926,13 @@
     "w": 1,
     "tier": "free",
     "badge": "",
-    "warn": ""
+    "warn": "Quita sombras en listas y elementos del Explorador.",
+    "summary": "Modifica la apariencia y el comportamiento visual de Windows; no son ajustes de FPS."
   },
   {
     "module": "Mantenimiento",
     "name": "Limpiar temporales del usuario",
-    "risk": "normal",
+    "risk": "caution",
     "req": {},
     "reboot": false,
     "mode": "once",
@@ -1806,12 +1946,13 @@
     "w": 1,
     "tier": "free",
     "badge": "",
-    "warn": ""
+    "warn": "Cerrá aplicaciones y guardá archivos antes de limpiar.",
+    "summary": "Elimina archivos dentro de la carpeta temporal del usuario. Cerrá las apps y guardá tu trabajo antes de limpiar."
   },
   {
     "module": "Mantenimiento",
     "name": "Limpiar temporales de Windows",
-    "risk": "normal",
+    "risk": "caution",
     "req": {},
     "reboot": false,
     "mode": "once",
@@ -1825,12 +1966,13 @@
     "w": 1,
     "tier": "free",
     "badge": "",
-    "warn": ""
+    "warn": "Cerrá instaladores y aplicaciones antes de limpiar.",
+    "summary": "Elimina archivos temporales de Windows. Los archivos en uso pueden permanecer y algunas tareas podrían recrear cachés."
   },
   {
     "module": "Mantenimiento",
     "name": "Limpiar caché de shaders DirectX",
-    "risk": "normal",
+    "risk": "caution",
     "req": {},
     "reboot": false,
     "mode": "once",
@@ -1844,12 +1986,13 @@
     "w": 1,
     "tier": "free",
     "badge": "",
-    "warn": ""
+    "warn": "Los juegos pueden recompilar shaders y mostrar tirones temporales después de la limpieza.",
+    "summary": "Borra la caché de shaders de DirectX. Los juegos pueden recompilar shaders y presentar tirones durante las primeras partidas."
   },
   {
     "module": "Mantenimiento",
     "name": "Limpiar caché de Chrome (cerrarlo antes)",
-    "risk": "normal",
+    "risk": "caution",
     "req": {},
     "reboot": false,
     "mode": "once",
@@ -1863,12 +2006,13 @@
     "w": 1,
     "tier": "free",
     "badge": "",
-    "warn": ""
+    "warn": "Cerrá Chrome antes de limpiar su caché.",
+    "summary": "Borra cachés de Chrome, no contraseñas ni cookies. Cerrá Chrome antes y considerá que algunas páginas cargarán de nuevo."
   },
   {
     "module": "Mantenimiento",
     "name": "Limpiar caché de Firefox (cerrarlo antes)",
-    "risk": "normal",
+    "risk": "caution",
     "req": {},
     "reboot": false,
     "mode": "once",
@@ -1882,12 +2026,13 @@
     "w": 1,
     "tier": "free",
     "badge": "",
-    "warn": ""
+    "warn": "Cerrá Firefox antes de limpiar su caché.",
+    "summary": "Borra la caché de Firefox. Cerrá Firefox antes; el navegador puede reconstruirla al volver a abrirlo."
   },
   {
     "module": "Mantenimiento",
     "name": "Limpiar caché web de Epic Games",
-    "risk": "normal",
+    "risk": "caution",
     "req": {},
     "reboot": false,
     "mode": "once",
@@ -1901,12 +2046,13 @@
     "w": 1,
     "tier": "free",
     "badge": "",
-    "warn": ""
+    "warn": "Cerrá Epic Games Launcher antes de limpiar su caché web.",
+    "summary": "Borra la caché web del launcher de Epic Games. Cerrá el launcher antes; puede reconstruir archivos al abrirse."
   },
   {
     "module": "Mantenimiento",
     "name": "Limpiar logs de CBS",
-    "risk": "normal",
+    "risk": "caution",
     "req": {},
     "reboot": false,
     "mode": "once",
@@ -1920,12 +2066,13 @@
     "w": 1,
     "tier": "free",
     "badge": "",
-    "warn": ""
+    "warn": "Perdés registros útiles para diagnosticar errores de Windows.",
+    "summary": "Elimina registros CBS usados para diagnosticar mantenimiento de Windows. No lo ejecutes si necesitás investigar un error."
   },
   {
     "module": "Mantenimiento",
     "name": "Vaciar papelera",
-    "risk": "normal",
+    "risk": "extreme",
     "req": {},
     "reboot": false,
     "mode": "once",
@@ -1939,12 +2086,13 @@
     "w": 1,
     "tier": "free",
     "badge": "",
-    "warn": ""
+    "warn": "Vacía la Papelera. Revisá su contenido antes: esta acción no tiene reversión automática.",
+    "summary": "Vacía la Papelera de reciclaje. Los archivos eliminados desde allí no se pueden recuperar fácilmente."
   },
   {
     "module": "Mantenimiento",
     "name": "Limpiar descargas de Windows Update",
-    "risk": "normal",
+    "risk": "caution",
     "req": {},
     "reboot": false,
     "mode": "once",
@@ -1958,12 +2106,13 @@
     "w": 1,
     "tier": "free",
     "badge": "",
-    "warn": ""
+    "warn": "Windows puede volver a descargar algunos paquetes de actualización.",
+    "summary": "Limpia los archivos descargados de Windows Update. Windows puede volver a descargarlos más adelante."
   },
   {
     "module": "Mantenimiento",
     "name": "Borrar residuos del instalador AMD",
-    "risk": "normal",
+    "risk": "caution",
     "req": {
       "gpu": "amd"
     },
@@ -1979,7 +2128,8 @@
     "w": 1,
     "tier": "free",
     "badge": "",
-    "warn": ""
+    "warn": "No se puede restaurar automáticamente la carpeta eliminada.",
+    "summary": "Elimina la carpeta C:\\AMD, que puede contener instaladores extraídos. No lo uses si guardás allí paquetes para reinstalar drivers."
   },
   {
     "module": "Interfaz",
@@ -2001,12 +2151,13 @@
     "w": 1,
     "tier": "free",
     "badge": "",
-    "warn": ""
+    "warn": "",
+    "summary": "Modifica la apariencia y el comportamiento visual de Windows; no son ajustes de FPS."
   },
   {
     "module": "Interfaz",
     "name": "Mostrar archivos ocultos",
-    "risk": "normal",
+    "risk": "caution",
     "req": {},
     "reboot": false,
     "mode": "track",
@@ -2023,12 +2174,13 @@
     "w": 1,
     "tier": "free",
     "badge": "",
-    "warn": ""
+    "warn": "",
+    "summary": "Muestra archivos y carpetas ocultos en el Explorador. Revisá con cuidado antes de borrar elementos del sistema."
   },
   {
     "module": "Interfaz",
     "name": "Ocultar cuadro de búsqueda de la barra",
-    "risk": "normal",
+    "risk": "caution",
     "req": {},
     "reboot": false,
     "mode": "track",
@@ -2045,7 +2197,8 @@
     "w": 1,
     "tier": "free",
     "badge": "",
-    "warn": ""
+    "warn": "",
+    "summary": "Modifica la apariencia y el comportamiento visual de Windows; no son ajustes de FPS."
   },
   {
     "module": "Seguridad básica",
@@ -2067,7 +2220,8 @@
     "w": 1,
     "tier": "free",
     "badge": "",
-    "warn": ""
+    "warn": "",
+    "summary": "Cambia una opción de seguridad y comodidad de Windows."
   },
   {
     "module": "Privacidad",
@@ -2087,6 +2241,14 @@
     "w": 1,
     "tier": "free",
     "badge": "",
-    "warn": ""
+    "warn": "",
+    "summary": "Ajusta una preferencia de privacidad o telemetría. No implica una mejora de FPS por sí sola.",
+    "detect": [
+      {
+        "type": "ps",
+        "cmd": "if ([Environment]::GetEnvironmentVariable('POWERSHELL_TELEMETRY_OPTOUT','Machine') -eq '1') { '1' } else { '0' }",
+        "expected": "1"
+      }
+    ]
   }
 ]
