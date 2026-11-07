@@ -1018,7 +1018,7 @@
   {
     "module": "Servicios",
     "name": "Servicio Control parental desactivado",
-    "risk": "caution",
+    "risk": "extreme",
     "req": {},
     "reboot": false,
     "mode": "track",
@@ -1035,8 +1035,9 @@
     "w": 2,
     "tier": "free",
     "badge": "",
-    "warn": "Desactiva funciones de Control parental de Windows. No lo apliques si se utilizan.",
-    "summary": "Cambia el inicio de un servicio de Windows. Puede desactivar la función que depende de él."
+    "warn": "Protegido por ZyroTech: puede interferir con funciones de seguridad familiar o supervisión de Windows. No se permite desactivarlo desde la app.",
+    "summary": "Cambia el inicio de un servicio de Windows. Puede desactivar la función que depende de él.",
+    "locked": true
   },
   {
     "module": "Servicios",
@@ -1347,7 +1348,7 @@
   {
     "module": "Tareas",
     "name": "Tarea programada: Family Safety Refresh",
-    "risk": "normal",
+    "risk": "extreme",
     "req": {},
     "reboot": false,
     "mode": "track",
@@ -1362,7 +1363,7 @@
     "w": 1,
     "tier": "free",
     "badge": "",
-    "warn": "",
+    "warn": "Protegido por ZyroTech: puede interferir con funciones de seguridad familiar o supervisión de Windows. No se permite desactivarlo desde la app.",
     "summary": "Deshabilita una tarea programada específica. No equivale a una mejora garantizada de rendimiento.",
     "detect": [
       {
@@ -1371,7 +1372,8 @@
         "name": "FamilySafetyRefreshTask",
         "state": "Disabled"
       }
-    ]
+    ],
+    "locked": true
   },
   {
     "module": "Gaming",
