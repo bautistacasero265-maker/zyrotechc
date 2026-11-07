@@ -86,13 +86,23 @@ class FreeReleaseTests(unittest.TestCase):
     def test_dashboard_layout_and_diagnostic_export(self):
         self.assertIn("Hacé que Windows", self.ui)
         self.assertIn("RESUMEN DE OPTIMIZACIÓN", self.ui)
-        self.assertIn("#FF5B9D", self.ui)
+        self.assertIn("#9B72FF", self.ui)
         self.assertIn('self.state("zoomed")', self.ui)
         self.assertIn("def export_report(self):", self.ui)
         self.assertIn("Exportar informe", self.ui)
         self.assertIn("no garantiza una mejora en juegos", self.ui)
         self.assertIn("TIPS PARA EMPEZAR", self.ui)
         self.assertIn("ZYROTECH PRO", self.ui)
+
+
+    def test_premium_ui_theme_and_responsive_layout(self):
+        self.assertIn('ACC = "#9B72FF"', self.ui)
+        self.assertIn('def _on_window_resize(self, event):', self.ui)
+        self.assertIn('metric_columns = 2 if compact else 4', self.ui)
+        self.assertIn('def tweak_row(self, tweak):', self.ui)
+        self.assertIn('CAMBIOS ACTIVOS', self.ui)
+        self.assertIn('REGISTRO RECIENTE', self.ui)
+        self.assertIn('Más control sobre tu PC.', self.ui)
 
     def test_private_timer_and_ram_actions_are_not_in_free_core(self):
         self.assertNotIn("NtSetTimerResolution", self.core)
