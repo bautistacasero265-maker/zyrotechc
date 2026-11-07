@@ -743,19 +743,18 @@ class App(ctk.CTk):
         top = ctk.CTkFrame(right, fg_color="transparent")
         top.pack(fill="x", pady=(0, 10))
 
-        self.category_title = ctk.CTkLabel(
-            top, text=self.cat or "Ajustes", font=self.f_h2,
-            text_color=TEXT, anchor="w"
-        )
-        self.result_count = ctk.CTkLabel(
-            top, text="", font=self.f_s, text_color=MUTE
-        )
-
         if compact:
             title_row = ctk.CTkFrame(top, fg_color="transparent")
             title_row.pack(fill="x")
-            self.category_title.pack(in_=title_row, side="left", padx=(2, 10))
-            self.result_count.pack(in_=title_row, side="right")
+            self.category_title = ctk.CTkLabel(
+                title_row, text=self.cat or "Ajustes", font=self.f_h2,
+                text_color=TEXT, anchor="w"
+            )
+            self.category_title.pack(side="left", padx=(2, 10))
+            self.result_count = ctk.CTkLabel(
+                title_row, text="", font=self.f_s, text_color=MUTE
+            )
+            self.result_count.pack(side="right")
             tools_row = ctk.CTkFrame(top, fg_color="transparent")
             tools_row.pack(fill="x", pady=(8, 0))
             self.search = ctk.CTkEntry(
@@ -769,7 +768,14 @@ class App(ctk.CTk):
                 width=132, height=39
             ).pack(side="right")
         else:
+            self.category_title = ctk.CTkLabel(
+                top, text=self.cat or "Ajustes", font=self.f_h2,
+                text_color=TEXT, anchor="w"
+            )
             self.category_title.pack(side="left", padx=(2, 12))
+            self.result_count = ctk.CTkLabel(
+                top, text="", font=self.f_s, text_color=MUTE
+            )
             self.result_count.pack(side="left")
             self.search = ctk.CTkEntry(
                 top, placeholder_text="Buscar ajustes...",
