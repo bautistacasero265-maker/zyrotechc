@@ -23,7 +23,16 @@
 
 ## Interfaz
 
-ZyroTech Free utiliza una interfaz oscura de alto contraste con identidad visual propia, acentos cian y lima, panel lateral persistente, dashboard de estado del sistema y tarjetas de ajustes con estados destacados. Las categorías actualizan el panel de resultados en el momento, sin reconstruir la pantalla ni perder switches, búsqueda o confirmaciones. El dashboard separa visualmente el estado del equipo, las métricas y las acciones principales. También permite exportar un informe legible para compartir un diagnóstico sin exponer rutas personales ni el contenido del registro. El análisis del equipo y de los ajustes corre en un hilo separado para evitar bloquear la interfaz.
+ZyroTech Free utiliza una identidad **Premium Gaming**: superficies oscuras de tono violeta, acento púrpura, detalles cian y estados semánticos de alto contraste. La navegación lateral permanece visible y cada pantalla comparte la misma jerarquía tipográfica, espaciado, tarjetas y botones.
+
+- Dashboard con presentación del producto, estado verificado de ajustes, resumen de hardware, acciones rápidas y consejos de uso.
+- Catálogo con categorías, búsqueda, recomendaciones, estados compatibles/no verificables y tarjetas de ajuste reorganizadas para mantener la lectura.
+- Actividad con cambios administrados, acciones individuales de reversión e historial reciente.
+- Diagnóstico DNS y pantalla Acerca de con componentes consistentes.
+- Reflujo del dashboard entre cuatro y dos columnas, y redistribución de los paneles principales al estrechar la ventana.
+- Las categorías actualizan el contenido sin reconstruir la pantalla ni perder búsqueda, switches o confirmaciones.
+
+El análisis del equipo y de los ajustes corre en un hilo separado para evitar bloquear la interfaz. La cobertura informa ajustes comprobados y no representa una puntuación de rendimiento ni una promesa de FPS.
 
 ## Releases y compilación automática
 
