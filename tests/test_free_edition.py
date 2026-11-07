@@ -150,6 +150,16 @@ class FreeReleaseTests(unittest.TestCase):
         self.assertIn('required_ack = tuple(sorted(', self.ui)
         self.assertIn('self.risk_ok.set(False)', self.ui)
 
+    def test_family_safety_tweaks_are_locked_and_not_recommended(self):
+        protected = {"ZT-0107", "ZT-0144"}
+        for item in self.catalog:
+            if item["id"] in protected:
+                self.assertTrue(item.get("locked"))
+                self.assertEqual(item.get("risk"), "extreme")
+        self.assertIn('bool(tweak.get("locked")) and not managed', self.ui)
+        self.assertIn('and not t.get("locked")', self.ui)
+        self.assertIn('include_locked=False', self.ui)
+
     def test_private_timer_and_ram_actions_are_not_in_free_core(self):
         self.assertNotIn("NtSetTimerResolution", self.core)
         self.assertNotIn("purge_standby", self.core)
