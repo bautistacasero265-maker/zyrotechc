@@ -104,6 +104,37 @@ class FreeReleaseTests(unittest.TestCase):
         self.assertIn('REGISTRO RECIENTE', self.ui)
         self.assertIn('Más control sobre tu PC.', self.ui)
 
+    def test_catalog_explains_every_tweak_and_marks_nontrivial_risks(self):
+        allowed_risks = {"normal", "caution", "extreme"}
+        for item in self.catalog:
+            self.assertTrue(item.get("summary"), item.get("id"))
+            self.assertIn(item.get("risk"), allowed_risks, item.get("id"))
+            if item.get("mode") == "once":
+                self.assertIn(item.get("risk"), {"caution", "extreme"}, item.get("id"))
+            if item.get("risk") == "extreme":
+                self.assertTrue(item.get("warn"), item.get("id"))
+
+    def test_tracked_powershell_tweaks_have_reliable_detection(self):
+        for item in self.catalog:
+            if item.get("mode") != "track":
+                continue
+            if any(action.get("type") == "ps" for action in item.get("actions", [])):
+                self.assertTrue(item.get("detect"), item.get("id"))
+        self.assertIn('if kind == "ps":', self.core)
+        self.assertIn("output.casefold() == expected.casefold()", self.core)
+
+    def test_recommender_is_conservative(self):
+        self.assertIn('safe_modules = {"Privacidad", "Debloat", "Gaming", "Tareas", "Seguridad básica"}', self.ui)
+        self.assertIn('tweak.get("risk") == "normal"', self.ui)
+        self.assertIn("actions_reversible", self.ui)
+        self.assertIn('tweak.get("module") in safe_modules', self.ui)
+        self.assertIn("No se aplicó ningún cambio", self.ui)
+
+    def test_caution_and_extreme_changes_require_acknowledgement(self):
+        self.assertIn('t.get("risk") in ("caution", "extreme")', self.ui)
+        self.assertIn("ANTES DE APLICAR", self.ui)
+        self.assertIn("Riesgo alto", self.ui)
+
     def test_private_timer_and_ram_actions_are_not_in_free_core(self):
         self.assertNotIn("NtSetTimerResolution", self.core)
         self.assertNotIn("purge_standby", self.core)
